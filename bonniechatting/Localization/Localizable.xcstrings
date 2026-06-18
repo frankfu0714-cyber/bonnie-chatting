@@ -1,6 +1,12 @@
 {
   "sourceLanguage" : "zh-Hant",
   "strings" : {
+    "" : {
+
+    },
+    "–" : {
+
+    },
     "·" : {
 
     },
@@ -668,6 +674,22 @@
         }
       }
     },
+    "mechanism.random.name" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Random Number"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隨機數字"
+          }
+        }
+      }
+    },
     "mechanism.sticks.name" : {
       "localizations" : {
         "en" : {
@@ -680,6 +702,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "求籤"
+          }
+        }
+      }
+    },
+    "mechanism.tissues.name" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pull a Tissue"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "抽面紙"
           }
         }
       }
@@ -733,6 +771,7 @@
       }
     },
     "petals.count.label" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -845,6 +884,7 @@
       }
     },
     "petals.settings.count" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -856,6 +896,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "花瓣數量(5–12)"
+          }
+        }
+      }
+    },
+    "petals.settings.footer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The petal count is randomized each round so the final-petal answer can't be pre-computed."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "花瓣數量每回合隨機產生,避免事先推算最後一片的答案。"
           }
         }
       }
@@ -905,6 +961,279 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "問事方式"
+          }
+        }
+      }
+    },
+    "random.action.again" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Roll Again"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "再抽一次"
+          }
+        }
+      }
+    },
+    "random.action.roll" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Roll"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "抽號"
+          }
+        }
+      }
+    },
+    "random.action.rolling" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rolling…"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "抽號中…"
+          }
+        }
+      }
+    },
+    "random.question.label" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your Question"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你的問題"
+          }
+        }
+      }
+    },
+    "random.question.placeholder" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What would you like to ask? (optional)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "想問什麼?(可不填)"
+          }
+        }
+      }
+    },
+    "random.range.error" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Min must be positive and less than max."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最小值需為正,且小於最大值。"
+          }
+        }
+      }
+    },
+    "random.range.label" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Range"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "範圍"
+          }
+        }
+      }
+    },
+    "random.range.max" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Max"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最大"
+          }
+        }
+      }
+    },
+    "random.range.min" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Min"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最小"
+          }
+        }
+      }
+    },
+    "random.range.subtitle" : {
+      "comment" : "Subtitle under the revealed number. %1$d = min, %2$d = max.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "from %1$d to %2$d"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "於 %1$d–%2$d 之間"
+          }
+        }
+      }
+    },
+    "random.reveal.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The number"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "抽中號碼"
+          }
+        }
+      }
+    },
+    "settings.language.chinese" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chinese"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中文"
+          }
+        }
+      }
+    },
+    "settings.language.english" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "English"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "英文"
+          }
+        }
+      }
+    },
+    "settings.language.footer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose the language used throughout the app. Changes take effect immediately."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選擇 App 全域使用的語言,變更立即生效。"
+          }
+        }
+      }
+    },
+    "settings.language.label" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Language"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "語言"
+          }
+        }
+      }
+    },
+    "settings.language.system" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Follow system"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跟隨系統"
+          }
+        }
+      }
+    },
+    "settings.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定"
           }
         }
       }
@@ -1085,191 +1414,180 @@
         }
       }
     },
-    "settings.title" : {
+    "tissues.action.again" : {
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Settings" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "設定" } }
-      }
-    },
-    "mechanism.tissues.name" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Pull a Tissue" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "抽面紙" } }
-      }
-    },
-    "mechanism.random.name" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Random Number" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "隨機數字" } }
-      }
-    },
-    "random.question.label" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Your Question" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "你的問題" } }
-      }
-    },
-    "random.question.placeholder" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "What would you like to ask? (optional)" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "想問什麼?(可不填)" } }
-      }
-    },
-    "random.range.label" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Range" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "範圍" } }
-      }
-    },
-    "random.range.min" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Min" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "最小" } }
-      }
-    },
-    "random.range.max" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Max" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "最大" } }
-      }
-    },
-    "random.range.error" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Min must be positive and less than max." } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "最小值需為正,且小於最大值。" } }
-      }
-    },
-    "random.range.subtitle" : {
-      "comment" : "Subtitle under the revealed number. %1$d = min, %2$d = max.",
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "from %1$d to %2$d" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "於 %1$d–%2$d 之間" } }
-      }
-    },
-    "random.reveal.title" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "The number" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "抽中號碼" } }
-      }
-    },
-    "random.action.roll" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Roll" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "抽號" } }
-      }
-    },
-    "random.action.rolling" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Rolling…" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "抽號中…" } }
-      }
-    },
-    "random.action.again" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Roll Again" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "再抽一次" } }
-      }
-    },
-    "tissues.question.label" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Your Question" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "你的問題" } }
-      }
-    },
-    "tissues.question.placeholder" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "What would you like to ask? (optional)" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "想問什麼?(可不填)" } }
-      }
-    },
-    "tissues.labels.title" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Two Outcomes" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "兩個答案" } }
-      }
-    },
-    "tissues.default.yes" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Yes" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "好" } }
-      }
-    },
-    "tissues.default.no" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "No" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "不好" } }
-      }
-    },
-    "tissues.next_hint" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Next pull" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "下一張" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New Box"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "再問一次"
+          }
+        }
       }
     },
     "tissues.action.fresh" : {
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "New Box" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "新的一盒" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New Box"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新的一盒"
+          }
+        }
       }
     },
-    "tissues.action.again" : {
+    "tissues.default.no" : {
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "New Box" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "再問一次" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不好"
+          }
+        }
+      }
+    },
+    "tissues.default.yes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yes"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "好"
+          }
+        }
+      }
+    },
+    "tissues.labels.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Two Outcomes"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "兩個答案"
+          }
+        }
+      }
+    },
+    "tissues.next_hint" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next pull"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下一張"
+          }
+        }
+      }
+    },
+    "tissues.question.label" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your Question"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你的問題"
+          }
+        }
+      }
+    },
+    "tissues.question.placeholder" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What would you like to ask? (optional)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "想問什麼?(可不填)"
+          }
+        }
       }
     },
     "tissues.reveal.title" : {
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Last tissue" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "最後一張" } }
-      }
-    },
-    "tissues.settings.title" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Tissue Settings" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "面紙設定" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last tissue"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最後一張"
+          }
+        }
       }
     },
     "tissues.settings.footer" : {
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "The number of tissues in the box is randomized each round so the final pull can't be pre-computed." } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "每盒面紙的張數每回合隨機,避免事先推算最後一張的答案。" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The number of tissues in the box is randomized each round so the final pull can't be pre-computed."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每盒面紙的張數每回合隨機,避免事先推算最後一張的答案。"
+          }
+        }
       }
     },
-    "petals.settings.footer" : {
+    "tissues.settings.title" : {
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "The petal count is randomized each round so the final-petal answer can't be pre-computed." } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "花瓣數量每回合隨機產生,避免事先推算最後一片的答案。" } }
-      }
-    },
-    "settings.language.label" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Language" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "語言" } }
-      }
-    },
-    "settings.language.footer" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Choose the language used throughout the app. Changes take effect immediately." } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "選擇 App 全域使用的語言,變更立即生效。" } }
-      }
-    },
-    "settings.language.system" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Follow system" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "跟隨系統" } }
-      }
-    },
-    "settings.language.english" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "English" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "英文" } }
-      }
-    },
-    "settings.language.chinese" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Chinese" } },
-        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "中文" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tissue Settings"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "面紙設定"
+          }
+        }
       }
     },
     "wheel.action.again" : {

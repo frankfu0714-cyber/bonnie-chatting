@@ -24,35 +24,34 @@ struct TissueView: View {
     @State private var firstPluckYes: Bool = true
     @State private var revealedLabel: String?
 
-    // MARK: - Drag + animation state
+    // MARK: - Slot tissue + falling-tissue queue
 
-    private enum Phase: Equatable { case idle, dragging, flying, rising, revealing }
-    @State private var phase: Phase = .idle
-
-    /// User's live drag translation (negative = up). Resets to 0 between pulls.
+    /// User's live drag translation on the SLOT tissue (negative = up).
+    /// Resets to 0 the instant the slot tissue is "released" — independent
+    /// fall animations are owned by `fallingTissues`.
     @State private var dragY: CGFloat = 0
-    /// Additional Y offset applied during the fly/fall release animation.
-    @State private var releaseY: CGFloat = 0
-    /// Sideways drift during fall.
-    @State private var driftX: CGFloat = 0
-    /// Tissue rotation in degrees (only used during fall).
-    @State private var rotation: Double = 0
-    /// Uniform scale (shrinks during fall as the tissue "crumples").
-    @State private var scale: CGFloat = 1.0
-    /// Vertical stretch anchored at the bottom — makes the tissue elongate
-    /// as the user pulls it out, and "rise from the slot" as a fresh tissue
-    /// emerges.
+    /// Vertical stretch anchored at the bottom — makes the slot tissue
+    /// elongate as the user pulls it out of the slot.
     @State private var stretch: CGFloat = 1.0
-    /// Opacity for the fade-out at the end of a fall.
-    @State private var tissueOpacity: Double = 1.0
-    /// True once the drag has passed the resistance threshold for the round.
+    /// True once the drag has passed the resistance threshold.
     @State private var hasSnapped: Bool = false
     /// True only for the final tissue — lifted with a soft glow as the reveal.
     @State private var finalLift: Bool = false
-    /// True while a pull animation cycle is in progress. Blocks hit testing
-    /// so a fast follow-up gesture (e.g. trackpad emulating multiple events
-    /// from a single drag) can't fire a second pull mid-animation.
-    @State private var isAnimating: Bool = false
+
+    /// Independent "in-flight" tissues. Each one has its own
+    /// `FallingTissueView` with self-managed onAppear → peak → fall →
+    /// crumple → fade lifecycle. The slot is INSTANTLY ready for the next
+    /// pull the moment one of these is spawned.
+    @State private var fallingTissues: [FallingDescriptor] = []
+
+    struct FallingDescriptor: Identifiable, Equatable {
+        let id = UUID()
+        /// Starting Y offset (relative to the inner ZStack center), so the
+        /// fall begins exactly where the user released the slot tissue.
+        let startY: CGFloat
+        /// Drag-end velocity that flavors the launch.
+        let velocityY: CGFloat
+    }
 
     // MARK: - Body
 
@@ -159,22 +158,13 @@ struct TissueView: View {
             // Tissue box + popping tissue.
             ZStack {
                 // The NEXT tissue — rendered UNDER the box so its bottom
-                // half is hidden inside the box. It tracks the leaving
-                // tissue's drag with a fixed ~80pt lag, so as the leaving
-                // tissue rises out of the slot, this one is already
-                // partway up — like a real interleaved tissue pack.
-                //
-                // Only present when there's a tissue queued behind the
-                // current one. The final pull (remaining == 1) skips this.
+                // half is hidden inside the box. It tracks the slot
+                // tissue's drag with a fixed ~80pt lag so the next one is
+                // already partway visible as you pull the current one out.
                 if showIncoming {
                     TissueShape()
                         .frame(width: 130, height: 96)
-                        // Tied to the OUTGOING's drag — not its release/fall
-                        // — so the incoming stops at the slot resting line
-                        // even after the outgoing flies away.
                         .offset(y: max(dragY + 42, -38))
-                        // Slight fade-in as the incoming first appears
-                        // above the box; once fully visible it stays at 1.
                         .opacity(incomingOpacity)
                 }
 
@@ -188,29 +178,39 @@ struct TissueView: View {
                         .fill(Theme.gold.opacity(0.55))
                         .frame(width: 150, height: 110)
                         .blur(radius: 22)
-                        .offset(y: -30 + dragY + releaseY)
+                        .offset(y: -30 + dragY)
                 }
 
-                // The OUTGOING tissue. Tap uses Button (reliable inside the
-                // outer ScrollView). Drag uses a simultaneous DragGesture
-                // with a 10pt minimum distance so a pure tap doesn't trip
-                // the drag path.
+                // The SLOT tissue — the one currently at rest / being
+                // pulled. Tap fires the same pull path as drag. There is
+                // NO animation lock: the slot resets to dragY=0 instantly
+                // as soon as a pull spawns a falling tissue, so the user
+                // can pull again immediately.
                 Button {
                     performTapPull()
                 } label: {
                     TissueShape()
                         .frame(width: 130, height: 96)
                         .scaleEffect(x: 1, y: stretch, anchor: .bottom)
-                        .scaleEffect(scale)
-                        .rotationEffect(.degrees(rotation))
-                        .opacity(tissueOpacity)
                         .frame(width: 170, height: 130)
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-                .offset(x: driftX, y: -38 + dragY + releaseY)
+                .offset(y: -38 + dragY)
                 .allowsHitTesting(canInteract)
                 .simultaneousGesture(dragOnlyGesture)
+
+                // Independent in-flight tissues. Each owns its animation
+                // lifecycle (peak → fall → crumple → fade → self-remove).
+                // Rendered on top of the slot tissue so a newly-spawned
+                // one visually "takes over" the position it was just
+                // released from.
+                ForEach(fallingTissues) { desc in
+                    FallingTissueView(startY: desc.startY,
+                                      velocityY: desc.velocityY) {
+                        fallingTissues.removeAll { $0.id == desc.id }
+                    }
+                }
             }
             .frame(height: 260)
 
@@ -327,8 +327,10 @@ struct TissueView: View {
                        : labelOrDefault(labelNo,  default: defaultNo)
     }
 
+    /// Only blocks input once the reveal card is up. Otherwise the slot
+    /// is ALWAYS interactive — no animation lock.
     private var canInteract: Bool {
-        revealedLabel == nil && !isAnimating && (phase == .idle || phase == .dragging)
+        revealedLabel == nil
     }
 
     /// Whether to render the "next" tissue behind the one being pulled.
@@ -359,16 +361,11 @@ struct TissueView: View {
         revealedLabel = nil
         totalCount = Int.random(in: 10...20)
         remaining = totalCount
-        phase = .idle
         finalLift = false
         hasSnapped = false
         dragY = 0
-        releaseY = 0
-        driftX = 0
-        rotation = 0
-        scale = 1.0
         stretch = 1.0
-        tissueOpacity = 1.0
+        fallingTissues.removeAll()
     }
 
     // MARK: - Drag interaction
@@ -386,21 +383,18 @@ struct TissueView: View {
     }
 
     private func handleDragChange(_ value: DragGesture.Value) {
-        guard !isAnimating, phase == .idle || phase == .dragging else { return }
-        if phase == .idle { phase = .dragging }
+        guard revealedLabel == nil else { return }
 
         let raw = value.translation.height
-        // Only treat upward (negative-y) motion as a pull. Ignore downward drag.
         guard raw < 0 else {
             dragY = 0
             stretch = 1.0
             return
         }
 
-        let amount = -raw  // positive: how far the user has pulled UP
+        let amount = -raw  // positive: pulled up by this much
 
         if !hasSnapped, amount < 30 {
-            // Resistance phase — tissue resists, offset is dampened to 40%.
             dragY = -amount * 0.4
             stretch = 1.0 + amount * 0.004
         } else {
@@ -408,97 +402,141 @@ struct TissueView: View {
                 hasSnapped = true
                 UIImpactFeedbackGenerator(style: .light).impactOccurred()
             }
-            // 1:1 tracking past the snap threshold.
             dragY = -amount
-            // Tissue elongates as more emerges from the slot.
             stretch = 1.0 + min(amount / 90, 0.7)
         }
     }
 
     private func handleDragEnd(_ value: DragGesture.Value) {
-        guard !isAnimating, phase == .dragging else {
-            return
-        }
+        guard revealedLabel == nil else { return }
 
         let raw = value.translation.height
         let velocityY = value.predictedEndTranslation.height - value.translation.height
 
         // Successful pull — past the snap threshold AND moved at least 50pt up.
         if hasSnapped, raw < -50 {
-            performRelease(velocityY: velocityY)
+            releaseSlotTissue(velocityY: velocityY)
             return
         }
 
-        // Cancelled drag — snap the tissue back to rest.
+        // Cancelled drag — spring the slot tissue back to rest.
         withAnimation(.spring(response: 0.35, dampingFraction: 0.7)) {
             dragY = 0
             stretch = 1.0
         }
         hasSnapped = false
-        phase = .idle
     }
 
-    /// Tap shortcut — simulates a quick pull-up and then a release with a
-    /// modest preset velocity, so non-draggers still get the satisfying
-    /// release physics.
+    /// Tap shortcut: spawn a falling tissue at the slot resting position
+    /// with a default upward velocity. The slot can be tapped again
+    /// immediately because the falling tissue manages its own lifecycle.
     private func performTapPull() {
-        guard !isAnimating, revealedLabel == nil, remaining > 0 else { return }
-        isAnimating = true
-        hasSnapped = true
-        phase = .dragging
+        guard revealedLabel == nil, remaining > 0 else { return }
 
-        withAnimation(.easeOut(duration: 0.14)) {
-            dragY = -55
-            stretch = 1.4
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.14) {
-            runReleaseInternal(velocityY: -350)
-        }
-    }
-
-    /// Common release path: final-tissue reveal vs. fly-fall-respawn.
-    /// Public entry from `handleDragEnd` — applies the animation lock.
-    private func performRelease(velocityY: CGFloat) {
-        guard !isAnimating else { return }
-        isAnimating = true
-        runReleaseInternal(velocityY: velocityY)
-    }
-
-    /// Internal release logic — assumes `isAnimating` is already set so it
-    /// can be called from `performTapPull` after its own lock-and-prep step
-    /// without re-locking.
-    private func runReleaseInternal(velocityY: CGFloat) {
-        // Final tissue → hold with reverence and reveal.
         if remaining == 1 {
-            let label = nextLabel
-            revealedLabel = label
-            phase = .revealing
-            withAnimation(.easeOut(duration: 0.95)) {
-                finalLift = true
-                dragY = -55
-                stretch = 1.0
-            }
+            triggerFinalReveal()
             return
         }
 
-        phase = .flying
+        spawnFallingTissue(fromDragY: 0, velocityY: -300)
+        // Reset slot (already at 0 since this was a tap).
+        dragY = 0
+        stretch = 1.0
+        hasSnapped = false
+    }
 
-        // Velocity gives the release a little extra "lift" at the peak,
-        // capped so a flick doesn't fling it absurdly far.
-        let momentum = max(-90, min(0, velocityY * 0.35))
+    /// Drag-release path: spawn the falling tissue at the dragged-up
+    /// position with the gesture's velocity, then INSTANTLY snap the
+    /// slot back to resting.
+    private func releaseSlotTissue(velocityY: CGFloat) {
+        if remaining == 1 {
+            triggerFinalReveal()
+            return
+        }
+
+        spawnFallingTissue(fromDragY: dragY, velocityY: velocityY)
+        dragY = 0
+        stretch = 1.0
+        hasSnapped = false
+    }
+
+    /// Append a new in-flight tissue at `(-38 + fromDragY)` and decrement
+    /// the count. Caps the active queue at 8 to keep render cost bounded
+    /// under extreme rapid-tapping (oldest one drops out — under normal
+    /// pacing it would have already cleaned itself up).
+    private func spawnFallingTissue(fromDragY: CGFloat, velocityY: CGFloat) {
+        let startY: CGFloat = -38 + fromDragY
+        fallingTissues.append(.init(startY: startY, velocityY: velocityY))
+        if fallingTissues.count > 8 {
+            fallingTissues.removeFirst()
+        }
+        remaining -= 1
+        pluckCount += 1
+        AudioServicesPlaySystemSound(1306)
+    }
+
+    /// Final-tissue path — held aloft with a golden glow and the reveal card.
+    private func triggerFinalReveal() {
+        let label = nextLabel
+        revealedLabel = label
+        withAnimation(.easeOut(duration: 0.95)) {
+            finalLift = true
+            dragY = min(dragY, -55)   // lift at least 55pt, or stay higher if already pulled
+            stretch = 1.0
+        }
+    }
+}
+
+// MARK: - Falling tissue (self-managed animation lifecycle)
+
+/// An independent in-flight tissue. Owns its own animation state so
+/// multiple instances can coexist on screen at different stages of their
+/// fall. Self-removes via `onComplete` after ~1.5s.
+private struct FallingTissueView: View {
+    let startY: CGFloat
+    let velocityY: CGFloat
+    let onComplete: () -> Void
+
+    @State private var offsetY: CGFloat
+    @State private var driftX: CGFloat = 0
+    @State private var rotation: Double = 0
+    @State private var scale: CGFloat = 1.0
+    @State private var opacity: Double = 1.0
+
+    init(startY: CGFloat, velocityY: CGFloat, onComplete: @escaping () -> Void) {
+        self.startY = startY
+        self.velocityY = velocityY
+        self.onComplete = onComplete
+        _offsetY = State(initialValue: startY)
+    }
+
+    var body: some View {
+        TissueShape()
+            .frame(width: 130, height: 96)
+            .scaleEffect(scale)
+            .rotationEffect(.degrees(rotation))
+            .opacity(opacity)
+            .offset(x: driftX, y: offsetY)
+            .allowsHitTesting(false)
+            .onAppear(perform: runLifecycle)
+    }
+
+    private func runLifecycle() {
+        // Lift amount = baseline 40pt + velocity contribution (capped at 100pt).
+        let liftAmount = max(40, min(100, abs(velocityY) * 0.30))
+        let peakY = startY - liftAmount
         let randomDrift = CGFloat.random(in: -70...70)
         let randomTumble = Double.random(in: -85...85)
 
-        // Phase 1: brief upward continuation — momentum from the user's pull.
+        // Phase 1 — brief upward peak carrying release momentum.
         withAnimation(.easeOut(duration: 0.22)) {
-            dragY = dragY + momentum
-            stretch = 1.0   // snaps free of the box, no more stretching
+            offsetY = peakY
         }
 
-        // Phase 2: gravity. Falls past the start, tumbles, crumples, fades.
+        // Phase 2 — gravity. Falls offscreen, tumbles, crumples, fades.
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.20) {
             withAnimation(.easeIn(duration: 0.85)) {
-                releaseY = 520
+                offsetY = 520
             }
             withAnimation(.linear(duration: 0.85)) {
                 rotation = randomTumble
@@ -508,35 +546,13 @@ struct TissueView: View {
                 scale = 0.82
             }
             withAnimation(.easeOut(duration: 0.45).delay(0.40)) {
-                tissueOpacity = 0
+                opacity = 0
             }
-
-            // Soft paper "swish" on release.
-            AudioServicesPlaySystemSound(1306)
         }
 
-        // After the fall completes: decrement and reset the OUTGOING tissue's
-        // transforms back to the slot resting position. With connected
-        // tissues, the user has been watching the incoming sit at the slot
-        // line throughout the fall, so this reset is invisible — the
-        // outgoing snaps back to slot (instantly, behind the incoming) and
-        // becomes the new resting tissue. The incoming's offset formula
-        // auto-derives back to +42 (hidden inside the box) since it depends
-        // on dragY.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.00) {
-            remaining -= 1
-            pluckCount += 1
-            hasSnapped = false
-
-            dragY = 0
-            releaseY = 0
-            driftX = 0
-            rotation = 0
-            scale = 1.0
-            stretch = 1.0
-            tissueOpacity = 1.0
-            phase = .idle
-            isAnimating = false
+        // Cleanup — remove from the parent's queue.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.50) {
+            onComplete()
         }
     }
 }
