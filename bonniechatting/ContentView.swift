@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     @AppStorage("selectedMechanismID") private var selectedMechanismID: String = JiaoBeiMechanism().id
+    @State private var showingSettings = false
 
     private let mechanisms: [any DivinationMechanism] = [
         JiaoBeiMechanism(),
@@ -34,9 +35,22 @@ struct ContentView: View {
                         .font(Theme.headlineSerif(20, weight: .semibold))
                         .foregroundStyle(Theme.cinnabarDeep)
                 }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        showingSettings = true
+                    } label: {
+                        Image(systemName: "gearshape")
+                            .foregroundStyle(Theme.cinnabar)
+                    }
+                    .accessibilityLabel("settings.title")
+                }
             }
             .toolbarBackground(Theme.parchment, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
+            .sheet(isPresented: $showingSettings) {
+                SettingsSheet()
+                    .presentationDetents([.medium])
+            }
         }
     }
 }

@@ -1085,6 +1085,42 @@
         }
       }
     },
+    "settings.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Settings" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "設定" } }
+      }
+    },
+    "settings.language.label" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Language" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "語言" } }
+      }
+    },
+    "settings.language.footer" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Choose the language used throughout the app. Changes take effect immediately." } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "選擇 App 全域使用的語言,變更立即生效。" } }
+      }
+    },
+    "settings.language.system" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Follow system" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "跟隨系統" } }
+      }
+    },
+    "settings.language.english" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "English" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "英文" } }
+      }
+    },
+    "settings.language.chinese" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Chinese" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "中文" } }
+      }
+    },
     "wheel.action.again" : {
       "localizations" : {
         "en" : {

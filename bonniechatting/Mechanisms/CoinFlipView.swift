@@ -306,12 +306,19 @@ struct CoinFlipView: View {
         questionFocused = false
         withAnimation(.easeIn(duration: 0.15)) { revealVisible = false }
 
-        let zi = Bool.random()
-        let extraSpins = Int.random(in: 4...7) * 360
-        let landing = zi ? 0 : 180
-        // Normalize rotation modulo 360 before adding spins, then add the offset.
-        let normalized = rotation.truncatingRemainder(dividingBy: 360)
-        let target = rotation - normalized + Double(extraSpins) + Double(landing)
+        // True 50/50 outcome — independent of previous flips, the rotation
+        // value, or any counter. Generated fresh per tap.
+        let nextFace: Face = Bool.random() ? .zi : .mu
+
+        // Spin animation: 4–7 full revolutions, plus the half-turn delta
+        // needed to land with `nextFace` facing the viewer.
+        let baseSpins = Double(Int.random(in: 4...7)) * 360.0
+        let currentMod = ((rotation.truncatingRemainder(dividingBy: 360)) + 360)
+            .truncatingRemainder(dividingBy: 360)
+        let targetMod: Double = (nextFace == .zi) ? 0 : 180
+        var deltaToTarget = targetMod - currentMod
+        if deltaToTarget < 0 { deltaToTarget += 360 }
+        let target = rotation + baseSpins + deltaToTarget
 
         spinning = true
         settled = false
@@ -327,7 +334,7 @@ struct CoinFlipView: View {
         }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.4) {
-            face = zi ? .zi : .mu
+            face = nextFace
             spinning = false
             settled = true
             AudioServicesPlaySystemSound(1104)

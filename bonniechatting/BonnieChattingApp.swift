@@ -3,10 +3,10 @@ import SwiftUI
 @main
 struct BonnieChattingApp: App {
 
-    /// The user's chosen UI language ("zh" / "en") — empty means follow system.
-    /// Stored so it takes effect on next launch; the env-locale below gives
-    /// us same-session updates for the strings that respect it.
-    @AppStorage("uiLanguage") private var uiLanguage: String = ""
+    /// The user's chosen UI language. One of: "system" (follow device),
+    /// "en", or "zh-Hant". Bound to the Settings sheet's language picker;
+    /// changes here re-render the whole UI via `.environment(\.locale, ...)`.
+    @AppStorage("preferredLocale") private var preferredLocale: String = "system"
 
     init() {
         // Pin nav-title text to brand ink so the warm-paper background reads cleanly
@@ -25,10 +25,10 @@ struct BonnieChattingApp: App {
     }
 
     private var currentLocale: Locale {
-        switch uiLanguage {
-        case "zh": return Locale(identifier: "zh-Hant")
-        case "en": return Locale(identifier: "en")
-        default:   return Locale.current
+        switch preferredLocale {
+        case "en":     return Locale(identifier: "en")
+        case "zh-Hant": return Locale(identifier: "zh-Hant")
+        default:       return .autoupdatingCurrent
         }
     }
 }

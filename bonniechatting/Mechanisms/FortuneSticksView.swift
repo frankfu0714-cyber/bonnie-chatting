@@ -125,8 +125,11 @@ struct FortuneSticksView: View {
     }
 
     private var stage: some View {
+        // Reserve a strip of clear space at the top of the stage so the stick
+        // tips can never poke up into the settings/title card above.
         ZStack {
-            // Ground glow
+            // Ground glow — sits lower in the stage so the cylinder reads as
+            // resting on a surface rather than floating.
             Circle()
                 .fill(
                     RadialGradient(
@@ -134,30 +137,28 @@ struct FortuneSticksView: View {
                         center: .center, startRadius: 30, endRadius: 200
                     )
                 )
-                .frame(height: 320)
+                .frame(width: 340, height: 320)
+                .offset(y: 70)
 
-            VStack(spacing: 0) {
-                // Sticks bundle poking out of the cylinder.
-                ZStack {
-                    ForEach(0..<n, id: \.self) { i in
-                        StickShape(numeral: ChineseNumeral.of(i + 1),
-                                   isFallen: fallenIndex == i)
-                            .offset(x: stickColumnOffset(for: i),
-                                    y: -110 + (fallenIndex == i ? 0 : sin(Double(i)) * 4))
-                            .rotationEffect(stickAngle(for: i))
-                    }
-
-                    // Cylinder body
-                    CylinderBody()
-                        .frame(width: 130, height: 150)
-                        .offset(y: 30)
+            // Sticks + cylinder anchored to the bottom of the stage. The
+            // bottom-aligned ZStack means the cylinder lifts off the bottom
+            // by a fixed amount; the sticks' tips end well below the stage's
+            // top edge.
+            ZStack(alignment: .bottom) {
+                ForEach(0..<n, id: \.self) { i in
+                    StickShape(numeral: ChineseNumeral.of(i + 1),
+                               isFallen: fallenIndex == i)
+                        .offset(x: stickColumnOffset(for: i),
+                                y: -135 + (fallenIndex == i ? 0 : sin(Double(i)) * 4))
+                        .rotationEffect(stickAngle(for: i))
                 }
-                .rotationEffect(cylinderTilt, anchor: .bottom)
-                .offset(y: 30)
 
-                Spacer(minLength: 0)
+                CylinderBody()
+                    .frame(width: 130, height: 150)
             }
-            .frame(height: 320)
+            .rotationEffect(cylinderTilt, anchor: .bottom)
+            .frame(maxHeight: .infinity, alignment: .bottom)
+            .padding(.bottom, 10)
 
             // The fallen stick lies horizontally below the cylinder.
             if let fi = fallenIndex {
@@ -167,7 +168,8 @@ struct FortuneSticksView: View {
                     .transition(.opacity)
             }
         }
-        .frame(height: 320)
+        .frame(height: 360)
+        .padding(.top, 10)
     }
 
     private func stickColumnOffset(for i: Int) -> CGFloat {
@@ -345,21 +347,21 @@ private struct StickShape: View {
                     RoundedRectangle(cornerRadius: 3, style: .continuous)
                         .stroke(Theme.woodDark.opacity(0.5), lineWidth: 0.6)
                 )
-                .frame(width: 14, height: 130)
+                .frame(width: 14, height: 98)
                 // Red dipped tip
                 .overlay(
                     RoundedRectangle(cornerRadius: 2, style: .continuous)
                         .fill(Theme.cinnabarDeep)
                         .frame(width: 14, height: 22)
-                        .offset(y: -54),
+                        .offset(y: -38),
                     alignment: .center
                 )
 
             // Brushed numeral near the top
             Text(numeral)
-                .font(.system(size: 14, weight: .bold, design: .serif))
+                .font(.system(size: 13, weight: .bold, design: .serif))
                 .foregroundStyle(Color.white)
-                .offset(y: -54)
+                .offset(y: -38)
         }
         .opacity(isFallen ? 1 : 0.96)
     }
