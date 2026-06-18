@@ -7,6 +7,7 @@ struct ContentView: View {
     private let mechanisms: [any DivinationMechanism] = [
         JiaoBeiMechanism(),
         FlowerPetalMechanism(),
+        TissueMechanism(),
         FortuneSticksMechanism(),
         SpinningWheelMechanism(),
         CoinFlipMechanism()

@@ -7,7 +7,11 @@ struct FlowerPetalView: View {
     @AppStorage("petals.question")   private var question: String = ""
     @AppStorage("petals.labelYes")   private var labelYes: String = ""
     @AppStorage("petals.labelNo")    private var labelNo: String = ""
-    @AppStorage("petals.count")      private var petalCount: Int = 7
+
+    /// Petal count is randomized per round (not persisted). Anything between
+    /// 6 and 10 — combined with first-pluck-label randomization, this makes
+    /// the final-petal answer genuinely unpredictable.
+    @State private var petalCount: Int = 7
 
     @FocusState private var questionFocused: Bool
     @State private var showingSettings = false
@@ -51,14 +55,8 @@ struct FlowerPetalView: View {
         .scrollDismissesKeyboard(.immediately)
         .onAppear { if petals.isEmpty { startNewRound() } }
         .sheet(isPresented: $showingSettings) {
-            FlowerSettingsSheet(
-                labelYes: $labelYes,
-                labelNo: $labelNo,
-                petalCount: $petalCount
-            ) {
-                startNewRound()
-            }
-            .presentationDetents([.medium])
+            FlowerSettingsSheet(labelYes: $labelYes, labelNo: $labelNo)
+                .presentationDetents([.medium])
         }
     }
 
@@ -100,19 +98,19 @@ struct FlowerPetalView: View {
                 Image(systemName: "slider.horizontal.3")
                     .foregroundStyle(Theme.gold)
                 VStack(alignment: .leading, spacing: 2) {
+                    Text("petals.settings.labels")
+                        .font(Theme.body(14, weight: .semibold))
+                        .foregroundStyle(Theme.ink)
                     HStack(spacing: 6) {
                         Text(labelOrDefault(labelYes, default: defaultYes))
-                            .font(Theme.body(14, weight: .semibold))
+                            .font(Theme.body(12, weight: .semibold))
                             .foregroundStyle(Theme.cinnabarDeep)
                         Text("／")
                             .foregroundStyle(Theme.inkQuiet)
                         Text(labelOrDefault(labelNo, default: defaultNo))
-                            .font(Theme.body(14, weight: .semibold))
+                            .font(Theme.body(12, weight: .semibold))
                             .foregroundStyle(Theme.inkSoft)
                     }
-                    Text(verbatim: "\(petalCount) " + petalCountLabel)
-                        .font(Theme.body(12))
-                        .foregroundStyle(Theme.inkQuiet)
                 }
                 Spacer()
                 Image(systemName: "chevron.right")
@@ -126,11 +124,6 @@ struct FlowerPetalView: View {
             )
         }
         .buttonStyle(.plain)
-    }
-
-    private var petalCountLabel: String {
-        // Quick localized count helper.
-        NSLocalizedString("petals.count.label", comment: "")
     }
 
     private var stage: some View {
@@ -313,8 +306,11 @@ struct FlowerPetalView: View {
         firstPluckYes = Bool.random()
         pluckCount = 0
         revealedLabel = nil
-        let count = max(3, min(petalCount, 16))
-        petals = (0..<count).map { Petal(id: $0, plucked: false, exitTilt: 0, exitOffset: .zero) }
+        // Random petal count per round so the user can't pre-compute the
+        // answer from parity. Range 6...10 keeps the flower looking like a
+        // flower at both ends.
+        petalCount = Int.random(in: 6...10)
+        petals = (0..<petalCount).map { Petal(id: $0, plucked: false, exitTilt: 0, exitOffset: .zero) }
     }
 
     private func pluck(_ petal: Petal) {
@@ -375,33 +371,25 @@ private struct FlowerSettingsSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Binding var labelYes: String
     @Binding var labelNo: String
-    @Binding var petalCount: Int
-    var onCommit: () -> Void
 
     var body: some View {
         NavigationStack {
             Form {
-                Section("petals.settings.labels") {
+                Section {
                     TextField("petals.default.yes", text: $labelYes)
                     TextField("petals.default.no",  text: $labelNo)
-                }
-                Section("petals.settings.count") {
-                    Stepper(value: $petalCount, in: 5...12) {
-                        Text(verbatim: "\(petalCount)")
-                            .font(Theme.headlineSerif(18, weight: .semibold))
-                            .foregroundStyle(Theme.cinnabarDeep)
-                    }
+                } header: {
+                    Text("petals.settings.labels")
+                } footer: {
+                    Text("petals.settings.footer")
                 }
             }
             .navigationTitle("petals.settings.title")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("action.done") {
-                        onCommit()
-                        dismiss()
-                    }
-                    .fontWeight(.semibold)
+                    Button("action.done") { dismiss() }
+                        .fontWeight(.semibold)
                 }
             }
         }

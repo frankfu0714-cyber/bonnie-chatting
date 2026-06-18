@@ -1091,6 +1091,84 @@
         "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "設定" } }
       }
     },
+    "mechanism.tissues.name" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Pull a Tissue" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "抽面紙" } }
+      }
+    },
+    "tissues.question.label" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Your Question" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "你的問題" } }
+      }
+    },
+    "tissues.question.placeholder" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "What would you like to ask? (optional)" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "想問什麼?(可不填)" } }
+      }
+    },
+    "tissues.labels.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Two Outcomes" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "兩個答案" } }
+      }
+    },
+    "tissues.default.yes" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Yes" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "好" } }
+      }
+    },
+    "tissues.default.no" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "No" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "不好" } }
+      }
+    },
+    "tissues.next_hint" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Next pull" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "下一張" } }
+      }
+    },
+    "tissues.action.fresh" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "New Box" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "新的一盒" } }
+      }
+    },
+    "tissues.action.again" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "New Box" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "再問一次" } }
+      }
+    },
+    "tissues.reveal.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Last tissue" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "最後一張" } }
+      }
+    },
+    "tissues.settings.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Tissue Settings" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "面紙設定" } }
+      }
+    },
+    "tissues.settings.footer" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "The number of tissues in the box is randomized each round so the final pull can't be pre-computed." } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "每盒面紙的張數每回合隨機,避免事先推算最後一張的答案。" } }
+      }
+    },
+    "petals.settings.footer" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "The petal count is randomized each round so the final-petal answer can't be pre-computed." } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "花瓣數量每回合隨機產生,避免事先推算最後一片的答案。" } }
+      }
+    },
     "settings.language.label" : {
       "localizations" : {
         "en" : { "stringUnit" : { "state" : "translated", "value" : "Language" } },
