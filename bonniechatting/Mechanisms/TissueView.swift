@@ -44,6 +44,18 @@ struct TissueView: View {
     /// pull the moment one of these is spawned.
     @State private var fallingTissues: [FallingDescriptor] = []
 
+    /// One-time "10-15 sheets in this pack" hint that fades in at the
+    /// start of each round and self-dismisses after a few seconds. The
+    /// user learns the ROUND'S RANGE but never sees a running count, so
+    /// they can't pre-compute which tissue is last.
+    @State private var roundIntroVisible: Bool = false
+
+    /// Timestamp of the last accepted pull. Pulls within 100ms of the
+    /// previous one are ignored — guards against a single physical
+    /// gesture being dispatched twice (e.g., Button tap + DragGesture
+    /// onEnded both firing on the same touch-up).
+    @State private var lastPullAt: Date = .distantPast
+
     struct FallingDescriptor: Identifiable, Equatable {
         let id = UUID()
         /// Starting Y offset (relative to the inner ZStack center), so the
@@ -181,13 +193,15 @@ struct TissueView: View {
                         .offset(y: -30 + dragY)
                 }
 
-                // The SLOT tissue — the one currently at rest / being
-                // pulled. Tap fires the same pull path as drag. There is
-                // NO animation lock: the slot resets to dragY=0 instantly
-                // as soon as a pull spawns a falling tissue, so the user
-                // can pull again immediately.
+                // The SLOT tissue. Tap is routed through a Button (the
+                // most reliable tap path inside the outer ScrollView).
+                // Drag is a simultaneous DragGesture with a 10pt minimum
+                // distance so a tap doesn't trip the drag path. A 100ms
+                // debounce on `dispatchPull` ensures a single physical
+                // gesture can't produce two pulls even if both paths
+                // somehow fire on the same event.
                 Button {
-                    performTapPull()
+                    dispatchPull(fromDragY: 0, velocityY: -300)
                 } label: {
                     TissueShape()
                         .frame(width: 130, height: 96)
@@ -198,7 +212,7 @@ struct TissueView: View {
                 .buttonStyle(.plain)
                 .offset(y: -38 + dragY)
                 .allowsHitTesting(canInteract)
-                .simultaneousGesture(dragOnlyGesture)
+                .simultaneousGesture(unifiedGesture)
 
                 // Independent in-flight tissues. Each owns its animation
                 // lifecycle (peak → fall → crumple → fade → self-remove).
@@ -214,33 +228,26 @@ struct TissueView: View {
             }
             .frame(height: 260)
 
-            // Bottom-center: "X left" + alternation hint.
-            VStack {
+            // Bottom-center: alternation hint + transient round intro.
+            VStack(spacing: 6) {
                 Spacer()
+                if roundIntroVisible {
+                    Text("tissues.round_intro")
+                        .font(Theme.body(11, weight: .semibold))
+                        .foregroundStyle(Theme.inkQuiet)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 5)
+                        .background(Capsule().fill(Theme.parchmentDim.opacity(0.7)))
+                        .overlay(Capsule().stroke(Theme.rule, lineWidth: 0.8))
+                        .transition(.opacity.combined(with: .scale(scale: 0.95)))
+                }
                 if revealedLabel == nil {
-                    HStack(spacing: 10) {
-                        countPill
-                        nextHintPill
-                    }
+                    nextHintPill
                 }
             }
             .padding(.bottom, 6)
         }
         .frame(height: 320)
-    }
-
-    private var countPill: some View {
-        HStack(spacing: 4) {
-            Image(systemName: "square.stack.3d.up.fill")
-                .font(.system(size: 11, weight: .semibold))
-            Text(verbatim: String(remaining))
-                .font(Theme.body(12, weight: .semibold))
-        }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 6)
-        .background(Capsule().fill(Theme.parchmentDim.opacity(0.7)))
-        .overlay(Capsule().stroke(Theme.rule, lineWidth: 0.8))
-        .foregroundStyle(Theme.inkSoft)
     }
 
     private var nextHintPill: some View {
@@ -359,20 +366,34 @@ struct TissueView: View {
         firstPluckYes = Bool.random()
         pluckCount = 0
         revealedLabel = nil
-        totalCount = Int.random(in: 10...20)
+        // 10-15 keeps the round shorter and, combined with the random
+        // first-pluck-label, makes the final tissue genuinely
+        // unpredictable. The user is shown the RANGE but never the
+        // running count.
+        totalCount = Int.random(in: 10...15)
         remaining = totalCount
         finalLift = false
         hasSnapped = false
         dragY = 0
         stretch = 1.0
         fallingTissues.removeAll()
+
+        // Briefly show the "10-15 sheets in this pack" intro hint.
+        withAnimation(.easeOut(duration: 0.35)) {
+            roundIntroVisible = true
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+            withAnimation(.easeIn(duration: 0.45)) {
+                roundIntroVisible = false
+            }
+        }
     }
 
     // MARK: - Drag interaction
 
-    /// Drag-only gesture. `minimumDistance: 10` keeps it out of the way of
-    /// the Button's tap recognizer — a pure tap never trips this path.
-    private var dragOnlyGesture: some Gesture {
+    /// Drag-only gesture. `minimumDistance: 10` keeps pure taps from
+    /// tripping the drag path — those are handled by the Button wrapper.
+    private var unifiedGesture: some Gesture {
         DragGesture(minimumDistance: 10)
             .onChanged { value in
                 handleDragChange(value)
@@ -408,18 +429,19 @@ struct TissueView: View {
     }
 
     private func handleDragEnd(_ value: DragGesture.Value) {
-        guard revealedLabel == nil else { return }
+        guard revealedLabel == nil, remaining > 0 else { return }
 
         let raw = value.translation.height
         let velocityY = value.predictedEndTranslation.height - value.translation.height
 
-        // Successful pull — past the snap threshold AND moved at least 50pt up.
+        // Real upward pull past the snap threshold — release with the
+        // gesture's actual velocity.
         if hasSnapped, raw < -50 {
-            releaseSlotTissue(velocityY: velocityY)
+            dispatchPull(fromDragY: dragY, velocityY: velocityY)
             return
         }
 
-        // Cancelled drag — spring the slot tissue back to rest.
+        // Anything else (downward drag, short cancel-pull) — spring back.
         withAnimation(.spring(response: 0.35, dampingFraction: 0.7)) {
             dragY = 0
             stretch = 1.0
@@ -427,34 +449,21 @@ struct TissueView: View {
         hasSnapped = false
     }
 
-    /// Tap shortcut: spawn a falling tissue at the slot resting position
-    /// with a default upward velocity. The slot can be tapped again
-    /// immediately because the falling tissue manages its own lifecycle.
-    private func performTapPull() {
-        guard revealedLabel == nil, remaining > 0 else { return }
+    /// Single dispatch path used by both the Button (tap) and the drag's
+    /// onEnded. A 100ms debounce on `lastPullAt` rejects a second call
+    /// triggered by the same physical gesture (e.g., Button tap fires
+    /// alongside a tiny-movement DragGesture onEnded) so the user gets
+    /// exactly one pull per intent.
+    private func dispatchPull(fromDragY: CGFloat, velocityY: CGFloat) {
+        let now = Date()
+        guard now.timeIntervalSince(lastPullAt) >= 0.1 else { return }
+        lastPullAt = now
 
         if remaining == 1 {
             triggerFinalReveal()
             return
         }
-
-        spawnFallingTissue(fromDragY: 0, velocityY: -300)
-        // Reset slot (already at 0 since this was a tap).
-        dragY = 0
-        stretch = 1.0
-        hasSnapped = false
-    }
-
-    /// Drag-release path: spawn the falling tissue at the dragged-up
-    /// position with the gesture's velocity, then INSTANTLY snap the
-    /// slot back to resting.
-    private func releaseSlotTissue(velocityY: CGFloat) {
-        if remaining == 1 {
-            triggerFinalReveal()
-            return
-        }
-
-        spawnFallingTissue(fromDragY: dragY, velocityY: velocityY)
+        spawnFallingTissue(fromDragY: fromDragY, velocityY: velocityY)
         dragY = 0
         stretch = 1.0
         hasSnapped = false

@@ -1510,6 +1510,12 @@
         }
       }
     },
+    "tissues.round_intro" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "About 10-15 sheets in this pack" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "本包約 10-15 張" } }
+      }
+    },
     "tissues.question.label" : {
       "localizations" : {
         "en" : {
