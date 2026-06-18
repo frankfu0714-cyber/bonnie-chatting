@@ -3,268 +3,471 @@
   "strings" : {
     "action.cancel" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Cancel" }
-        },
-        "zh-Hant" : {
-          "stringUnit" : { "state" : "translated", "value" : "取消" }
-        }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Cancel" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "取消" } }
       }
     },
     "action.done" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Done" }
-        },
-        "zh-Hant" : {
-          "stringUnit" : { "state" : "translated", "value" : "完成" }
-        }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Done" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "完成" } }
       }
     },
     "app.title" : {
       "comment" : "App title shown in the navigation bar.",
       "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Bonnie Chatting" }
-        },
-        "zh-Hant" : {
-          "stringUnit" : { "state" : "translated", "value" : "幫你決定?" }
-        }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Bonnie Chatting" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "幫你決定?" } }
       }
     },
     "picker.mechanism" : {
-      "comment" : "Label for the divination-mechanism picker in the toolbar.",
       "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Mechanism" }
-        },
-        "zh-Hant" : {
-          "stringUnit" : { "state" : "translated", "value" : "問事方式" }
-        }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Mechanism" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "問事方式" } }
       }
     },
+
     "mechanism.jiaobei.name" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Moon Blocks (Jiao Bei)" }
-        },
-        "zh-Hant" : {
-          "stringUnit" : { "state" : "translated", "value" : "筊杯" }
-        }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Moon Blocks" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "筊杯" } }
       }
     },
-    "jiaobei.question.label" : {
-      "comment" : "Section label above the question text field.",
+    "mechanism.petals.name" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Your Question" }
-        },
-        "zh-Hant" : {
-          "stringUnit" : { "state" : "translated", "value" : "你的問題" }
-        }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Petals" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "花瓣" } }
+      }
+    },
+    "mechanism.sticks.name" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Fortune Sticks" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "求籤" } }
+      }
+    },
+    "mechanism.wheel.name" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Spinning Wheel" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "轉盤" } }
+      }
+    },
+    "mechanism.coin.name" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Coin" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "銅板" } }
+      }
+    },
+
+    "jiaobei.question.label" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Your Question" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "你的問題" } }
       }
     },
     "jiaobei.question.placeholder" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "What would you like to ask? (optional)" }
-        },
-        "zh-Hant" : {
-          "stringUnit" : { "state" : "translated", "value" : "想問什麼?(可不填)" }
-        }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "What would you like to ask? (optional)" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "想問什麼?(可不填)" } }
       }
     },
     "jiaobei.labels.title" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Outcome Labels" }
-        },
-        "zh-Hant" : {
-          "stringUnit" : { "state" : "translated", "value" : "答案說法" }
-        }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Outcome Labels" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "答案說法" } }
       }
     },
     "jiaobei.labels.using_defaults" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Using default meanings — tap to customize" }
-        },
-        "zh-Hant" : {
-          "stringUnit" : { "state" : "translated", "value" : "使用預設說法 — 點此自訂" }
-        }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Using default meanings — tap to customize" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "使用預設說法 — 點此自訂" } }
       }
     },
     "jiaobei.labels.custom_set" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Custom labels set — tap to edit" }
-        },
-        "zh-Hant" : {
-          "stringUnit" : { "state" : "translated", "value" : "已自訂說法 — 點此修改" }
-        }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Custom labels set — tap to edit" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "已自訂說法 — 點此修改" } }
       }
     },
     "jiaobei.labels.reset" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Reset to defaults" }
-        },
-        "zh-Hant" : {
-          "stringUnit" : { "state" : "translated", "value" : "恢復預設" }
-        }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Reset to defaults" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "恢復預設" } }
       }
     },
     "jiaobei.action.toss" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Toss" }
-        },
-        "zh-Hant" : {
-          "stringUnit" : { "state" : "translated", "value" : "擲筊" }
-        }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Toss" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "擲筊" } }
       }
     },
     "jiaobei.action.toss_again" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Toss Again" }
-        },
-        "zh-Hant" : {
-          "stringUnit" : { "state" : "translated", "value" : "再擲一次" }
-        }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Toss Again" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "再擲一次" } }
       }
     },
     "jiaobei.action.tossing" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Tossing…" }
-        },
-        "zh-Hant" : {
-          "stringUnit" : { "state" : "translated", "value" : "擲筊中…" }
-        }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Tossing…" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "擲筊中…" } }
       }
     },
-
     "jiaobei.outcome.sheng.name" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "聖筊" }
-        },
-        "zh-Hant" : {
-          "stringUnit" : { "state" : "translated", "value" : "聖筊" }
-        }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "聖筊" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "聖筊" } }
       }
     },
     "jiaobei.outcome.sheng.title" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Sacred Yes" }
-        },
-        "zh-Hant" : {
-          "stringUnit" : { "state" : "translated", "value" : "神明應允" }
-        }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Sacred Yes" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "神明應允" } }
       }
     },
     "jiaobei.outcome.sheng.default_label" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Yes — go ahead" }
-        },
-        "zh-Hant" : {
-          "stringUnit" : { "state" : "translated", "value" : "好，去做" }
-        }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Yes — go ahead" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "好,去做" } }
       }
     },
     "jiaobei.outcome.sheng.desc" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "One flat side and one curved side land up. The deity is in agreement — the answer is yes." }
-        },
-        "zh-Hant" : {
-          "stringUnit" : { "state" : "translated", "value" : "一平一凸 — 神明同意,可以放心去做。" }
-        }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "One flat side and one curved side land up. The deity is in agreement — the answer is yes." } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "一平一凸 — 神明同意,可以放心去做。" } }
       }
     },
-
     "jiaobei.outcome.xiao.name" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "笑筊" }
-        },
-        "zh-Hant" : {
-          "stringUnit" : { "state" : "translated", "value" : "笑筊" }
-        }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "笑筊" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "笑筊" } }
       }
     },
     "jiaobei.outcome.xiao.title" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Laughing Blocks" }
-        },
-        "zh-Hant" : {
-          "stringUnit" : { "state" : "translated", "value" : "神明在笑" }
-        }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Laughing Blocks" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "神明在笑" } }
       }
     },
     "jiaobei.outcome.xiao.default_label" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "The deity is laughing — try asking differently" }
-        },
-        "zh-Hant" : {
-          "stringUnit" : { "state" : "translated", "value" : "神明在笑,再問一次" }
-        }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "The deity is laughing — try asking differently" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "神明在笑,再問一次" } }
       }
     },
     "jiaobei.outcome.xiao.desc" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Both flat sides land up. Your question may be unclear, already answered, or not the right one. Rephrase and ask again." }
-        },
-        "zh-Hant" : {
-          "stringUnit" : { "state" : "translated", "value" : "兩面皆平 — 問題不清或答案明顯,換個問法再問一次。" }
-        }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Both flat sides land up. Your question may be unclear, already answered, or not the right one. Rephrase and ask again." } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "兩面皆平 — 問題不清或答案明顯,換個問法再問一次。" } }
       }
     },
-
     "jiaobei.outcome.yin.name" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "陰筊" }
-        },
-        "zh-Hant" : {
-          "stringUnit" : { "state" : "translated", "value" : "陰筊" }
-        }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "陰筊" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "陰筊" } }
       }
     },
     "jiaobei.outcome.yin.title" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Sacred No" }
-        },
-        "zh-Hant" : {
-          "stringUnit" : { "state" : "translated", "value" : "神明否決" }
-        }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Sacred No" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "神明否決" } }
       }
     },
     "jiaobei.outcome.yin.default_label" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "No — hold off" }
-        },
-        "zh-Hant" : {
-          "stringUnit" : { "state" : "translated", "value" : "不行,再等等" }
-        }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "No — hold off" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "不行,再等等" } }
       }
     },
     "jiaobei.outcome.yin.desc" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : { "state" : "translated", "value" : "Both curved sides land up. The deity does not agree — wait, reconsider, or choose another path." }
-        },
-        "zh-Hant" : {
-          "stringUnit" : { "state" : "translated", "value" : "兩面皆凸 — 神明不允,先緩一緩,或另尋他法。" }
-        }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Both curved sides land up. The deity does not agree — wait, reconsider, or choose another path." } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "兩面皆凸 — 神明不允,先緩一緩,或另尋他法。" } }
+      }
+    },
+
+    "petals.question.label" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Your Question" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "你的問題" } }
+      }
+    },
+    "petals.question.placeholder" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Loves me? Loves me not? (optional)" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "想問什麼?(可不填)" } }
+      }
+    },
+    "petals.default.yes" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Yes" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "好" } }
+      }
+    },
+    "petals.default.no" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "No" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "不好" } }
+      }
+    },
+    "petals.next_hint" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Next pluck" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "下一片" } }
+      }
+    },
+    "petals.count.label" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "petals" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "片花瓣" } }
+      }
+    },
+    "petals.reveal.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Final petal" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "最後一片" } }
+      }
+    },
+    "petals.action.fresh" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "New Flower" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "重新開始" } }
+      }
+    },
+    "petals.action.again" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "New Flower" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "再問一次" } }
+      }
+    },
+    "petals.settings.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Flower Settings" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "花瓣設定" } }
+      }
+    },
+    "petals.settings.labels" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Two Outcomes" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "兩個答案" } }
+      }
+    },
+    "petals.settings.count" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Petal Count (5–12)" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "花瓣數量(5–12)" } }
+      }
+    },
+
+    "sticks.question.label" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Your Question" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "你的問題" } }
+      }
+    },
+    "sticks.question.placeholder" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "What would you like to ask? (optional)" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "想問什麼?(可不填)" } }
+      }
+    },
+    "sticks.settings.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Fortune Stick Options" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "籤詩選項" } }
+      }
+    },
+    "sticks.settings.list_header" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Possible Answers" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "可能的答案" } }
+      }
+    },
+    "sticks.settings.list_footer" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "One option per line. The drawn stick's number will map to its position in this list." } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "每行一個選項。抽出的籤號會對應到清單上的順序。" } }
+      }
+    },
+    "sticks.default.options" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Pizza\nRamen\nSushi\nSalad" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "披薩\n拉麵\n壽司\n沙拉" } }
+      }
+    },
+    "sticks.reveal.prefix" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Stick No. " } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "第" } }
+      }
+    },
+    "sticks.reveal.suffix" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "籤" } }
+      }
+    },
+    "sticks.action.shake" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Shake" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "搖籤" } }
+      }
+    },
+    "sticks.action.shaking" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Shaking…" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "搖籤中…" } }
+      }
+    },
+    "sticks.action.again" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Shake Again" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "再搖一次" } }
+      }
+    },
+
+    "wheel.question.label" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Your Question" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "你的問題" } }
+      }
+    },
+    "wheel.question.placeholder" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "What would you like to ask? (optional)" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "想問什麼?(可不填)" } }
+      }
+    },
+    "wheel.settings.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Wheel Options" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "轉盤選項" } }
+      }
+    },
+    "wheel.settings.list_header" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Wedges" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "扇形" } }
+      }
+    },
+    "wheel.settings.list_footer" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "One option per line. Each becomes a wedge on the wheel." } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "每行一個選項,每個會變成轉盤的一格。" } }
+      }
+    },
+    "wheel.default.options" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Pizza\nRamen\nSushi\nSalad\nBeef Noodles\nDumplings" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "披薩\n拉麵\n壽司\n沙拉\n牛肉麵\n水餃" } }
+      }
+    },
+    "wheel.reveal.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "The wheel decided" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "轉盤決定了" } }
+      }
+    },
+    "wheel.action.spin" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Spin" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "轉動" } }
+      }
+    },
+    "wheel.action.spinning" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Spinning…" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "轉動中…" } }
+      }
+    },
+    "wheel.action.again" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Spin Again" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "再轉一次" } }
+      }
+    },
+
+    "coin.question.label" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Your Question" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "你的問題" } }
+      }
+    },
+    "coin.question.placeholder" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "What would you like to ask? (optional)" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "想問什麼?(可不填)" } }
+      }
+    },
+    "coin.settings.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Coin Faces" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "正反兩面" } }
+      }
+    },
+    "coin.settings.zi_header" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Text Side (Heads)" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "字面" } }
+      }
+    },
+    "coin.settings.zi_footer" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "What the 字 (text) side of the coin means for this question." } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "字面對這個問題代表什麼意思。" } }
+      }
+    },
+    "coin.settings.mu_header" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Back Side (Tails)" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "幕面" } }
+      }
+    },
+    "coin.settings.mu_footer" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "What the 幕 (back) side of the coin means for this question." } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "幕面對這個問題代表什麼意思。" } }
+      }
+    },
+    "coin.default.zi" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Yes" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "是" } }
+      }
+    },
+    "coin.default.mu" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "No" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "否" } }
+      }
+    },
+    "coin.reveal.zi_desc" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "The inscribed 字 face landed up — the text side speaks." } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "字面朝上 — 由字面說話。" } }
+      }
+    },
+    "coin.reveal.mu_desc" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "The 幕 (back) face landed up — the quiet side speaks." } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "幕面朝上 — 由幕面說話。" } }
+      }
+    },
+    "coin.action.flip" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Flip" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "擲銅板" } }
+      }
+    },
+    "coin.action.flipping" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Flipping…" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "翻轉中…" } }
+      }
+    },
+    "coin.action.again" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Flip Again" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "再擲一次" } }
       }
     }
   },
