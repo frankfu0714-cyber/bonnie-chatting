@@ -10,7 +10,8 @@ struct ContentView: View {
         TissueMechanism(),
         FortuneSticksMechanism(),
         SpinningWheelMechanism(),
-        CoinFlipMechanism()
+        CoinFlipMechanism(),
+        RandomNumberMechanism()
     ]
 
     private var selected: any DivinationMechanism {

@@ -158,6 +158,26 @@ struct TissueView: View {
 
             // Tissue box + popping tissue.
             ZStack {
+                // The NEXT tissue — rendered UNDER the box so its bottom
+                // half is hidden inside the box. It tracks the leaving
+                // tissue's drag with a fixed ~80pt lag, so as the leaving
+                // tissue rises out of the slot, this one is already
+                // partway up — like a real interleaved tissue pack.
+                //
+                // Only present when there's a tissue queued behind the
+                // current one. The final pull (remaining == 1) skips this.
+                if showIncoming {
+                    TissueShape()
+                        .frame(width: 130, height: 96)
+                        // Tied to the OUTGOING's drag — not its release/fall
+                        // — so the incoming stops at the slot resting line
+                        // even after the outgoing flies away.
+                        .offset(y: max(dragY + 42, -38))
+                        // Slight fade-in as the incoming first appears
+                        // above the box; once fully visible it stays at 1.
+                        .opacity(incomingOpacity)
+                }
+
                 TissueBoxShape()
                     .frame(width: 240, height: 150)
                     .offset(y: 50)
@@ -171,7 +191,7 @@ struct TissueView: View {
                         .offset(y: -30 + dragY + releaseY)
                 }
 
-                // The tissue itself. Tap uses Button (reliable inside the
+                // The OUTGOING tissue. Tap uses Button (reliable inside the
                 // outer ScrollView). Drag uses a simultaneous DragGesture
                 // with a 10pt minimum distance so a pure tap doesn't trip
                 // the drag path.
@@ -309,6 +329,27 @@ struct TissueView: View {
 
     private var canInteract: Bool {
         revealedLabel == nil && !isAnimating && (phase == .idle || phase == .dragging)
+    }
+
+    /// Whether to render the "next" tissue behind the one being pulled.
+    /// False on the final tissue (nothing queued behind it) and once the
+    /// reveal has fired.
+    private var showIncoming: Bool {
+        revealedLabel == nil && remaining > 1
+    }
+
+    /// Soft fade-in for the incoming tissue as it first peeks above the
+    /// box. Stays at 1 once the outgoing has cleared the slot.
+    private var incomingOpacity: Double {
+        // dragY == 0 → outgoing is at rest → incoming center sits at +42
+        //   (well inside the box, hidden by the box body).
+        // dragY ≈ -60 → incoming peeking above the box edge.
+        // dragY ≤ -80 → incoming centered at slot resting line (fully visible).
+        let raw = max(dragY + 42, -38)  // matches the offset formula above
+        // Map raw from +42…-38 to opacity 0…1. Anything above the slot line
+        // shows at full opacity.
+        let progress = (42 - raw) / (42 - (-38))
+        return Double(min(max(progress, 0), 1))
     }
 
     private func startNewRound() {
@@ -474,33 +515,28 @@ struct TissueView: View {
             AudioServicesPlaySystemSound(1306)
         }
 
-        // After the fall completes: decrement, reset state, animate the next
-        // tissue rising from the slot with a small overshoot bounce.
+        // After the fall completes: decrement and reset the OUTGOING tissue's
+        // transforms back to the slot resting position. With connected
+        // tissues, the user has been watching the incoming sit at the slot
+        // line throughout the fall, so this reset is invisible — the
+        // outgoing snaps back to slot (instantly, behind the incoming) and
+        // becomes the new resting tissue. The incoming's offset formula
+        // auto-derives back to +42 (hidden inside the box) since it depends
+        // on dragY.
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.00) {
             remaining -= 1
             pluckCount += 1
             hasSnapped = false
 
-            // Reset transient transforms — the next tissue starts from inside
-            // the slot (stretch ≈ 0 keeps it flat against the slot line).
             dragY = 0
             releaseY = 0
             driftX = 0
             rotation = 0
             scale = 1.0
-            stretch = 0.05
+            stretch = 1.0
             tissueOpacity = 1.0
-            phase = .rising
-
-            // Overshoot to 1.1 then settle to 1.0 — feels like the box's
-            // tension pushes the next tissue up.
-            withAnimation(.interpolatingSpring(stiffness: 220, damping: 13)) {
-                stretch = 1.0
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
-                phase = .idle
-                isAnimating = false
-            }
+            phase = .idle
+            isAnimating = false
         }
     }
 }

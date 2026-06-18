@@ -312,16 +312,6 @@ private struct CylinderBody: View {
                         .frame(height: 14)
                         .overlay(Rectangle().stroke(Theme.gold.opacity(0.7), lineWidth: 0.8))
                 )
-
-            // Inner rim (top)
-            Ellipse()
-                .fill(Theme.woodShadow.opacity(0.8))
-                .frame(width: 110, height: 24)
-                .offset(y: -60)
-            Ellipse()
-                .stroke(Theme.gold.opacity(0.75), lineWidth: 1.2)
-                .frame(width: 116, height: 26)
-                .offset(y: -61)
         }
         .shadow(color: Theme.woodShadow.opacity(0.35), radius: 6, x: 0, y: 4)
     }

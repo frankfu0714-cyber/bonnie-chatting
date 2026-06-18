@@ -1097,6 +1097,79 @@
         "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "抽面紙" } }
       }
     },
+    "mechanism.random.name" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Random Number" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "隨機數字" } }
+      }
+    },
+    "random.question.label" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Your Question" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "你的問題" } }
+      }
+    },
+    "random.question.placeholder" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "What would you like to ask? (optional)" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "想問什麼?(可不填)" } }
+      }
+    },
+    "random.range.label" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Range" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "範圍" } }
+      }
+    },
+    "random.range.min" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Min" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "最小" } }
+      }
+    },
+    "random.range.max" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Max" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "最大" } }
+      }
+    },
+    "random.range.error" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Min must be positive and less than max." } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "最小值需為正,且小於最大值。" } }
+      }
+    },
+    "random.range.subtitle" : {
+      "comment" : "Subtitle under the revealed number. %1$d = min, %2$d = max.",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "from %1$d to %2$d" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "於 %1$d–%2$d 之間" } }
+      }
+    },
+    "random.reveal.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "The number" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "抽中號碼" } }
+      }
+    },
+    "random.action.roll" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Roll" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "抽號" } }
+      }
+    },
+    "random.action.rolling" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Rolling…" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "抽號中…" } }
+      }
+    },
+    "random.action.again" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Roll Again" } },
+        "zh-Hant" : { "stringUnit" : { "state" : "translated", "value" : "再抽一次" } }
+      }
+    },
     "tissues.question.label" : {
       "localizations" : {
         "en" : { "stringUnit" : { "state" : "translated", "value" : "Your Question" } },
