@@ -18,7 +18,11 @@ struct RandomNumberView: View {
     @State private var revealed: Int?
     @State private var revealVisible: Bool = false
     @State private var spinning: Bool = false
-    @State private var spinTask: Task<Void, Never>?
+    @State private var spinTimer: Timer?
+    @State private var spinStartedAt: Date?
+    /// The next scheduled tick interval (eases up over the spin so it
+    /// visibly "slows down" before settling).
+    @State private var spinNextDelay: TimeInterval = 0.05
 
     // MARK: - Body
 
@@ -44,7 +48,7 @@ struct RandomNumberView: View {
                 displayValue = max(minValue, 1)
             }
         }
-        .onDisappear { spinTask?.cancel() }
+        .onDisappear { stopSpin() }
     }
 
     // MARK: - Sub-views
@@ -162,10 +166,6 @@ struct RandomNumberView: View {
                 .lineLimit(1)
                 .padding(.horizontal, 50)
                 .frame(height: 200)
-                // Subtle vertical wobble while spinning so the reel reads as "live".
-                .scaleEffect(spinning ? 1.04 : 1.0, anchor: .center)
-                .animation(.easeInOut(duration: 0.18).repeatForever(autoreverses: true),
-                           value: spinning)
         }
         .frame(height: 220)
     }
@@ -237,7 +237,7 @@ struct RandomNumberView: View {
     private func performRoll() {
         guard isValidRange, !spinning else { return }
         focusedField = nil
-        spinTask?.cancel()
+        stopSpin()  // belt-and-suspenders: ensure any prior timer is dead
 
         withAnimation(.easeIn(duration: 0.15)) { revealVisible = false }
         revealed = nil
@@ -247,29 +247,53 @@ struct RandomNumberView: View {
         let lo = minValue
         let hi = maxValue
         let duration: TimeInterval = 0.9
-        let tickStart: TimeInterval = 0.04
-        let tickEnd: TimeInterval = 0.14   // slow down as we approach the end
 
-        spinTask = Task { @MainActor in
-            let startedAt = Date()
-            while !Task.isCancelled {
-                let elapsed = Date().timeIntervalSince(startedAt)
-                if elapsed >= duration { break }
-                displayValue = Int.random(in: lo...hi)
-                // Ease the tick interval from tickStart up to tickEnd.
-                let t = elapsed / duration
-                let interval = tickStart + (tickEnd - tickStart) * t
-                try? await Task.sleep(nanoseconds: UInt64(interval * 1_000_000_000))
-            }
-            if Task.isCancelled { return }
+        spinStartedAt = Date()
+        spinNextDelay = 0.05
+        scheduleNextSpinTick(target: target, lo: lo, hi: hi, duration: duration)
+    }
 
-            displayValue = target
-            revealed = target
-            spinning = false
-            AudioServicesPlaySystemSound(1104)
-            withAnimation(.spring(response: 0.45, dampingFraction: 0.85)) {
-                revealVisible = true
+    /// Schedule a single tick on the main run loop. After the spin window
+    /// elapses, set the final value, fire the reveal, and stop scheduling.
+    /// Using one-shot Timer.scheduledTimer chained off itself (rather than
+    /// `repeats: true`) keeps the "stop" path single-source-of-truth: the
+    /// final tick simply doesn't schedule another.
+    private func scheduleNextSpinTick(target: Int, lo: Int, hi: Int, duration: TimeInterval) {
+        // Capture the start-time identity so a follow-up roll (which would
+        // bump spinStartedAt) can no-op any in-flight scheduled tick.
+        guard let myStart = spinStartedAt else { return }
+
+        spinTimer?.invalidate()
+        spinTimer = Timer.scheduledTimer(withTimeInterval: spinNextDelay, repeats: false) { _ in
+            // If a newer roll has taken over, this stale tick exits silently.
+            guard spinStartedAt == myStart else { return }
+
+            let elapsed = Date().timeIntervalSince(myStart)
+            if elapsed >= duration {
+                stopSpin()
+                displayValue = target
+                revealed = target
+                spinning = false
+                AudioServicesPlaySystemSound(1104)
+                withAnimation(.spring(response: 0.45, dampingFraction: 0.85)) {
+                    revealVisible = true
+                }
+                return
             }
+
+            displayValue = Int.random(in: lo...hi)
+            // Tick interval eases up from ~0.05s to ~0.14s as the spin
+            // approaches the end, giving the visual "slowing down" feel.
+            let t = min(1.0, elapsed / duration)
+            spinNextDelay = 0.05 + (0.14 - 0.05) * t
+            scheduleNextSpinTick(target: target, lo: lo, hi: hi, duration: duration)
         }
+    }
+
+    /// Tear down any in-flight spin scheduling. Always safe to call.
+    private func stopSpin() {
+        spinTimer?.invalidate()
+        spinTimer = nil
+        spinStartedAt = nil
     }
 }
