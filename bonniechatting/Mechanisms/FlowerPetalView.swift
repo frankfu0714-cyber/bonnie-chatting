@@ -195,7 +195,6 @@ struct FlowerPetalView: View {
         .frame(height: 340)
     }
 
-    @ViewBuilder
     private func petalView(_ petal: Petal, total: Int) -> some View {
         let angle = Double(petal.id) / Double(total) * 360.0 - 90.0
         let radius: CGFloat = 110
@@ -203,31 +202,42 @@ struct FlowerPetalView: View {
         let y = sin(angle * .pi / 180) * radius
         let baseRotation = angle + 90
 
-        PetalShape()
-            .fill(
-                LinearGradient(
-                    colors: petal.plucked
-                        ? [Theme.parchmentDim, Theme.parchmentDim.opacity(0.5)]
-                        : [Color(red: 0.88, green: 0.45, blue: 0.42),
-                           Theme.cinnabar],
-                    startPoint: .top,
-                    endPoint: .bottom
+        // Wrap each petal as a Button: Buttons handle hit-testing reliably
+        // inside ScrollViews (where plain .onTapGesture can lose taps), and
+        // a Button's tap region is its label's frame. We force a 60×100
+        // label frame so the tap target is bigger than the petal's visual
+        // 36×80, giving a small forgiveness margin.
+        return Button {
+            pluck(petal)
+        } label: {
+            PetalShape()
+                .fill(
+                    LinearGradient(
+                        colors: petal.plucked
+                            ? [Theme.parchmentDim, Theme.parchmentDim.opacity(0.5)]
+                            : [Color(red: 0.88, green: 0.45, blue: 0.42),
+                               Theme.cinnabar],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
                 )
-            )
-            .overlay(
-                PetalShape().stroke(Theme.cinnabarDeep.opacity(0.35), lineWidth: 0.8)
-            )
-            .frame(width: 36, height: 80)
-            .shadow(color: Theme.woodShadow.opacity(0.15), radius: 2, x: 0, y: 1)
-            .rotationEffect(.degrees(baseRotation + (petal.plucked ? petal.exitTilt : 0)))
-            .offset(x: x + (petal.plucked ? petal.exitOffset.width : 0),
-                    y: y + (petal.plucked ? petal.exitOffset.height : 0))
-            .opacity(petal.plucked ? 0 : 1)
-            .scaleEffect(petal.plucked ? 0.7 : 1)
-            .contentShape(Rectangle().inset(by: -8))
-            .onTapGesture {
-                pluck(petal)
-            }
+                .overlay(
+                    PetalShape().stroke(Theme.cinnabarDeep.opacity(0.35), lineWidth: 0.8)
+                )
+                .frame(width: 36, height: 80)
+                .shadow(color: Theme.woodShadow.opacity(0.15), radius: 2, x: 0, y: 1)
+                .rotationEffect(.degrees(baseRotation + (petal.plucked ? petal.exitTilt : 0)))
+                .opacity(petal.plucked ? 0 : 1)
+                .scaleEffect(petal.plucked ? 0.7 : 1)
+                .frame(width: 60, height: 100)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .offset(
+            x: x + (petal.plucked ? petal.exitOffset.width : 0),
+            y: y + (petal.plucked ? petal.exitOffset.height : 0)
+        )
+        .allowsHitTesting(!petal.plucked)
     }
 
     private func revealCard(label: String) -> some View {
