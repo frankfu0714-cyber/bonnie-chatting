@@ -169,17 +169,13 @@ struct TissueView: View {
 
             // Tissue box + popping tissue.
             ZStack {
-                // The NEXT tissue — rendered UNDER the box so its bottom
-                // half is hidden inside the box. It tracks the slot
-                // tissue's drag with a fixed ~80pt lag so the next one is
-                // already partway visible as you pull the current one out.
-                if showIncoming {
-                    TissueShape()
-                        .frame(width: 130, height: 96)
-                        .offset(y: max(dragY + 42, -38))
-                        .opacity(incomingOpacity)
-                }
-
+                // Box body (with the dark slot capsule inside) renders
+                // first — it's the backdrop. Both the slot tissue and the
+                // incoming tissue are drawn on top of the box, but each
+                // is MASKED so only the portion ABOVE the slot's top edge
+                // is visible. The masked-away bottom portion lets the box
+                // body (and its dark slot graphic) show through, which
+                // reads as the tissue emerging from inside the slot.
                 TissueBoxShape()
                     .frame(width: 240, height: 150)
                     .offset(y: 50)
@@ -193,19 +189,27 @@ struct TissueView: View {
                         .offset(y: -30 + dragY)
                 }
 
-                // The SLOT tissue. Tap is routed through a Button (the
-                // most reliable tap path inside the outer ScrollView).
-                // Drag is a simultaneous DragGesture with a 10pt minimum
-                // distance so a tap doesn't trip the drag path. A 100ms
-                // debounce on `dispatchPull` ensures a single physical
-                // gesture can't produce two pulls even if both paths
-                // somehow fire on the same event.
+                // The NEXT tissue — anchored at the slot, masked to the
+                // above-slot region. Tracks the slot tissue's drag with a
+                // ~80pt lag so it peeks out as the current one is pulled.
+                if showIncoming {
+                    let incomingOffsetY = max(dragY + 42, -38)
+                    TissueShape()
+                        .frame(width: 130, height: 96)
+                        .mask(alignment: .top) { aboveSlotMask(offsetY: incomingOffsetY) }
+                        .offset(y: incomingOffsetY)
+                        .opacity(incomingOpacity)
+                }
+
+                // The SLOT tissue. Same anchor-to-slot masking; the user
+                // pulls this one upward.
                 Button {
                     dispatchPull(fromDragY: 0, velocityY: -300)
                 } label: {
                     TissueShape()
                         .frame(width: 130, height: 96)
                         .scaleEffect(x: 1, y: stretch, anchor: .bottom)
+                        .mask(alignment: .top) { aboveSlotMask(offsetY: -38 + dragY) }
                         .frame(width: 170, height: 130)
                         .contentShape(Rectangle())
                 }
@@ -214,11 +218,8 @@ struct TissueView: View {
                 .allowsHitTesting(canInteract)
                 .simultaneousGesture(unifiedGesture)
 
-                // Independent in-flight tissues. Each owns its animation
-                // lifecycle (peak → fall → crumple → fade → self-remove).
-                // Rendered on top of the slot tissue so a newly-spawned
-                // one visually "takes over" the position it was just
-                // released from.
+                // Independent in-flight tissues — detached from the slot,
+                // tumble away freely without the slot mask.
                 ForEach(fallingTissues) { desc in
                     FallingTissueView(startY: desc.startY,
                                       velocityY: desc.velocityY) {
@@ -345,6 +346,29 @@ struct TissueView: View {
     /// reveal has fired.
     private var showIncoming: Bool {
         revealedLabel == nil && remaining > 1
+    }
+
+    /// Mask shape that exposes only the portion of a 96-pt-tall tissue
+    /// whose pixels sit ABOVE the slot's top edge (stage_y = -7). The
+    /// masked-away bottom is "inside the box" — covered by the box body
+    /// underneath, including its dark slot graphic.
+    ///
+    /// Implementation: a tall Rectangle aligned to the tissue's frame
+    /// top, then offset so its bottom edge falls at `local_y = -48 +
+    /// visibleHeight` where visibleHeight is the count of pixels above
+    /// the slot. The tall (1000pt) rect generously covers any portion
+    /// the bottom-anchored scaleEffect stretches above the frame top.
+    @ViewBuilder
+    private func aboveSlotMask(offsetY: CGFloat) -> some View {
+        // stage_y of a tissue pixel = local_y + offsetY.
+        // Show pixels with stage_y ≤ -7 (slot top).
+        // So show pixels with local_y ≤ -7 - offsetY.
+        // In a 96-tall frame (local_y -48...48), visible height from top
+        // is (-7 - offsetY) - (-48) = 41 - offsetY, clamped to [0, 96].
+        let visibleHeight = max(0, min(96, 41 - offsetY))
+        Rectangle()
+            .frame(width: 500, height: 1000)
+            .offset(y: visibleHeight - 1000)
     }
 
     /// Soft fade-in for the incoming tissue as it first peeks above the
