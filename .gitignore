@@ -1,0 +1,23 @@
+# Xcode build artifacts
+build/
+DerivedData/
+*.xcuserdatad/
+*.xcuserstate
+xcuserdata/
+
+# xcodegen output — the project file is regenerated from project.yml,
+# so we don't commit it. Open via `xcodegen && xed bonniechatting.xcodeproj`.
+bonniechatting.xcodeproj/
+
+# macOS
+.DS_Store
+
+# SwiftPM (none used yet, but be ready)
+.build/
+Packages/
+Package.resolved
+
+# Editors
+*.swp
+.vscode/
+.idea/

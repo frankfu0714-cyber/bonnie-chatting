@@ -1,0 +1,272 @@
+{
+  "sourceLanguage" : "zh-Hant",
+  "strings" : {
+    "action.cancel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Cancel" }
+        },
+        "zh-Hant" : {
+          "stringUnit" : { "state" : "translated", "value" : "取消" }
+        }
+      }
+    },
+    "action.done" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Done" }
+        },
+        "zh-Hant" : {
+          "stringUnit" : { "state" : "translated", "value" : "完成" }
+        }
+      }
+    },
+    "app.title" : {
+      "comment" : "App title shown in the navigation bar.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Bonnie Chatting" }
+        },
+        "zh-Hant" : {
+          "stringUnit" : { "state" : "translated", "value" : "幫你決定?" }
+        }
+      }
+    },
+    "picker.mechanism" : {
+      "comment" : "Label for the divination-mechanism picker in the toolbar.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Mechanism" }
+        },
+        "zh-Hant" : {
+          "stringUnit" : { "state" : "translated", "value" : "問事方式" }
+        }
+      }
+    },
+    "mechanism.jiaobei.name" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Moon Blocks (Jiao Bei)" }
+        },
+        "zh-Hant" : {
+          "stringUnit" : { "state" : "translated", "value" : "筊杯" }
+        }
+      }
+    },
+    "jiaobei.question.label" : {
+      "comment" : "Section label above the question text field.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Your Question" }
+        },
+        "zh-Hant" : {
+          "stringUnit" : { "state" : "translated", "value" : "你的問題" }
+        }
+      }
+    },
+    "jiaobei.question.placeholder" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "What would you like to ask? (optional)" }
+        },
+        "zh-Hant" : {
+          "stringUnit" : { "state" : "translated", "value" : "想問什麼?(可不填)" }
+        }
+      }
+    },
+    "jiaobei.labels.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Outcome Labels" }
+        },
+        "zh-Hant" : {
+          "stringUnit" : { "state" : "translated", "value" : "答案說法" }
+        }
+      }
+    },
+    "jiaobei.labels.using_defaults" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Using default meanings — tap to customize" }
+        },
+        "zh-Hant" : {
+          "stringUnit" : { "state" : "translated", "value" : "使用預設說法 — 點此自訂" }
+        }
+      }
+    },
+    "jiaobei.labels.custom_set" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Custom labels set — tap to edit" }
+        },
+        "zh-Hant" : {
+          "stringUnit" : { "state" : "translated", "value" : "已自訂說法 — 點此修改" }
+        }
+      }
+    },
+    "jiaobei.labels.reset" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Reset to defaults" }
+        },
+        "zh-Hant" : {
+          "stringUnit" : { "state" : "translated", "value" : "恢復預設" }
+        }
+      }
+    },
+    "jiaobei.action.toss" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Toss" }
+        },
+        "zh-Hant" : {
+          "stringUnit" : { "state" : "translated", "value" : "擲筊" }
+        }
+      }
+    },
+    "jiaobei.action.toss_again" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Toss Again" }
+        },
+        "zh-Hant" : {
+          "stringUnit" : { "state" : "translated", "value" : "再擲一次" }
+        }
+      }
+    },
+    "jiaobei.action.tossing" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Tossing…" }
+        },
+        "zh-Hant" : {
+          "stringUnit" : { "state" : "translated", "value" : "擲筊中…" }
+        }
+      }
+    },
+
+    "jiaobei.outcome.sheng.name" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "聖筊" }
+        },
+        "zh-Hant" : {
+          "stringUnit" : { "state" : "translated", "value" : "聖筊" }
+        }
+      }
+    },
+    "jiaobei.outcome.sheng.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Sacred Yes" }
+        },
+        "zh-Hant" : {
+          "stringUnit" : { "state" : "translated", "value" : "神明應允" }
+        }
+      }
+    },
+    "jiaobei.outcome.sheng.default_label" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Yes — go ahead" }
+        },
+        "zh-Hant" : {
+          "stringUnit" : { "state" : "translated", "value" : "好，去做" }
+        }
+      }
+    },
+    "jiaobei.outcome.sheng.desc" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "One flat side and one curved side land up. The deity is in agreement — the answer is yes." }
+        },
+        "zh-Hant" : {
+          "stringUnit" : { "state" : "translated", "value" : "一平一凸 — 神明同意,可以放心去做。" }
+        }
+      }
+    },
+
+    "jiaobei.outcome.xiao.name" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "笑筊" }
+        },
+        "zh-Hant" : {
+          "stringUnit" : { "state" : "translated", "value" : "笑筊" }
+        }
+      }
+    },
+    "jiaobei.outcome.xiao.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Laughing Blocks" }
+        },
+        "zh-Hant" : {
+          "stringUnit" : { "state" : "translated", "value" : "神明在笑" }
+        }
+      }
+    },
+    "jiaobei.outcome.xiao.default_label" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "The deity is laughing — try asking differently" }
+        },
+        "zh-Hant" : {
+          "stringUnit" : { "state" : "translated", "value" : "神明在笑,再問一次" }
+        }
+      }
+    },
+    "jiaobei.outcome.xiao.desc" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Both flat sides land up. Your question may be unclear, already answered, or not the right one. Rephrase and ask again." }
+        },
+        "zh-Hant" : {
+          "stringUnit" : { "state" : "translated", "value" : "兩面皆平 — 問題不清或答案明顯,換個問法再問一次。" }
+        }
+      }
+    },
+
+    "jiaobei.outcome.yin.name" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "陰筊" }
+        },
+        "zh-Hant" : {
+          "stringUnit" : { "state" : "translated", "value" : "陰筊" }
+        }
+      }
+    },
+    "jiaobei.outcome.yin.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Sacred No" }
+        },
+        "zh-Hant" : {
+          "stringUnit" : { "state" : "translated", "value" : "神明否決" }
+        }
+      }
+    },
+    "jiaobei.outcome.yin.default_label" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "No — hold off" }
+        },
+        "zh-Hant" : {
+          "stringUnit" : { "state" : "translated", "value" : "不行,再等等" }
+        }
+      }
+    },
+    "jiaobei.outcome.yin.desc" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : { "state" : "translated", "value" : "Both curved sides land up. The deity does not agree — wait, reconsider, or choose another path." }
+        },
+        "zh-Hant" : {
+          "stringUnit" : { "state" : "translated", "value" : "兩面皆凸 — 神明不允,先緩一緩,或另尋他法。" }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
