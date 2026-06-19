@@ -212,16 +212,17 @@ struct TissueView: View {
                 }
 
                 // The NEXT tissue — pinned at the slot resting position
-                // and immobile. It sits behind the slot tissue in
-                // z-order; when the user pulls the slot tissue UP, the
-                // next one is revealed at rest. It does NOT track the
-                // drag — Frank found the "connected lag" effect looked
-                // wrong, not realistic.
+                // and immobile. Only shown at full rest; hidden while
+                // any pull or fall is in progress so the user sees only
+                // the tissue they're currently pulling. Restored
+                // instantly via `.transition(.identity)` once the cycle
+                // finishes.
                 if showIncoming {
                     TissueShape()
                         .frame(width: 130, height: 96)
                         .mask(alignment: .top) { aboveSlotMask(offsetY: -38) }
                         .offset(y: -38)
+                        .transition(.identity)
                 }
 
                 // The SLOT tissue. Same anchor-to-slot masking; the user
@@ -371,10 +372,18 @@ struct TissueView: View {
     }
 
     /// Whether to render the "next" tissue behind the one being pulled.
-    /// False on the final tissue (nothing queued behind it) and once the
-    /// reveal has fired.
+    ///
+    /// Hidden while ANY pull is in progress — Frank's mental model is
+    /// that there should only be ONE tissue visible while pulling, and
+    /// seeing the incoming peek out of the slot at the same time reads
+    /// as "two tissues being pulled". So: only show it at full rest.
+    /// Also gated on the final tissue (nothing queued) and the reveal
+    /// having fired.
     private var showIncoming: Bool {
-        revealedLabel == nil && remaining > 1
+        revealedLabel == nil
+            && remaining > 1
+            && dragY == 0
+            && fallingTissues.isEmpty
     }
 
     /// Mask shape that exposes only the portion of a 96-pt-tall tissue
