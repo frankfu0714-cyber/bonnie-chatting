@@ -177,141 +177,135 @@ struct TissueView: View {
     }
 
     private var stage: some View {
-        ZStack {
-            // Glow under the box
-            Ellipse()
-                .fill(
-                    RadialGradient(
-                        colors: [Theme.gold.opacity(0.30), Theme.parchment.opacity(0)],
-                        center: .center, startRadius: 30, endRadius: 220
-                    )
-                )
-                .frame(width: 360, height: 240)
-                .offset(y: 30)
-
-            // Tissue box + popping tissue.
+        VStack(spacing: 0) {
+            // Reserved headroom ABOVE the box — empty during normal play,
+            // becomes the float-zone for the final-reveal tissue + halo.
+            // Always allocated (not conditional) so the layout doesn't
+            // shift when finalLift triggers.
             ZStack {
-                // Box body (with the dark slot capsule inside) renders
-                // first — it's the backdrop. Both the slot tissue and the
-                // incoming tissue are drawn on top of the box, but each
-                // is MASKED so only the portion ABOVE the slot's top edge
-                // is visible. The masked-away bottom portion lets the box
-                // body (and its dark slot graphic) show through, which
-                // reads as the tissue emerging from inside the slot.
-                TissueBoxShape()
-                    .frame(width: 240, height: 150)
-                    .offset(y: 50)
-
-                // Glow halo for the final tissue — fixed-position halo
-                // centered behind the free-floating reveal tissue.
                 if finalLift {
+                    // Golden halo behind the floating tissue.
                     Capsule()
                         .fill(Theme.gold.opacity(0.55))
                         .frame(width: 180, height: 140)
                         .blur(radius: 24)
-                        .offset(y: finalRevealCenterY)
                         .transition(.opacity)
-                }
-
-                // The NEXT tissue — pinned at the slot resting position
-                // and immobile. Only shown at full rest; hidden while
-                // any pull or fall is in progress so the user sees only
-                // the tissue they're currently pulling. Restored
-                // instantly via `.transition(.identity)` once the cycle
-                // finishes.
-                if showIncoming {
-                    TissueShape()
-                        .frame(width: 130, height: 96)
-                        .mask(alignment: .top) { aboveSlotMask(offsetY: -38) }
-                        .offset(y: -38)
-                        .transition(.identity)
-                }
-
-                // The SLOT tissue — render a VERY TALL tissue (130×300)
-                // anchored with its BOTTOM at the slot top (stage_y = -7).
-                // A bottom-aligned mask reveals only the bottom
-                // `visibleHeight` pt of it, so the visible region grows
-                // upward as the user pulls while the bottom edge stays
-                // pinned inside the slot. No scaleEffect, no GeometryReader,
-                // no dynamic frame — just a fixed huge layout slot whose
-                // mask varies with `dragY`.
-                //
-                // Hidden during the final reveal — at that point the slot
-                // is empty (no tissues left in the box), and the revealed
-                // tissue is rendered separately as a free-floating element.
-                if !finalLift {
-                    let visibleHeight: CGFloat = 79 + max(0, -dragY)
-                    TissueShape()
-                        .frame(width: 130, height: 300)
-                        .mask(alignment: .bottom) {
-                            Rectangle()
-                                .frame(width: 200, height: visibleHeight)
-                        }
-                        .offset(y: -157)  // 300/2 + 7 = 157 → bottom edge at slot top
-                        .allowsHitTesting(false)
-                        .transition(.identity)
-                }
-
-                // The FINAL revealed tissue — fully detached from the slot,
-                // hovering above the (now empty) slot opening with a gentle
-                // bob. Rendered as a compact fixed-size tissue, not a
-                // stretched slot tissue.
-                if finalLift {
+                    // Free-floating final tissue — compact, fixed-size,
+                    // detached from the slot with clear empty space below.
                     FinalRevealTissueView()
-                        .offset(y: finalRevealCenterY)
                         .allowsHitTesting(false)
                         .transition(.opacity)
                 }
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: 130)
 
-                Button {
-                    dispatchPull(velocityY: -300)
-                } label: {
-                    Color.clear
-                        .frame(width: 170, height: 130)
-                        .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-                .offset(y: -38)
-                .allowsHitTesting(canInteract)
-                .simultaneousGesture(unifiedGesture)
+            // Box area — slot tissue, box body, the regular pulling
+            // interaction. The final-reveal float-tissue is NOT in here.
+            ZStack {
+                // Glow under the box
+                Ellipse()
+                    .fill(
+                        RadialGradient(
+                            colors: [Theme.gold.opacity(0.30), Theme.parchment.opacity(0)],
+                            center: .center, startRadius: 30, endRadius: 220
+                        )
+                    )
+                    .frame(width: 360, height: 240)
+                    .offset(y: 30)
 
-                // Independent in-flight tissues — detached from the slot,
-                // tumble away freely without the slot mask.
-                // `.transition(.identity)` makes the removal *instant* so a
-                // SwiftUI implicit fade-out can't briefly keep a stale
-                // tissue visible after we clear the array.
-                ForEach(fallingTissues) { desc in
-                    FallingTissueView(startY: desc.startY,
-                                      velocityY: desc.velocityY) {
-                        withTransaction(Transaction(animation: nil)) {
-                            fallingTissues.removeAll { $0.id == desc.id }
-                        }
+                // Tissue box + popping tissue.
+                ZStack {
+                    // Box body (with the dark slot capsule inside) renders
+                    // first — it's the backdrop. Both the slot tissue and the
+                    // incoming tissue are drawn on top of the box, but each
+                    // is MASKED so only the portion ABOVE the slot's top edge
+                    // is visible. The masked-away bottom portion lets the box
+                    // body (and its dark slot graphic) show through, which
+                    // reads as the tissue emerging from inside the slot.
+                    TissueBoxShape()
+                        .frame(width: 240, height: 150)
+                        .offset(y: 50)
+
+                    // The NEXT tissue — pinned at the slot resting position
+                    // and immobile. Only shown at full rest; hidden while
+                    // any pull or fall is in progress so the user sees only
+                    // the tissue they're currently pulling. Restored
+                    // instantly via `.transition(.identity)` once the cycle
+                    // finishes.
+                    if showIncoming {
+                        TissueShape()
+                            .frame(width: 130, height: 96)
+                            .mask(alignment: .top) { aboveSlotMask(offsetY: -38) }
+                            .offset(y: -38)
+                            .transition(.identity)
                     }
-                    .transition(.identity)
-                }
-            }
-            .frame(height: 260)
 
-            // Bottom-center: alternation hint + transient round intro.
-            VStack(spacing: 6) {
-                Spacer()
-                if roundIntroVisible {
-                    Text("tissues.round_intro")
-                        .font(Theme.body(11, weight: .semibold))
-                        .foregroundStyle(Theme.inkQuiet)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 5)
-                        .background(Capsule().fill(Theme.parchmentDim.opacity(0.7)))
-                        .overlay(Capsule().stroke(Theme.rule, lineWidth: 0.8))
-                        .transition(.opacity.combined(with: .scale(scale: 0.95)))
+                    // The SLOT tissue — render a VERY TALL tissue (130×300)
+                    // anchored with its BOTTOM at the slot top (stage_y = -7).
+                    // Hidden during the final reveal — the slot is empty
+                    // (no tissues left in the box) and the revealed tissue
+                    // floats in the headroom area above.
+                    if !finalLift {
+                        let visibleHeight: CGFloat = 79 + max(0, -dragY)
+                        TissueShape()
+                            .frame(width: 130, height: 300)
+                            .mask(alignment: .bottom) {
+                                Rectangle()
+                                    .frame(width: 200, height: visibleHeight)
+                            }
+                            .offset(y: -157)
+                            .allowsHitTesting(false)
+                            .transition(.identity)
+                    }
+
+                    Button {
+                        dispatchPull(velocityY: -300)
+                    } label: {
+                        Color.clear
+                            .frame(width: 170, height: 130)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .offset(y: -38)
+                    .allowsHitTesting(canInteract)
+                    .simultaneousGesture(unifiedGesture)
+
+                    // Independent in-flight tissues — detached from the slot,
+                    // tumble away freely without the slot mask.
+                    ForEach(fallingTissues) { desc in
+                        FallingTissueView(startY: desc.startY,
+                                          velocityY: desc.velocityY) {
+                            withTransaction(Transaction(animation: nil)) {
+                                fallingTissues.removeAll { $0.id == desc.id }
+                            }
+                        }
+                        .transition(.identity)
+                    }
                 }
-                if revealedLabel == nil {
-                    nextHintPill
+                .frame(height: 260)
+
+                // Bottom-center: alternation hint + transient round intro.
+                VStack(spacing: 6) {
+                    Spacer()
+                    if roundIntroVisible {
+                        Text("tissues.round_intro")
+                            .font(Theme.body(11, weight: .semibold))
+                            .foregroundStyle(Theme.inkQuiet)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 5)
+                            .background(Capsule().fill(Theme.parchmentDim.opacity(0.7)))
+                            .overlay(Capsule().stroke(Theme.rule, lineWidth: 0.8))
+                            .transition(.opacity.combined(with: .scale(scale: 0.95)))
+                    }
+                    if revealedLabel == nil {
+                        nextHintPill
+                    }
                 }
+                .padding(.bottom, 6)
             }
-            .padding(.bottom, 6)
+            .frame(height: 320)
         }
-        .frame(height: 320)
     }
 
     private var nextHintPill: some View {
@@ -593,15 +587,10 @@ struct TissueView: View {
         AudioServicesPlaySystemSound(1306)
     }
 
-    /// Stage_y where the free-floating final tissue (and its glow) is
-    /// centered — ~90pt above the resting tissue position (which sits at
-    /// y=-38), so the floating tissue clearly clears the slot opening with
-    /// a visible empty gap below it.
-    private var finalRevealCenterY: CGFloat { -128 }
-
     /// Final-tissue path — the tissue detaches from the slot and floats
-    /// above the (now empty) box with a golden glow halo. The slot below
-    /// is rendered empty since there are no tissues left.
+    /// in the reserved headroom area above the (now empty) box, with a
+    /// golden glow halo. The slot below is rendered empty since there
+    /// are no tissues left.
     private func triggerFinalReveal() {
         let label = nextLabel
         revealedLabel = label
