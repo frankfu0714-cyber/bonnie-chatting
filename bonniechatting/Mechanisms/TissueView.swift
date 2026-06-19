@@ -184,21 +184,24 @@ struct TissueView: View {
             // shift when finalLift triggers.
             ZStack {
                 if finalLift {
-                    // Golden halo behind the floating tissue.
+                    // Stronger golden halo behind the floating tissue —
+                    // makes the "revealed" state read unmistakably.
                     Capsule()
-                        .fill(Theme.gold.opacity(0.55))
-                        .frame(width: 180, height: 140)
-                        .blur(radius: 24)
+                        .fill(Theme.gold.opacity(0.75))
+                        .frame(width: 170, height: 130)
+                        .blur(radius: 30)
                         .transition(.opacity)
-                    // Free-floating final tissue — compact, fixed-size,
-                    // detached from the slot with clear empty space below.
+                    // Free-floating final tissue — smaller (90×72) than the
+                    // slot tissues so it reads as a single isolated sheet
+                    // lifted away from the box, with a balloon-style ground
+                    // shadow on the cream below.
                     FinalRevealTissueView()
                         .allowsHitTesting(false)
                         .transition(.opacity)
                 }
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 130)
+            .frame(height: 220)
 
             // Box area — slot tissue, box body, the regular pulling
             // interaction. The final-reveal float-tissue is NOT in here.
@@ -608,24 +611,36 @@ struct TissueView: View {
 // MARK: - Final reveal tissue (free-floating, gentle bob)
 
 /// The last tissue rendered as a free-floating element above the slot,
-/// with a slow rise/fall bob and a subtle tilt to feel deliberate.
+/// smaller than the slot tissues (90×72 vs 130×96) so it reads as a
+/// single isolated sheet lifted away. A static balloon-style ground
+/// shadow on the cream below reinforces the "hovering" effect while the
+/// tissue itself bobs and tilts gently.
 private struct FinalRevealTissueView: View {
     @State private var bobOffset: CGFloat = 0
     @State private var tilt: Double = 0
 
     var body: some View {
-        TissueShape()
-            .frame(width: 130, height: 96)
-            .rotationEffect(.degrees(tilt))
-            .offset(y: bobOffset)
-            .onAppear {
-                withAnimation(.easeInOut(duration: 2.6).repeatForever(autoreverses: true)) {
-                    bobOffset = -5
-                }
-                withAnimation(.easeInOut(duration: 4.2).repeatForever(autoreverses: true)) {
-                    tilt = 1.5
-                }
+        ZStack {
+            // Ground shadow — stays put while the tissue bobs above it.
+            Ellipse()
+                .fill(Color.black.opacity(0.14))
+                .frame(width: 72, height: 14)
+                .blur(radius: 6)
+                .offset(y: 56)
+
+            TissueShape()
+                .frame(width: 90, height: 72)
+                .rotationEffect(.degrees(tilt))
+                .offset(y: bobOffset)
+        }
+        .onAppear {
+            withAnimation(.easeInOut(duration: 2.6).repeatForever(autoreverses: true)) {
+                bobOffset = -6
             }
+            withAnimation(.easeInOut(duration: 4.2).repeatForever(autoreverses: true)) {
+                tilt = 1.5
+            }
+        }
     }
 }
 
