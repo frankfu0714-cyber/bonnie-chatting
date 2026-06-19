@@ -201,7 +201,7 @@ struct TissueView: View {
                 }
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 220)
+            .frame(height: 130)
 
             // Box area — slot tissue, box body, the regular pulling
             // interaction. The final-reveal float-tissue is NOT in here.
