@@ -581,11 +581,11 @@ struct TissueView: View {
     private func triggerFinalReveal() {
         let label = nextLabel
         revealedLabel = label
-        withAnimation(.easeOut(duration: 0.95)) {
+        withAnimation(.easeOut(duration: 0.6)) {
             finalLift = true
-            // Lift to at least 120pt of pull (≈200pt visible height),
-            // or stay taller if the user was already mid-pull.
-            dragY = min(dragY, -120)
+            // Lift to ~45pt of pull (≈124pt visible height) — clearly aloft
+            // with the golden halo, but not dominating the screen.
+            dragY = min(dragY, -45)
         }
     }
 }
