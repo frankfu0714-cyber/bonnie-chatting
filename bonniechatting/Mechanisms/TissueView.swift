@@ -189,16 +189,17 @@ struct TissueView: View {
                         .offset(y: -30 + dragY)
                 }
 
-                // The NEXT tissue — anchored at the slot, masked to the
-                // above-slot region. Tracks the slot tissue's drag with a
-                // ~80pt lag so it peeks out as the current one is pulled.
+                // The NEXT tissue — pinned at the slot resting position
+                // and immobile. It sits behind the slot tissue in
+                // z-order; when the user pulls the slot tissue UP, the
+                // next one is revealed at rest. It does NOT track the
+                // drag — Frank found the "connected lag" effect looked
+                // wrong, not realistic.
                 if showIncoming {
-                    let incomingOffsetY = max(dragY + 42, -38)
                     TissueShape()
                         .frame(width: 130, height: 96)
-                        .mask(alignment: .top) { aboveSlotMask(offsetY: incomingOffsetY) }
-                        .offset(y: incomingOffsetY)
-                        .opacity(incomingOpacity)
+                        .mask(alignment: .top) { aboveSlotMask(offsetY: -38) }
+                        .offset(y: -38)
                 }
 
                 // The SLOT tissue. Same anchor-to-slot masking; the user
@@ -369,20 +370,6 @@ struct TissueView: View {
         Rectangle()
             .frame(width: 500, height: 1000)
             .offset(y: visibleHeight - 1000)
-    }
-
-    /// Soft fade-in for the incoming tissue as it first peeks above the
-    /// box. Stays at 1 once the outgoing has cleared the slot.
-    private var incomingOpacity: Double {
-        // dragY == 0 → outgoing is at rest → incoming center sits at +42
-        //   (well inside the box, hidden by the box body).
-        // dragY ≈ -60 → incoming peeking above the box edge.
-        // dragY ≤ -80 → incoming centered at slot resting line (fully visible).
-        let raw = max(dragY + 42, -38)  // matches the offset formula above
-        // Map raw from +42…-38 to opacity 0…1. Anything above the slot line
-        // shows at full opacity.
-        let progress = (42 - raw) / (42 - (-38))
-        return Double(min(max(progress, 0), 1))
     }
 
     private func startNewRound() {
