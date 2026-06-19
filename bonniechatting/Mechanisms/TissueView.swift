@@ -424,6 +424,14 @@ struct TissueView: View {
             return
         }
 
+        // Evict any in-flight falling tissue the moment the user starts
+        // pulling a new one. Otherwise the previous pull's mid-fall ghost
+        // hovers on screen alongside the current+incoming pair — Frank
+        // saw it as a "middle" third tissue floating above the box.
+        if !fallingTissues.isEmpty {
+            fallingTissues.removeAll()
+        }
+
         let amount = -raw  // positive: pulled up by this much
 
         if !hasSnapped, amount < 30 {
@@ -470,6 +478,10 @@ struct TissueView: View {
         guard now.timeIntervalSince(lastPullAt) >= 0.1 else { return }
         lastPullAt = now
 
+        // Strictly one in-flight tissue at a time. Replace any residue
+        // from the previous pull before spawning the new one.
+        fallingTissues.removeAll()
+
         if remaining == 1 {
             triggerFinalReveal()
             return
@@ -487,8 +499,8 @@ struct TissueView: View {
     private func spawnFallingTissue(fromDragY: CGFloat, velocityY: CGFloat) {
         let startY: CGFloat = -38 + fromDragY
         fallingTissues.append(.init(startY: startY, velocityY: velocityY))
-        if fallingTissues.count > 8 {
-            fallingTissues.removeFirst()
+        if fallingTissues.count > 1 {
+            fallingTissues.removeFirst(fallingTissues.count - 1)
         }
         remaining -= 1
         pluckCount += 1
