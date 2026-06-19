@@ -19,40 +19,44 @@ struct ContentView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                MechanismChipBar(
-                    mechanisms: mechanisms,
-                    selectedID: $selectedMechanismID
-                )
-                .padding(.top, 4)
-                .padding(.bottom, 6)
+        VStack(spacing: 0) {
+            // Custom title bar — tighter than the standard nav bar so the
+            // chip row sits closer to the title, leaving more viewport
+            // room for the mechanism content below.
+            HStack {
+                Spacer().frame(width: 36)
+                Spacer()
+                Text("app.title")
+                    .font(Theme.headlineSerif(20, weight: .semibold))
+                    .foregroundStyle(Theme.cinnabarDeep)
+                Spacer()
+                Button {
+                    showingSettings = true
+                } label: {
+                    Image(systemName: "gearshape")
+                        .font(.system(size: 18, weight: .regular))
+                        .foregroundStyle(Theme.cinnabar)
+                        .frame(width: 36, height: 36)
+                }
+                .accessibilityLabel("settings.title")
+            }
+            .padding(.horizontal, 12)
+            .padding(.top, 2)
+            .padding(.bottom, 2)
 
-                AnyView(selected.view())
-            }
-            .background(Theme.parchment.ignoresSafeArea())
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    Text("app.title")
-                        .font(Theme.headlineSerif(20, weight: .semibold))
-                        .foregroundStyle(Theme.cinnabarDeep)
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        showingSettings = true
-                    } label: {
-                        Image(systemName: "gearshape")
-                            .foregroundStyle(Theme.cinnabar)
-                    }
-                    .accessibilityLabel("settings.title")
-                }
-            }
-            .toolbarBackground(Theme.parchment, for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
-            .sheet(isPresented: $showingSettings) {
-                SettingsSheet()
-                    .presentationDetents([.medium])
-            }
+            MechanismChipBar(
+                mechanisms: mechanisms,
+                selectedID: $selectedMechanismID
+            )
+            .padding(.top, 2)
+            .padding(.bottom, 6)
+
+            AnyView(selected.view())
+        }
+        .background(Theme.parchment.ignoresSafeArea())
+        .sheet(isPresented: $showingSettings) {
+            SettingsSheet()
+                .presentationDetents([.medium])
         }
     }
 }
