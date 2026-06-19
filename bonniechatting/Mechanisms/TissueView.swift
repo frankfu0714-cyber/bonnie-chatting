@@ -221,11 +221,17 @@ struct TissueView: View {
 
                 // Independent in-flight tissues — detached from the slot,
                 // tumble away freely without the slot mask.
+                // `.transition(.identity)` makes the removal *instant* so a
+                // SwiftUI implicit fade-out can't briefly keep a stale
+                // tissue visible after we clear the array.
                 ForEach(fallingTissues) { desc in
                     FallingTissueView(startY: desc.startY,
                                       velocityY: desc.velocityY) {
-                        fallingTissues.removeAll { $0.id == desc.id }
+                        withTransaction(Transaction(animation: nil)) {
+                            fallingTissues.removeAll { $0.id == desc.id }
+                        }
                     }
+                    .transition(.identity)
                 }
             }
             .frame(height: 260)
@@ -387,7 +393,7 @@ struct TissueView: View {
         hasSnapped = false
         dragY = 0
         stretch = 1.0
-        fallingTissues.removeAll()
+        clearFallingTissues()
 
         // Briefly show the "10-15 sheets in this pack" intro hint.
         withAnimation(.easeOut(duration: 0.35)) {
@@ -417,19 +423,17 @@ struct TissueView: View {
     private func handleDragChange(_ value: DragGesture.Value) {
         guard revealedLabel == nil else { return }
 
+        // Touchdown / any movement on the slot tissue evicts any in-flight
+        // ghost from a previous pull. Unconditional — runs even before we
+        // know if this gesture is going to be a tap, a drag, or just a
+        // jitter. Cheap if the array is already empty.
+        clearFallingTissues()
+
         let raw = value.translation.height
         guard raw < 0 else {
             dragY = 0
             stretch = 1.0
             return
-        }
-
-        // Evict any in-flight falling tissue the moment the user starts
-        // pulling a new one. Otherwise the previous pull's mid-fall ghost
-        // hovers on screen alongside the current+incoming pair — Frank
-        // saw it as a "middle" third tissue floating above the box.
-        if !fallingTissues.isEmpty {
-            fallingTissues.removeAll()
         }
 
         let amount = -raw  // positive: pulled up by this much
@@ -479,8 +483,10 @@ struct TissueView: View {
         lastPullAt = now
 
         // Strictly one in-flight tissue at a time. Replace any residue
-        // from the previous pull before spawning the new one.
-        fallingTissues.removeAll()
+        // from the previous pull before spawning the new one — animation
+        // explicitly disabled so SwiftUI can't keep a stale view alive
+        // through an implicit removal transition.
+        clearFallingTissues()
 
         if remaining == 1 {
             triggerFinalReveal()
@@ -490,6 +496,17 @@ struct TissueView: View {
         dragY = 0
         stretch = 1.0
         hasSnapped = false
+    }
+
+    /// Single source of truth for evicting in-flight falling tissues.
+    /// Wrapped in a no-animation transaction so the removal is *immediate*
+    /// — combined with `.transition(.identity)` on the ForEach, there's
+    /// no frame in which a removed tissue is still visible.
+    private func clearFallingTissues() {
+        guard !fallingTissues.isEmpty else { return }
+        withTransaction(Transaction(animation: nil)) {
+            fallingTissues.removeAll()
+        }
     }
 
     /// Append a new in-flight tissue at `(-38 + fromDragY)` and decrement
