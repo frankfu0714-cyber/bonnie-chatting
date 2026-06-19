@@ -202,13 +202,15 @@ struct TissueView: View {
                     .frame(width: 240, height: 150)
                     .offset(y: 50)
 
-                // Glow halo for the final tissue.
+                // Glow halo for the final tissue, centered on the visible
+                // center of the (stretched) slot tissue.
                 if finalLift {
+                    let glowHeight: CGFloat = 79 + max(0, -dragY)
                     Capsule()
                         .fill(Theme.gold.opacity(0.55))
                         .frame(width: 150, height: 110)
                         .blur(radius: 22)
-                        .offset(y: -30 + dragY)
+                        .offset(y: -7 - glowHeight / 2)
                 }
 
                 // The NEXT tissue — pinned at the slot resting position
@@ -225,20 +227,34 @@ struct TissueView: View {
                         .transition(.identity)
                 }
 
-                // The SLOT tissue. Same anchor-to-slot masking; the user
-                // pulls this one upward.
+                // The SLOT tissue — render a VERY TALL tissue (130×300)
+                // anchored with its BOTTOM at the slot top (stage_y = -7).
+                // A bottom-aligned mask reveals only the bottom
+                // `visibleHeight` pt of it, so the visible region grows
+                // upward as the user pulls while the bottom edge stays
+                // pinned inside the slot. No scaleEffect, no GeometryReader,
+                // no dynamic frame — just a fixed huge layout slot whose
+                // mask varies with `dragY`.
+                let visibleHeight: CGFloat = 79 + max(0, -dragY)
+
+                TissueShape()
+                    .frame(width: 130, height: 300)
+                    .mask(alignment: .bottom) {
+                        Rectangle()
+                            .frame(width: 200, height: visibleHeight)
+                    }
+                    .offset(y: -157)  // 300/2 + 7 = 157 → bottom edge at slot top
+                    .allowsHitTesting(false)
+
                 Button {
-                    dispatchPull(fromDragY: 0, velocityY: -300)
+                    dispatchPull(velocityY: -300)
                 } label: {
-                    TissueShape()
-                        .frame(width: 130, height: 96)
-                        .scaleEffect(x: 1, y: stretch, anchor: .bottom)
-                        .mask(alignment: .top) { aboveSlotMask(offsetY: -38 + dragY) }
+                    Color.clear
                         .frame(width: 170, height: 130)
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-                .offset(y: -38 + dragY)
+                .offset(y: -38)
                 .allowsHitTesting(canInteract)
                 .simultaneousGesture(unifiedGesture)
 
@@ -470,15 +486,17 @@ struct TissueView: View {
         let amount = -raw  // positive: pulled up by this much
 
         if !hasSnapped, amount < 30 {
+            // Resistance phase — tissue grows just slightly.
             dragY = -amount * 0.4
-            stretch = 1.0 + amount * 0.004
         } else {
             if !hasSnapped {
                 hasSnapped = true
                 UIImpactFeedbackGenerator(style: .light).impactOccurred()
             }
-            dragY = -amount
-            stretch = 1.0 + min(amount / 90, 0.7)
+            // Past the snap, every pt of drag adds 1pt of visible
+            // height to the tissue. Capped at 200pt of pull so it
+            // doesn't fly off the top of the stage.
+            dragY = -min(amount, 200)
         }
     }
 
@@ -491,14 +509,13 @@ struct TissueView: View {
         // Real upward pull past the snap threshold — release with the
         // gesture's actual velocity.
         if hasSnapped, raw < -50 {
-            dispatchPull(fromDragY: dragY, velocityY: velocityY)
+            dispatchPull(velocityY: velocityY)
             return
         }
 
         // Anything else (downward drag, short cancel-pull) — spring back.
         withAnimation(.spring(response: 0.35, dampingFraction: 0.7)) {
             dragY = 0
-            stretch = 1.0
         }
         hasSnapped = false
     }
@@ -508,7 +525,7 @@ struct TissueView: View {
     /// triggered by the same physical gesture (e.g., Button tap fires
     /// alongside a tiny-movement DragGesture onEnded) so the user gets
     /// exactly one pull per intent.
-    private func dispatchPull(fromDragY: CGFloat, velocityY: CGFloat) {
+    private func dispatchPull(velocityY: CGFloat) {
         let now = Date()
         guard now.timeIntervalSince(lastPullAt) >= 0.1 else { return }
         lastPullAt = now
@@ -523,9 +540,16 @@ struct TissueView: View {
             triggerFinalReveal()
             return
         }
-        spawnFallingTissue(fromDragY: fromDragY, velocityY: velocityY)
+
+        // The falling tissue spawns at the visible center of the slot
+        // tissue's CURRENT stretched form, so the released tissue
+        // appears to detach from exactly where the user was holding it.
+        // Slot top is at stage_y = -7; visible tissue height is
+        // (79 + max(0, -dragY)); visible center = -7 - height/2.
+        let visibleHeight = 79.0 + max(0, -dragY)
+        let visibleCenterY = -7.0 - visibleHeight / 2.0
+        spawnFallingTissue(startY: visibleCenterY, velocityY: velocityY)
         dragY = 0
-        stretch = 1.0
         hasSnapped = false
     }
 
@@ -540,12 +564,9 @@ struct TissueView: View {
         }
     }
 
-    /// Append a new in-flight tissue at `(-38 + fromDragY)` and decrement
-    /// the count. Caps the active queue at 8 to keep render cost bounded
-    /// under extreme rapid-tapping (oldest one drops out — under normal
-    /// pacing it would have already cleaned itself up).
-    private func spawnFallingTissue(fromDragY: CGFloat, velocityY: CGFloat) {
-        let startY: CGFloat = -38 + fromDragY
+    /// Append a new in-flight tissue at the given stage_y and decrement
+    /// the count. Capped at 1 active falling tissue (see below).
+    private func spawnFallingTissue(startY: CGFloat, velocityY: CGFloat) {
         fallingTissues.append(.init(startY: startY, velocityY: velocityY))
         if fallingTissues.count > 1 {
             fallingTissues.removeFirst(fallingTissues.count - 1)
@@ -555,14 +576,16 @@ struct TissueView: View {
         AudioServicesPlaySystemSound(1306)
     }
 
-    /// Final-tissue path — held aloft with a golden glow and the reveal card.
+    /// Final-tissue path — held aloft (stretched up out of the slot)
+    /// with a golden glow and the reveal card.
     private func triggerFinalReveal() {
         let label = nextLabel
         revealedLabel = label
         withAnimation(.easeOut(duration: 0.95)) {
             finalLift = true
-            dragY = min(dragY, -55)   // lift at least 55pt, or stay higher if already pulled
-            stretch = 1.0
+            // Lift to at least 120pt of pull (≈200pt visible height),
+            // or stay taller if the user was already mid-pull.
+            dragY = min(dragY, -120)
         }
     }
 }
