@@ -202,15 +202,15 @@ struct TissueView: View {
                     .frame(width: 240, height: 150)
                     .offset(y: 50)
 
-                // Glow halo for the final tissue, centered on the visible
-                // center of the (stretched) slot tissue.
+                // Glow halo for the final tissue — fixed-position halo
+                // centered behind the free-floating reveal tissue.
                 if finalLift {
-                    let glowHeight: CGFloat = 79 + max(0, -dragY)
                     Capsule()
                         .fill(Theme.gold.opacity(0.55))
-                        .frame(width: 150, height: 110)
-                        .blur(radius: 22)
-                        .offset(y: -7 - glowHeight / 2)
+                        .frame(width: 180, height: 140)
+                        .blur(radius: 24)
+                        .offset(y: finalRevealCenterY)
+                        .transition(.opacity)
                 }
 
                 // The NEXT tissue — pinned at the slot resting position
@@ -235,16 +235,33 @@ struct TissueView: View {
                 // pinned inside the slot. No scaleEffect, no GeometryReader,
                 // no dynamic frame — just a fixed huge layout slot whose
                 // mask varies with `dragY`.
-                let visibleHeight: CGFloat = 79 + max(0, -dragY)
+                //
+                // Hidden during the final reveal — at that point the slot
+                // is empty (no tissues left in the box), and the revealed
+                // tissue is rendered separately as a free-floating element.
+                if !finalLift {
+                    let visibleHeight: CGFloat = 79 + max(0, -dragY)
+                    TissueShape()
+                        .frame(width: 130, height: 300)
+                        .mask(alignment: .bottom) {
+                            Rectangle()
+                                .frame(width: 200, height: visibleHeight)
+                        }
+                        .offset(y: -157)  // 300/2 + 7 = 157 → bottom edge at slot top
+                        .allowsHitTesting(false)
+                        .transition(.identity)
+                }
 
-                TissueShape()
-                    .frame(width: 130, height: 300)
-                    .mask(alignment: .bottom) {
-                        Rectangle()
-                            .frame(width: 200, height: visibleHeight)
-                    }
-                    .offset(y: -157)  // 300/2 + 7 = 157 → bottom edge at slot top
-                    .allowsHitTesting(false)
+                // The FINAL revealed tissue — fully detached from the slot,
+                // hovering above the (now empty) slot opening with a gentle
+                // bob. Rendered as a compact fixed-size tissue, not a
+                // stretched slot tissue.
+                if finalLift {
+                    FinalRevealTissueView()
+                        .offset(y: finalRevealCenterY)
+                        .allowsHitTesting(false)
+                        .transition(.opacity)
+                }
 
                 Button {
                     dispatchPull(velocityY: -300)
@@ -576,17 +593,50 @@ struct TissueView: View {
         AudioServicesPlaySystemSound(1306)
     }
 
-    /// Final-tissue path — held aloft (stretched up out of the slot)
-    /// with a golden glow and the reveal card.
+    /// Stage_y where the free-floating final tissue (and its glow) is
+    /// centered — ~90pt above the resting tissue position (which sits at
+    /// y=-38), so the floating tissue clearly clears the slot opening with
+    /// a visible empty gap below it.
+    private var finalRevealCenterY: CGFloat { -128 }
+
+    /// Final-tissue path — the tissue detaches from the slot and floats
+    /// above the (now empty) box with a golden glow halo. The slot below
+    /// is rendered empty since there are no tissues left.
     private func triggerFinalReveal() {
         let label = nextLabel
         revealedLabel = label
+        hasSnapped = false
         withAnimation(.easeOut(duration: 0.6)) {
             finalLift = true
-            // Lift to ~45pt of pull (≈124pt visible height) — clearly aloft
-            // with the golden halo, but not dominating the screen.
-            dragY = min(dragY, -45)
+            // Reset the slot drag — the final tissue is no longer
+            // slot-anchored, so the pulled-stretch state is irrelevant.
+            dragY = 0
+            stretch = 1.0
         }
+    }
+}
+
+// MARK: - Final reveal tissue (free-floating, gentle bob)
+
+/// The last tissue rendered as a free-floating element above the slot,
+/// with a slow rise/fall bob and a subtle tilt to feel deliberate.
+private struct FinalRevealTissueView: View {
+    @State private var bobOffset: CGFloat = 0
+    @State private var tilt: Double = 0
+
+    var body: some View {
+        TissueShape()
+            .frame(width: 130, height: 96)
+            .rotationEffect(.degrees(tilt))
+            .offset(y: bobOffset)
+            .onAppear {
+                withAnimation(.easeInOut(duration: 2.6).repeatForever(autoreverses: true)) {
+                    bobOffset = -5
+                }
+                withAnimation(.easeInOut(duration: 4.2).repeatForever(autoreverses: true)) {
+                    tilt = 1.5
+                }
+            }
     }
 }
 
