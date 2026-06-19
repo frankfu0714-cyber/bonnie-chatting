@@ -178,12 +178,13 @@ struct TissueView: View {
 
     private var stage: some View {
         VStack(spacing: 0) {
-            // Reserved headroom ABOVE the box — empty during normal play,
-            // becomes the float-zone for the final-reveal tissue + halo.
-            // Always allocated (not conditional) so the layout doesn't
-            // shift when finalLift triggers.
-            ZStack {
-                if finalLift {
+            // Headroom ABOVE the box — CONDITIONALLY allocated only during
+            // the final reveal so normal play keeps the box snug against
+            // the cards above. Triggers a spring-animated layout shift
+            // when finalLift flips, so the box smoothly drops down to
+            // make room for the floating tissue rather than snapping.
+            if finalLift {
+                ZStack {
                     // Stronger golden halo behind the floating tissue —
                     // makes the "revealed" state read unmistakably.
                     Capsule()
@@ -199,9 +200,10 @@ struct TissueView: View {
                         .allowsHitTesting(false)
                         .transition(.opacity)
                 }
+                .frame(maxWidth: .infinity)
+                .frame(height: 130)
+                .transition(.opacity)
             }
-            .frame(maxWidth: .infinity)
-            .frame(height: 130)
 
             // Box area — slot tissue, box body, the regular pulling
             // interaction. The final-reveal float-tissue is NOT in here.
@@ -450,7 +452,11 @@ struct TissueView: View {
         // running count.
         totalCount = Int.random(in: 10...15)
         remaining = totalCount
-        finalLift = false
+        // Spring the headroom slot back closed so the box smoothly rises
+        // up after a final-reveal round, mirroring the open animation.
+        withAnimation(.spring(response: 0.5, dampingFraction: 0.78)) {
+            finalLift = false
+        }
         hasSnapped = false
         dragY = 0
         stretch = 1.0
@@ -598,7 +604,9 @@ struct TissueView: View {
         let label = nextLabel
         revealedLabel = label
         hasSnapped = false
-        withAnimation(.easeOut(duration: 0.6)) {
+        // Spring so the box smoothly drops down to make room as the
+        // headroom slot allocates, instead of snapping into place.
+        withAnimation(.spring(response: 0.5, dampingFraction: 0.78)) {
             finalLift = true
             // Reset the slot drag — the final tissue is no longer
             // slot-anchored, so the pulled-stretch state is irrelevant.
