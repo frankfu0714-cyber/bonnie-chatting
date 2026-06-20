@@ -22,11 +22,21 @@ enum Theme {
     static let gold         = Color(red: 0.785, green: 0.663, blue: 0.360) // #C8A95C — 金
     static let goldDeep     = Color(red: 0.60,  green: 0.47,  blue: 0.20)
 
-    // MARK: - Wood (for moon-block faces)
+    // MARK: - Wood (general — used for fortune sticks, coin edges, shadows, etc.)
     static let woodLight    = Color(red: 0.72, green: 0.50, blue: 0.30)
     static let woodMid      = Color(red: 0.55, green: 0.34, blue: 0.18)
     static let woodDark     = Color(red: 0.34, green: 0.19, blue: 0.10)
     static let woodShadow   = Color(red: 0.18, green: 0.10, blue: 0.05)
+
+    // MARK: - Lacquer (deep red lacquered wood — real temple moon blocks)
+    /// Highlight along the curve's apex.
+    static let lacquerHi    = Color(red: 0.55, green: 0.18, blue: 0.18) // brighter burgundy for top sheen
+    /// Main body — rich burgundy.
+    static let lacquerMid   = Color(red: 0.478, green: 0.118, blue: 0.145) // ~#7A1E25
+    /// Shadowed underside of the dome.
+    static let lacquerLow   = Color(red: 0.361, green: 0.094, blue: 0.125) // ~#5C1820
+    /// Outline + deepest shadow.
+    static let lacquerEdge  = Color(red: 0.227, green: 0.051, blue: 0.063) // ~#3A0D10
 
     // MARK: - Fonts
     /// Headline serif: tries `Songti TC` first (traditional look), falls back to system serif.

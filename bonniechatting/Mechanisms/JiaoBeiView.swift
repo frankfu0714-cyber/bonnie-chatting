@@ -140,9 +140,9 @@ struct JiaoBeiView: View {
                         endRadius: 200
                     )
                 )
-                .frame(height: 280)
+                .frame(height: 240)
 
-            HStack(spacing: 40) {
+            HStack(spacing: 24) {
                 MoonBlockView(
                     face: leftFace,
                     rotation: leftRotation,
@@ -157,7 +157,7 @@ struct JiaoBeiView: View {
                 )
             }
         }
-        .frame(height: 260)
+        .frame(height: 220)
         .padding(.vertical, 8)
     }
 
