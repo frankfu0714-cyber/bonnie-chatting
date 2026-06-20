@@ -30,9 +30,6 @@ struct TissueView: View {
     /// Resets to 0 the instant the slot tissue is "released" — independent
     /// fall animations are owned by `fallingTissues`.
     @State private var dragY: CGFloat = 0
-    /// Vertical stretch anchored at the bottom — makes the slot tissue
-    /// elongate as the user pulls it out of the slot.
-    @State private var stretch: CGFloat = 1.0
     /// True once the drag has passed the resistance threshold.
     @State private var hasSnapped: Bool = false
     /// True only for the final tissue — lifted with a soft glow as the reveal.
@@ -89,28 +86,6 @@ struct TissueView: View {
             TissueSettingsSheet(labelYes: $labelYes, labelNo: $labelNo)
                 .presentationDetents([.medium])
         }
-        #if DEBUG
-        // Diagnostic overlay — shows the exact live state for the
-        // "3 tissues" investigation. Lives only in Debug builds; the App
-        // Store / Release build never includes it.
-        .overlay(alignment: .topLeading) {
-            VStack(alignment: .leading, spacing: 1) {
-                Text("rem=\(remaining)/\(totalCount)")
-                Text("incoming=\(showIncoming ? "Y" : "N")")
-                Text("falling=\(fallingTissues.count)")
-                Text("dragY=\(Int(dragY))")
-                Text("stretch=\(stretch, specifier: "%.2f")")
-                Text("snapped=\(hasSnapped ? "Y" : "N")")
-            }
-            .font(.system(size: 9, weight: .medium, design: .monospaced))
-            .padding(.horizontal, 6).padding(.vertical, 4)
-            .background(Color.black.opacity(0.75))
-            .foregroundStyle(.white)
-            .cornerRadius(4)
-            .padding(8)
-            .allowsHitTesting(false)
-        }
-        #endif
     }
 
     // MARK: - Sub-views
@@ -459,7 +434,6 @@ struct TissueView: View {
         }
         hasSnapped = false
         dragY = 0
-        stretch = 1.0
         clearFallingTissues()
 
         // Briefly show the "10-15 sheets in this pack" intro hint.
@@ -499,7 +473,6 @@ struct TissueView: View {
         let raw = value.translation.height
         guard raw < 0 else {
             dragY = 0
-            stretch = 1.0
             return
         }
 
@@ -611,7 +584,6 @@ struct TissueView: View {
             // Reset the slot drag — the final tissue is no longer
             // slot-anchored, so the pulled-stretch state is irrelevant.
             dragY = 0
-            stretch = 1.0
         }
     }
 }
