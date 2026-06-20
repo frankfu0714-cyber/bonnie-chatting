@@ -1,49 +1,34 @@
 import SwiftUI
 
-/// A hand-carved-looking crescent moon block. The shape is a vertically-stretched
-/// teardrop: wide and rounded at the bottom (the "belly"), tapered at the top.
-/// We use the same outline for both faces — `flat` vs `curved` is conveyed by
-/// the fill (lighter wood gradient with a subtle inner highlight vs. darker
-/// wood gradient with a domed shadow).
+/// A real-temple 筊杯 silhouette: a "D" — flat bottom edge and a half-circle arc
+/// above. The flat edge is the divination face; the arc is the rounded back.
+/// The same outline is used regardless of which side is up — `MoonBlockView`
+/// switches the surface treatment (flat painted face vs. domed back with a
+/// gloss highlight) so the viewer can read each block's orientation.
 struct MoonBlockShape: Shape {
     func path(in rect: CGRect) -> Path {
         var p = Path()
-        let w = rect.width
-        let h = rect.height
-        let cx = rect.midX
-
-        // Start at the top apex.
-        p.move(to: CGPoint(x: cx, y: rect.minY + h * 0.06))
-        // Right side curves out to the belly, then around the bottom.
+        // Flat diametral edge across the bottom of the rect.
+        p.move(to: CGPoint(x: rect.minX, y: rect.maxY))
+        p.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+        // Cubic curve back to the start, arching over the top. Control points
+        // are pulled outward and slightly above the top edge so the resulting
+        // curve approximates a true semicircle when rect is ~2:1 (W:H).
+        let lift = rect.height * 0.34
         p.addCurve(
-            to: CGPoint(x: rect.maxX - w * 0.04, y: rect.minY + h * 0.62),
-            control1: CGPoint(x: rect.minX + w * 0.85, y: rect.minY + h * 0.10),
-            control2: CGPoint(x: rect.maxX - w * 0.02, y: rect.minY + h * 0.40)
-        )
-        p.addCurve(
-            to: CGPoint(x: cx, y: rect.maxY - h * 0.02),
-            control1: CGPoint(x: rect.maxX - w * 0.05, y: rect.maxY - h * 0.06),
-            control2: CGPoint(x: rect.minX + w * 0.70, y: rect.maxY - h * 0.01)
-        )
-        // Mirror on the left side back up to the apex.
-        p.addCurve(
-            to: CGPoint(x: rect.minX + w * 0.04, y: rect.minY + h * 0.62),
-            control1: CGPoint(x: rect.minX + w * 0.30, y: rect.maxY - h * 0.01),
-            control2: CGPoint(x: rect.minX + w * 0.05, y: rect.maxY - h * 0.06)
-        )
-        p.addCurve(
-            to: CGPoint(x: cx, y: rect.minY + h * 0.06),
-            control1: CGPoint(x: rect.minX + w * 0.02, y: rect.minY + h * 0.40),
-            control2: CGPoint(x: rect.minX + w * 0.15, y: rect.minY + h * 0.10)
+            to: CGPoint(x: rect.minX, y: rect.maxY),
+            control1: CGPoint(x: rect.maxX, y: rect.minY - lift),
+            control2: CGPoint(x: rect.minX, y: rect.minY - lift)
         )
         p.closeSubpath()
         return p
     }
 }
 
-/// A single moon block rendered as a face — `.flat` shows the lighter top
-/// (the side you'd press into ink), `.curved` shows the rounder back with
-/// a domed highlight.
+/// A single moon block. `.flat` shows the painted flat face — uniform burgundy
+/// with a faint inner ring and a tiny carved centre dot. `.curved` shows the
+/// rounded back — burgundy gradient with a thin gloss strip ~25% from the top
+/// of the arc, suggesting lacquered depth.
 struct MoonBlockView: View {
     let face: BlockFace
     /// Visual rotation applied after the toss settles (random, for variety).
@@ -52,27 +37,32 @@ struct MoonBlockView: View {
     /// settled angle persists after animation ends.
     var tumble: Angle = .zero
     var translation: CGSize = .zero
-    var size: CGSize = CGSize(width: 110, height: 150)
+    /// Default is ~2:1 to match real moon blocks.
+    var size: CGSize = CGSize(width: 150, height: 78)
 
     var body: some View {
         ZStack {
             // Drop shadow on the ground beneath the block.
             Ellipse()
                 .fill(Theme.woodShadow.opacity(0.28))
-                .frame(width: size.width * 0.85, height: 14)
-                .offset(y: size.height * 0.50)
+                .frame(width: size.width * 0.85, height: 12)
+                .offset(y: size.height * 0.62)
                 .blur(radius: 6)
 
-            MoonBlockShape()
-                .fill(faceFill)
-                .overlay(
-                    MoonBlockShape()
-                        .stroke(Theme.woodDark.opacity(0.55), lineWidth: 1.2)
-                )
-                .overlay(faceHighlight)
-                .frame(width: size.width, height: size.height)
-                .shadow(color: Theme.woodShadow.opacity(0.35), radius: 4, x: 1, y: 3)
-                .rotationEffect(rotation + tumble)
+            ZStack {
+                // Body fill
+                MoonBlockShape()
+                    .fill(faceFill)
+                // Surface treatment (gloss strip or carved-face cue)
+                faceHighlight
+                    .mask(MoonBlockShape())
+                // Outline
+                MoonBlockShape()
+                    .stroke(Theme.lacquerEdge.opacity(0.85), lineWidth: 1.2)
+            }
+            .frame(width: size.width, height: size.height)
+            .shadow(color: Theme.woodShadow.opacity(0.35), radius: 4, x: 1, y: 3)
+            .rotationEffect(rotation + tumble)
         }
         .offset(translation)
     }
@@ -80,14 +70,16 @@ struct MoonBlockView: View {
     private var faceFill: LinearGradient {
         switch face {
         case .flat:
+            // Flat face: nearly uniform burgundy, slight cool→warm tilt.
             return LinearGradient(
-                colors: [Theme.woodLight, Theme.woodMid, Theme.woodMid.opacity(0.92)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
+                colors: [Theme.lacquerMid, Theme.lacquerLow],
+                startPoint: .top,
+                endPoint: .bottom
             )
         case .curved:
+            // Curved face: bright at the dome apex (top), dark at the flat edge (bottom).
             return LinearGradient(
-                colors: [Theme.woodMid, Theme.woodDark, Theme.woodShadow],
+                colors: [Theme.lacquerHi, Theme.lacquerMid, Theme.lacquerLow, Theme.lacquerEdge],
                 startPoint: .top,
                 endPoint: .bottom
             )
@@ -97,29 +89,32 @@ struct MoonBlockView: View {
     @ViewBuilder private var faceHighlight: some View {
         switch face {
         case .flat:
-            // Long woodgrain streaks on the flat face.
-            MoonBlockShape()
+            // Subtle inner darker ring near the edge + a tiny carved centre dot,
+            // suggesting we're looking straight down at a flat painted top.
+            ZStack {
+                MoonBlockShape()
+                    .stroke(Theme.lacquerEdge.opacity(0.35), lineWidth: 6)
+                    .blur(radius: 4)
+                Circle()
+                    .fill(Theme.lacquerEdge.opacity(0.45))
+                    .frame(width: 5, height: 5)
+                    .offset(y: -size.height * 0.05)
+            }
+        case .curved:
+            // Gloss strip ~25% from the top of the curved face.
+            Capsule()
                 .fill(
                     LinearGradient(
-                        colors: [Color.white.opacity(0.10), Color.clear, Theme.woodDark.opacity(0.18)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
+                        colors: [Color.white.opacity(0.0),
+                                 Color.white.opacity(0.55),
+                                 Color.white.opacity(0.0)],
+                        startPoint: .leading,
+                        endPoint: .trailing
                     )
                 )
-                .frame(width: size.width, height: size.height)
-        case .curved:
-            // Domed highlight near the top of the curved back.
-            Ellipse()
-                .fill(
-                    RadialGradient(
-                        colors: [Color.white.opacity(0.22), Color.clear],
-                        center: .center,
-                        startRadius: 2,
-                        endRadius: size.width * 0.55
-                    )
-                )
-                .frame(width: size.width * 0.78, height: size.height * 0.55)
-                .offset(y: -size.height * 0.08)
+                .frame(width: size.width * 0.72, height: size.height * 0.10)
+                .offset(y: -size.height * 0.22)
+                .blur(radius: 2)
         }
     }
 }

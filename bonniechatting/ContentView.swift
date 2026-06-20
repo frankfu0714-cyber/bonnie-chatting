@@ -11,7 +11,8 @@ struct ContentView: View {
         FortuneSticksMechanism(),
         SpinningWheelMechanism(),
         CoinFlipMechanism(),
-        RandomNumberMechanism()
+        RandomNumberMechanism(),
+        DiceMechanism()
     ]
 
     private var selected: any DivinationMechanism {
