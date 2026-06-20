@@ -142,23 +142,56 @@ struct JiaoBeiView: View {
                 )
                 .frame(height: 240)
 
-            HStack(spacing: 24) {
-                MoonBlockView(
-                    face: leftFace,
-                    rotation: leftRotation,
-                    tumble: leftTumble,
-                    translation: leftOffset
-                )
-                MoonBlockView(
-                    face: rightFace,
-                    rotation: rightRotation,
-                    tumble: rightTumble,
-                    translation: rightOffset
-                )
+            if phase == .idle {
+                idleComposition
+            } else {
+                tossedComposition
             }
         }
         .frame(height: 220)
         .padding(.vertical, 8)
+    }
+
+    /// Before any toss: the two blocks rest touching at their flat edges,
+    /// forming a complete circle with a thin dark hairline at the seam.
+    /// The tap-to-toss animation will split them apart.
+    private var idleComposition: some View {
+        ZStack {
+            HStack(spacing: 0) {
+                // Left block: rotated CCW so the flat edge faces the seam
+                // (right side of the left block); dome wraps around outside.
+                MoonBlockView(face: .flat)
+                    .rotationEffect(.degrees(-90))
+                    .frame(width: 75, height: 150)
+                // Right block: rotated CW so the flat edge faces the seam
+                // (left side of the right block); dome wraps around outside.
+                MoonBlockView(face: .flat)
+                    .rotationEffect(.degrees(90))
+                    .frame(width: 75, height: 150)
+            }
+            Rectangle()
+                .fill(Theme.mbRedDeep.opacity(0.50))
+                .frame(width: 0.75, height: 144)
+        }
+    }
+
+    /// During and after the toss: independent blocks with their own
+    /// rotations and offsets driven by `performToss`.
+    private var tossedComposition: some View {
+        HStack(spacing: 24) {
+            MoonBlockView(
+                face: leftFace,
+                rotation: leftRotation,
+                tumble: leftTumble,
+                translation: leftOffset
+            )
+            MoonBlockView(
+                face: rightFace,
+                rotation: rightRotation,
+                tumble: rightTumble,
+                translation: rightOffset
+            )
+        }
     }
 
     private func revealCard(outcome: JiaoBeiOutcome) -> some View {
