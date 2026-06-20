@@ -8,10 +8,11 @@ import SwiftUI
 struct MoonBlockShape: Shape {
     func path(in rect: CGRect) -> Path {
         var p = Path()
-        // Subtle inward arc on the "flat" side (~10% of height upward at
-        // centre) — matches real temple jiao bei, which are gently scooped
-        // rather than perfectly flat.
-        let flatArcDepth = rect.height * 0.10
+        // Concave inward arc on the "flat" side (~30% of height upward at
+        // centre) — real temple jiao bei have a pronounced scoop, giving the
+        // overall silhouette a leaf/crescent shape that meets at sharp-ish
+        // points at the left and right tips.
+        let flatArcDepth = rect.height * 0.30
         p.move(to: CGPoint(x: rect.minX, y: rect.maxY))
         p.addQuadCurve(
             to: CGPoint(x: rect.maxX, y: rect.maxY),
