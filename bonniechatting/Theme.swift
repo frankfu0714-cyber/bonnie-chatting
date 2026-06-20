@@ -29,6 +29,8 @@ enum Theme {
     static let woodShadow   = Color(red: 0.18, green: 0.10, blue: 0.05)
 
     // MARK: - Lacquer (deep red lacquered wood — real temple moon blocks)
+    /// Brightest specular along the dome crest.
+    static let lacquerSpec  = Color(red: 0.70, green: 0.30, blue: 0.30) // warm highlight under gloss
     /// Highlight along the curve's apex.
     static let lacquerHi    = Color(red: 0.55, green: 0.18, blue: 0.18) // brighter burgundy for top sheen
     /// Main body — rich burgundy.

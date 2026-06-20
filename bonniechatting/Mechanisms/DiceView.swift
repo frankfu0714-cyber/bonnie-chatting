@@ -14,14 +14,23 @@ struct DiceView: View {
 
     /// Final values for each die (1–6). Empty before any roll.
     @State private var results: [Int] = []
-    /// Per-die value shown during the tumble — scrambles every tick.
+    /// Per-die value shown — scrambles during tumble, locks at impact.
     @State private var displayValues: [Int] = []
-    /// Per-die tumble rotations (random axes).
+    /// Per-die 3-axis tumble rotations (random per die, animated independently).
     @State private var tumble: [DieTumble] = []
+    /// Per-die vertical offset for the drop + bounce.
+    @State private var verticalOffset: [CGFloat] = []
+    /// Per-die post-settle wobble rotation in degrees (z-axis).
+    @State private var wobble: [Double] = []
+    /// Per-die locked flag — once true, displayValues[i] is the final face.
+    @State private var locked: [Bool] = []
+
     @State private var rolling: Bool = false
     @State private var revealVisible: Bool = false
-    @State private var rollTimer: Timer?
-    @State private var rollStartedAt: Date?
+    @State private var scrambleTimer: Timer?
+    /// Identity of the in-flight roll — stale scheduled work checks against
+    /// this to no-op if a new roll has started.
+    @State private var rollID: UUID = UUID()
 
     // MARK: - Body
 
@@ -43,7 +52,7 @@ struct DiceView: View {
         }
         .scrollDismissesKeyboard(.immediately)
         .onAppear { ensureSlots() }
-        .onDisappear { stopRoll() }
+        .onDisappear { stopScramble() }
     }
 
     // MARK: - Sub-views
@@ -104,8 +113,6 @@ struct DiceView: View {
             guard !rolling else { return }
             diceCount = n
             ensureSlots()
-            // Clear any prior reveal — count change means previous results no
-            // longer correspond to what the user sees on stage.
             if !results.isEmpty {
                 withAnimation(.easeIn(duration: 0.15)) { revealVisible = false }
                 results = []
@@ -131,7 +138,6 @@ struct DiceView: View {
 
     private var stage: some View {
         ZStack {
-            // Felt-style table beneath the dice.
             RoundedRectangle(cornerRadius: 22, style: .continuous)
                 .fill(
                     RadialGradient(
@@ -142,14 +148,15 @@ struct DiceView: View {
                 .frame(height: 220)
                 .padding(.horizontal, 8)
 
-            // Dice grid: 1-3 in one row, 4-6 wrap to two rows.
             VStack(spacing: 14) {
                 ForEach(0..<rows.count, id: \.self) { rowIdx in
                     HStack(spacing: 14) {
                         ForEach(rows[rowIdx], id: \.self) { slot in
                             DieView(
                                 face: faceFor(slot),
-                                tumble: tumble.indices.contains(slot) ? tumble[slot] : .zero
+                                tumble: tumble.indices.contains(slot) ? tumble[slot] : .zero,
+                                verticalOffset: verticalOffset.indices.contains(slot) ? verticalOffset[slot] : 0,
+                                wobble: wobble.indices.contains(slot) ? wobble[slot] : 0
                             )
                         }
                     }
@@ -157,9 +164,9 @@ struct DiceView: View {
             }
         }
         .frame(height: 240)
+        .clipped()
     }
 
-    /// Lay out the dice in 1–2 rows: up to 3 per row, second row balances.
     private var rows: [[Int]] {
         let total = max(1, min(6, diceCount))
         let perRow = total <= 3 ? total : Int(ceil(Double(total) / 2.0))
@@ -174,13 +181,12 @@ struct DiceView: View {
     }
 
     private func faceFor(_ slot: Int) -> Int {
-        if rolling, displayValues.indices.contains(slot) {
+        if displayValues.indices.contains(slot) {
             return displayValues[slot]
         }
         if results.indices.contains(slot) {
             return results[slot]
         }
-        // Pre-roll placeholder: a calm "1".
         return 1
     }
 
@@ -259,93 +265,158 @@ struct DiceView: View {
 
     private func ensureSlots() {
         let n = max(1, min(6, diceCount))
-        if displayValues.count != n {
-            displayValues = Array(repeating: 1, count: n)
-        }
-        if tumble.count != n {
-            tumble = Array(repeating: .zero, count: n)
-        }
+        if displayValues.count != n { displayValues = Array(repeating: 1, count: n) }
+        if tumble.count != n        { tumble        = Array(repeating: .zero, count: n) }
+        if verticalOffset.count != n { verticalOffset = Array(repeating: 0, count: n) }
+        if wobble.count != n        { wobble        = Array(repeating: 0, count: n) }
+        if locked.count != n        { locked        = Array(repeating: true, count: n) }
     }
 
     private func performRoll() {
         guard !rolling else { return }
         questionFocused = false
-        stopRoll()
+        stopScramble()
         ensureSlots()
 
         let n = max(1, min(6, diceCount))
-        let finalResults = (0..<n).map { _ in Int.random(in: 1...6) }
+        let target = (0..<n).map { _ in Int.random(in: 1...6) }
 
-        // Hide the previous reveal first.
         withAnimation(.easeIn(duration: 0.15)) { revealVisible = false }
         results = []
         rolling = true
+        rollID = UUID()
+        let myRoll = rollID
 
-        // Kick off random 3-axis rotations per die.
-        let newTumbles: [DieTumble] = (0..<n).map { _ in DieTumble.random() }
-        withAnimation(.easeOut(duration: 1.0)) {
-            tumble = newTumbles
+        // Reset visuals: dice lifted above the stage, ready to drop.
+        // Use no-animation to instantly position before the drop.
+        var newOffsets = Array(repeating: CGFloat(0), count: n)
+        var newWobbles = Array(repeating: Double(0), count: n)
+        var newLocked  = Array(repeating: false, count: n)
+        for i in 0..<n {
+            newOffsets[i] = -CGFloat.random(in: 110...150)
+            newWobbles[i] = 0
+        }
+        withTransaction(Transaction(animation: nil)) {
+            verticalOffset = newOffsets
+            wobble = newWobbles
+            tumble = Array(repeating: .zero, count: n)
+            displayValues = (0..<n).map { _ in Int.random(in: 1...6) }
+            locked = newLocked
         }
 
-        rollStartedAt = Date()
-        scheduleNextScrambleTick(target: finalResults, duration: 1.15)
-    }
+        // Start scrambling the visible face on un-locked dice.
+        startScramble(myRoll: myRoll)
 
-    /// Tick: scramble each die's visible face. As we near the end, the tick
-    /// rate slows so it visibly "settles."
-    private func scheduleNextScrambleTick(target: [Int], duration: TimeInterval) {
-        guard let started = rollStartedAt else { return }
-        rollTimer?.invalidate()
+        // Drive each die independently — stagger spawn, random per-die
+        // rotation, drop with bounce, then small settle wobble.
+        for i in 0..<n {
+            let spawnDelay = Double(i) * 0.07 + Double.random(in: 0...0.04)
+            // Slight per-die speed variance for organic feel.
+            let speed = Double.random(in: 0.88...1.18)
+            let drop   = 0.32 * speed
+            let bUp    = 0.10 * speed
+            let bDown  = 0.13 * speed
 
-        let elapsed = Date().timeIntervalSince(started)
-        let t = min(1.0, elapsed / duration)
-        let delay = 0.06 + (0.18 - 0.06) * t
+            // Independent 3-axis tumble target per die.
+            let dieTumble = DieTumble.random()
 
-        rollTimer = Timer.scheduledTimer(withTimeInterval: delay, repeats: false) { _ in
-            guard rollStartedAt == started else { return }
-
-            let now = Date().timeIntervalSince(started)
-            if now >= duration {
-                // Settle: lock in faces, neutralize tumble so the dice sit flat.
-                stopRoll()
-                results = target
-                displayValues = target
-                withAnimation(.spring(response: 0.45, dampingFraction: 0.7)) {
-                    tumble = Array(repeating: .zero, count: target.count)
+            // Phase 1: drop — easeIn for gravity-like acceleration.
+            DispatchQueue.main.asyncAfter(deadline: .now() + spawnDelay) {
+                guard rollID == myRoll else { return }
+                withAnimation(.easeIn(duration: drop)) {
+                    verticalOffset[i] = 0
+                    tumble[i] = dieTumble
                 }
-                rolling = false
-                AudioServicesPlaySystemSound(1104) // "Tock"
-                withAnimation(.spring(response: 0.45, dampingFraction: 0.85)) {
-                    revealVisible = true
-                }
-                return
             }
 
-            displayValues = displayValues.indices.map { _ in Int.random(in: 1...6) }
-            scheduleNextScrambleTick(target: target, duration: duration)
+            // Phase 2: impact + bounce up. Play clack at impact time.
+            DispatchQueue.main.asyncAfter(deadline: .now() + spawnDelay + drop) {
+                guard rollID == myRoll else { return }
+                AudioServicesPlaySystemSound(1104)
+                withAnimation(.easeOut(duration: bUp)) {
+                    verticalOffset[i] = -CGFloat.random(in: 10...18)
+                }
+            }
+
+            // Phase 3: settle down from bounce.
+            DispatchQueue.main.asyncAfter(deadline: .now() + spawnDelay + drop + bUp) {
+                guard rollID == myRoll else { return }
+                withAnimation(.easeIn(duration: bDown)) {
+                    verticalOffset[i] = 0
+                }
+            }
+
+            // Phase 4: lock in the final face + tiny wobble.
+            let lockAt = spawnDelay + drop + bUp + bDown
+            DispatchQueue.main.asyncAfter(deadline: .now() + lockAt) {
+                guard rollID == myRoll else { return }
+                displayValues[i] = target[i]
+                locked[i] = true
+                let wobbleAmt = Double.random(in: 2.5...4.0) * (Bool.random() ? 1 : -1)
+                withAnimation(.spring(response: 0.30, dampingFraction: 0.45)) {
+                    wobble[i] = wobbleAmt
+                }
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + lockAt + 0.14) {
+                guard rollID == myRoll else { return }
+                withAnimation(.spring(response: 0.32, dampingFraction: 0.75)) {
+                    wobble[i] = 0
+                }
+            }
+        }
+
+        // After the last die settles, fire the reveal card.
+        let lastEnd = Double(n - 1) * 0.07 + 0.04 + 0.38 + 0.12 + 0.16 + 0.18
+        DispatchQueue.main.asyncAfter(deadline: .now() + lastEnd) {
+            guard rollID == myRoll else { return }
+            stopScramble()
+            results = target
+            displayValues = target
+            rolling = false
+            withAnimation(.spring(response: 0.45, dampingFraction: 0.85)) {
+                revealVisible = true
+            }
         }
     }
 
-    private func stopRoll() {
-        rollTimer?.invalidate()
-        rollTimer = nil
-        rollStartedAt = nil
+    // MARK: - Scramble timer
+
+    /// While the roll is in flight, scramble the visible face of any die
+    /// that has NOT yet been locked. Locked dice show their final value.
+    private func startScramble(myRoll: UUID) {
+        scrambleTimer?.invalidate()
+        scrambleTimer = Timer.scheduledTimer(withTimeInterval: 0.09, repeats: true) { t in
+            guard rollID == myRoll else {
+                t.invalidate()
+                return
+            }
+            for i in displayValues.indices {
+                if locked.indices.contains(i), !locked[i] {
+                    displayValues[i] = Int.random(in: 1...6)
+                }
+            }
+        }
+    }
+
+    private func stopScramble() {
+        scrambleTimer?.invalidate()
+        scrambleTimer = nil
     }
 }
 
 // MARK: - Die rendering
 
-/// One die: rounded white square with a slight 3D tilt and black pips.
+/// One die: rounded white square with 3D tumble + drop offset + settle wobble.
 private struct DieView: View {
     let face: Int
     let tumble: DieTumble
+    let verticalOffset: CGFloat
+    let wobble: Double
 
     private let dieSize: CGFloat = 58
 
     var body: some View {
         ZStack {
-            // Top-edge highlight stripe — applied behind the face to suggest
-            // light hitting the top bevel.
             RoundedRectangle(cornerRadius: 10, style: .continuous)
                 .fill(
                     LinearGradient(
@@ -367,7 +438,8 @@ private struct DieView: View {
         .shadow(color: Theme.woodShadow.opacity(0.35), radius: 4, x: 1, y: 3)
         .rotation3DEffect(.degrees(tumble.x), axis: (1, 0, 0))
         .rotation3DEffect(.degrees(tumble.y), axis: (0, 1, 0))
-        .rotation3DEffect(.degrees(tumble.z), axis: (0, 0, 1))
+        .rotation3DEffect(.degrees(tumble.z + wobble), axis: (0, 0, 1))
+        .offset(y: verticalOffset)
     }
 }
 
@@ -378,7 +450,6 @@ private struct PipsView: View {
     var body: some View {
         GeometryReader { geo in
             let s = min(geo.size.width, geo.size.height)
-            // Three-column grid positions, centred. Pip diameter scales with die.
             let pipD = s * 0.18
             ZStack {
                 ForEach(0..<pipsFor(face: face).count, id: \.self) { i in
@@ -394,7 +465,6 @@ private struct PipsView: View {
         }
     }
 
-    /// Unit-vector pip positions (-1, 0, +1) around the centre.
     private func pipsFor(face: Int) -> [CGPoint] {
         switch face {
         case 1:
@@ -420,7 +490,11 @@ private struct PipsView: View {
     }
 }
 
-/// Random 3-axis rotation for a single die.
+/// Random 3-axis rotation target for a single die. Each die rolls
+/// independently to a different rotation, so they don't spin in sync.
+/// X/Y rotation amounts are whole multiples of 360° so the die lands flat
+/// with its front face visible; the per-die variation comes from the spin
+/// count and direction.
 private struct DieTumble: Equatable {
     var x: Double
     var y: Double
@@ -429,10 +503,15 @@ private struct DieTumble: Equatable {
     static let zero = DieTumble(x: 0, y: 0, z: 0)
 
     static func random() -> DieTumble {
-        DieTumble(
-            x: Double.random(in: 180...720) * (Bool.random() ? 1 : -1),
-            y: Double.random(in: 180...720) * (Bool.random() ? 1 : -1),
-            z: Double.random(in: -40...40)
+        let xTurns = Double(Int.random(in: 1...3)) * (Bool.random() ? 1 : -1)
+        let yTurns = Double(Int.random(in: 1...3)) * (Bool.random() ? 1 : -1)
+        // z lands on a 90° step — d6 face reads identically every quarter turn
+        // around z, so this just adds in-plane orientation variety per die.
+        let zSteps = Double(Int.random(in: -4...4))
+        return DieTumble(
+            x: xTurns * 360.0,
+            y: yTurns * 360.0,
+            z: zSteps * 90.0
         )
     }
 }
