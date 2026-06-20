@@ -1,15 +1,24 @@
 import SwiftUI
 
-/// A real-temple 筊杯 silhouette: a "D" — flat bottom edge and a half-circle arc
-/// above. The flat edge is the divination face; the arc is the rounded back.
-/// The same outline is used regardless of which side is up — `MoonBlockView`
-/// switches the surface treatment so the viewer can read each block's
-/// orientation (flat-up vs curved-up).
+/// A real-temple 筊杯 silhouette. Proper crescent moon proportions: the top
+/// arcs outward strongly; the bottom arcs *inward* slightly so the "flat"
+/// edge isn't a hard straight line. Same outline regardless of which side
+/// is up — `MoonBlockView` switches the surface treatment so the viewer
+/// can read each block's orientation (flat-up vs curved-up).
 struct MoonBlockShape: Shape {
     func path(in rect: CGRect) -> Path {
         var p = Path()
+        // Subtle inward arc on the "flat" side (~10% of height upward at
+        // centre) — matches real temple jiao bei, which are gently scooped
+        // rather than perfectly flat.
+        let flatArcDepth = rect.height * 0.10
         p.move(to: CGPoint(x: rect.minX, y: rect.maxY))
-        p.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+        p.addQuadCurve(
+            to: CGPoint(x: rect.maxX, y: rect.maxY),
+            control: CGPoint(x: rect.midX, y: rect.maxY - flatArcDepth)
+        )
+        // Outer dome arc back to start — control points pulled outward and
+        // above the rect to approximate a true semicircle.
         let lift = rect.height * 0.34
         p.addCurve(
             to: CGPoint(x: rect.minX, y: rect.maxY),
