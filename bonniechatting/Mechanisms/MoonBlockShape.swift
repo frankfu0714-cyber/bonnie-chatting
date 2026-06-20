@@ -1,25 +1,18 @@
 import SwiftUI
 
-/// A real-temple 筊杯 silhouette. Proper crescent moon proportions: the top
-/// arcs outward strongly; the bottom arcs *inward* slightly so the "flat"
-/// edge isn't a hard straight line. Same outline regardless of which side
-/// is up — `MoonBlockView` switches the surface treatment so the viewer
-/// can read each block's orientation (flat-up vs curved-up).
+/// Clean half-moon silhouette: perfectly straight flat edge, semicircle dome.
+/// Modern flat-graphic style (think temple-stationary sticker), not
+/// photorealistic wood. The same outline is used for both face-up states —
+/// orientation reads from the carved centre dot on the flat face.
 struct MoonBlockShape: Shape {
     func path(in rect: CGRect) -> Path {
         var p = Path()
-        // Concave inward arc on the "flat" side (~30% of height upward at
-        // centre) — real temple jiao bei have a pronounced scoop, giving the
-        // overall silhouette a leaf/crescent shape that meets at sharp-ish
-        // points at the left and right tips.
-        let flatArcDepth = rect.height * 0.30
+        // Flat diametral edge across the bottom of the rect.
         p.move(to: CGPoint(x: rect.minX, y: rect.maxY))
-        p.addQuadCurve(
-            to: CGPoint(x: rect.maxX, y: rect.maxY),
-            control: CGPoint(x: rect.midX, y: rect.maxY - flatArcDepth)
-        )
-        // Outer dome arc back to start — control points pulled outward and
-        // above the rect to approximate a true semicircle.
+        p.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+        // Cubic curve back to the start — control points pulled outward and
+        // slightly above the top edge so the curve approximates a true
+        // semicircle when rect is sized 2:1 (W:H).
         let lift = rect.height * 0.34
         p.addCurve(
             to: CGPoint(x: rect.minX, y: rect.maxY),
@@ -31,201 +24,87 @@ struct MoonBlockShape: Shape {
     }
 }
 
-/// A single moon block, rendered with 3D-leaning depth cues:
-/// - `.curved`: looking down at the dome-shaped back. Strong directional fill
-///   from a hot specular crest at the top arc to deep shadow at the flat
-///   bottom edge, plus a thin bright gloss strip near the crest.
-/// - `.flat`: looking down at the painted divination face. Bevelled
-///   chamfer around the perimeter, faint inner highlight, tiny carved
-///   centre dot.
-/// Both faces sit on a soft cast shadow on the parchment beneath them.
+/// A thin curved arc that follows the inner edge of the block's dome — a
+/// stylised highlight suggesting light from above. Drawn separately so we
+/// can stroke it with a fading gradient, giving soft endpoints.
+struct MoonBlockHighlightArc: Shape {
+    func path(in rect: CGRect) -> Path {
+        var p = Path()
+        let w = rect.width
+        let h = rect.height
+        // Endpoints sit ~22% in from the block's left/right edges, about
+        // halfway down the rect. Control points pull up above the rect so
+        // the cubic peaks ~17% from the top — visually hugging the inner
+        // edge of the dome.
+        let inset = w * 0.22
+        let endY = rect.minY + h * 0.50
+        let ctrlY = rect.minY - h * 0.10
+        p.move(to: CGPoint(x: rect.minX + inset, y: endY))
+        p.addCurve(
+            to: CGPoint(x: rect.maxX - inset, y: endY),
+            control1: CGPoint(x: rect.minX + inset, y: ctrlY),
+            control2: CGPoint(x: rect.maxX - inset, y: ctrlY)
+        )
+        return p
+    }
+}
+
+/// A single moon block, rendered in modern flat-graphic style. Cinnabar
+/// red body with a subtle vertical gradient and a thin curved highlight
+/// hugging the inner top edge. Flat-face-up shows a small carved centre
+/// dot to make orientation readable in the toss reveal.
 struct MoonBlockView: View {
     let face: BlockFace
-    /// Persistent rotation after a toss settles.
+    /// Persistent rotation after the toss settles.
     var rotation: Angle = .zero
     /// In-flight rotation during the toss.
     var tumble: Angle = .zero
     var translation: CGSize = .zero
-    /// ~2:1 aspect to match real moon blocks.
-    var size: CGSize = CGSize(width: 150, height: 78)
+    /// 2:1 aspect so the dome reads as a true semicircle.
+    var size: CGSize = CGSize(width: 150, height: 75)
 
     var body: some View {
         ZStack {
-            // Soft cast shadow on the parchment beneath the block. Larger
-            // and softer than the SwiftUI .shadow modifier so the block
-            // reads as a physical object sitting on the surface.
-            Ellipse()
-                .fill(Theme.woodShadow.opacity(0.42))
-                .frame(width: size.width * 1.05, height: 18)
-                .offset(y: size.height * 0.66)
-                .blur(radius: 9)
+            MoonBlockShape()
+                .fill(bodyFill)
+                .overlay(
+                    MoonBlockHighlightArc()
+                        .stroke(
+                            LinearGradient(
+                                colors: [Color.white.opacity(0),
+                                         Color(red: 1, green: 0.96, blue: 0.90).opacity(0.75),
+                                         Color.white.opacity(0)],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ),
+                            style: StrokeStyle(lineWidth: 3, lineCap: .round)
+                        )
+                )
+                .overlay(
+                    MoonBlockShape()
+                        .stroke(Theme.mbRedDeep.opacity(0.55), lineWidth: 0.8)
+                )
+                .frame(width: size.width, height: size.height)
 
-            ZStack {
-                // Body fill — directional gradient.
-                MoonBlockShape()
-                    .fill(faceFill)
-                // Surface treatment (gloss strip / bevel / carved dot), masked.
-                faceHighlight
-                    .mask(MoonBlockShape())
-                // Outline.
-                MoonBlockShape()
-                    .stroke(Theme.lacquerEdge.opacity(0.95), lineWidth: 1.2)
+            if face == .flat {
+                // Carved centre dot — subtle reading cue for flat-face-up.
+                Circle()
+                    .fill(Theme.mbRedDeep.opacity(0.70))
+                    .frame(width: 4.5, height: 4.5)
+                    .offset(y: -size.height * 0.05)
             }
-            .frame(width: size.width, height: size.height)
-            // Tight contact shadow nudging the block off the surface.
-            .shadow(color: Theme.woodShadow.opacity(0.45), radius: 3, x: 1, y: 2)
-            .rotationEffect(rotation + tumble)
         }
+        .rotationEffect(rotation + tumble)
         .offset(translation)
     }
 
-    // MARK: - Fills
-
-    /// Curved-face body fill: top-down LinearGradient with strong tonal range
-    /// suggesting a rounded surface lit from above.
-    /// Flat-face body fill: gentler, more uniform burgundy.
-    private var faceFill: LinearGradient {
-        switch face {
-        case .flat:
-            return LinearGradient(
-                colors: [
-                    Theme.lacquerMid,
-                    Theme.lacquerMid,
-                    Theme.lacquerLow
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-        case .curved:
-            return LinearGradient(
-                colors: [
-                    Theme.lacquerSpec,
-                    Theme.lacquerHi,
-                    Theme.lacquerMid,
-                    Theme.lacquerLow,
-                    Theme.lacquerEdge
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-        }
-    }
-
-    // MARK: - Surface treatment
-
-    @ViewBuilder private var faceHighlight: some View {
-        switch face {
-        case .flat:
-            flatFaceTreatment
-        case .curved:
-            curvedFaceTreatment
-        }
-    }
-
-    /// Painted flat face: subtle bevelled edge, faint top sheen catching
-    /// light, and the small carved centre indentation.
-    private var flatFaceTreatment: some View {
-        ZStack {
-            // Dark chamfer around the perimeter — the painted edge of the block.
-            MoonBlockShape()
-                .stroke(Theme.lacquerEdge.opacity(0.55), lineWidth: 5)
-                .blur(radius: 3)
-
-            // Faint top-edge sheen — a soft horizontal smear of light along
-            // the curved upper edge where light catches the bevel.
-            Ellipse()
-                .fill(
-                    RadialGradient(
-                        colors: [Color.white.opacity(0.20), Color.clear],
-                        center: .center,
-                        startRadius: 0,
-                        endRadius: size.width * 0.55
-                    )
-                )
-                .frame(width: size.width * 0.85, height: size.height * 0.40)
-                .offset(y: -size.height * 0.22)
-                .blendMode(.plusLighter)
-
-            // Carved centre indentation: dark dot with a tiny highlight rim above,
-            // suggesting a shallow carved pit.
-            ZStack {
-                Circle()
-                    .fill(Theme.lacquerEdge.opacity(0.85))
-                    .frame(width: 6, height: 6)
-                Circle()
-                    .stroke(Color.white.opacity(0.18), lineWidth: 0.7)
-                    .frame(width: 6, height: 6)
-                    .offset(y: -0.5)
-            }
-            .offset(y: -size.height * 0.05)
-        }
-    }
-
-    /// Curved-face back: bright thin gloss strip near the crest, a secondary
-    /// off-axis highlight, and a dark inner shadow along the bottom edge
-    /// suggesting the wood wrapping away from the viewer.
-    private var curvedFaceTreatment: some View {
-        ZStack {
-            // Bright gloss strip ~22% from the top arc — the brightest specular.
-            Capsule()
-                .fill(
-                    LinearGradient(
-                        colors: [Color.white.opacity(0.0),
-                                 Color.white.opacity(0.85),
-                                 Color.white.opacity(0.0)],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-                .frame(width: size.width * 0.66, height: size.height * 0.09)
-                .offset(y: -size.height * 0.24)
-                .blur(radius: 2)
-                .blendMode(.plusLighter)
-
-            // Wide warm highlight halo behind the gloss strip — adds tonal
-            // depth and reads as a rounded surface catching ambient light.
-            Ellipse()
-                .fill(
-                    RadialGradient(
-                        colors: [Color.white.opacity(0.18), Color.clear],
-                        center: .center,
-                        startRadius: 0,
-                        endRadius: size.width * 0.50
-                    )
-                )
-                .frame(width: size.width * 0.92, height: size.height * 0.55)
-                .offset(y: -size.height * 0.10)
-                .blendMode(.plusLighter)
-
-            // Dark inner shadow along the bottom flat edge — the back of the
-            // block curving away. Thin band hugging the flat baseline.
-            Rectangle()
-                .fill(
-                    LinearGradient(
-                        colors: [Color.clear,
-                                 Color.clear,
-                                 Theme.lacquerEdge.opacity(0.55)],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
-                .frame(height: size.height)
-                .blendMode(.multiply)
-
-            // Subtle off-axis right-side specular smear — light wrapping
-            // around the curve on the right.
-            Ellipse()
-                .fill(
-                    RadialGradient(
-                        colors: [Color.white.opacity(0.16), Color.clear],
-                        center: .center,
-                        startRadius: 0,
-                        endRadius: size.width * 0.25
-                    )
-                )
-                .frame(width: size.width * 0.30, height: size.height * 0.30)
-                .offset(x: size.width * 0.22, y: -size.height * 0.05)
-                .blendMode(.plusLighter)
-        }
+    /// Subtle vertical gradient. Same for both faces — orientation reads
+    /// from the carved dot, not from shading.
+    private var bodyFill: LinearGradient {
+        LinearGradient(
+            colors: [Theme.mbRedLight, Theme.mbRed, Theme.mbRedDeep],
+            startPoint: .top,
+            endPoint: .bottom
+        )
     }
 }

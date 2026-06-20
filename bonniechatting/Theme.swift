@@ -28,17 +28,13 @@ enum Theme {
     static let woodDark     = Color(red: 0.34, green: 0.19, blue: 0.10)
     static let woodShadow   = Color(red: 0.18, green: 0.10, blue: 0.05)
 
-    // MARK: - Lacquer (deep red lacquered wood — real temple moon blocks)
-    /// Brightest specular along the dome crest.
-    static let lacquerSpec  = Color(red: 0.70, green: 0.30, blue: 0.30) // warm highlight under gloss
-    /// Highlight along the curve's apex.
-    static let lacquerHi    = Color(red: 0.55, green: 0.18, blue: 0.18) // brighter burgundy for top sheen
-    /// Main body — rich burgundy.
-    static let lacquerMid   = Color(red: 0.478, green: 0.118, blue: 0.145) // ~#7A1E25
-    /// Shadowed underside of the dome.
-    static let lacquerLow   = Color(red: 0.361, green: 0.094, blue: 0.125) // ~#5C1820
-    /// Outline + deepest shadow.
-    static let lacquerEdge  = Color(red: 0.227, green: 0.051, blue: 0.063) // ~#3A0D10
+    // MARK: - Moon block (筊杯) — flat-graphic cinnabar, NOT photorealistic wood.
+    /// Brighter top of the body gradient.
+    static let mbRedLight   = Color(red: 0.831, green: 0.255, blue: 0.220) // ~#D3413A
+    /// Main cinnabar fill.
+    static let mbRed        = Color(red: 0.784, green: 0.212, blue: 0.184) // ~#C8362F — i-Marker temple-red
+    /// Slightly darker bottom of the body gradient + outline.
+    static let mbRedDeep    = Color(red: 0.631, green: 0.157, blue: 0.137) // ~#A12823
 
     // MARK: - Fonts
     /// Headline serif: tries `Songti TC` first (traditional look), falls back to system serif.
