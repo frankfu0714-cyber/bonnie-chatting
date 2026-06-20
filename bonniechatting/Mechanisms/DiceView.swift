@@ -346,14 +346,16 @@ struct DiceView: View {
                 }
             }
 
-            // Phase 4: lock in the final face + tiny wobble.
+            // Phase 4: lock in the final face + return tumble to .zero so the
+            // die sits flat. A tiny z-axis wobble adds settle weight.
             let lockAt = spawnDelay + drop + bUp + bDown
             DispatchQueue.main.asyncAfter(deadline: .now() + lockAt) {
                 guard rollID == myRoll else { return }
                 displayValues[i] = target[i]
                 locked[i] = true
                 let wobbleAmt = Double.random(in: 2.5...4.0) * (Bool.random() ? 1 : -1)
-                withAnimation(.spring(response: 0.30, dampingFraction: 0.45)) {
+                withAnimation(.spring(response: 0.32, dampingFraction: 0.55)) {
+                    tumble[i] = .zero
                     wobble[i] = wobbleAmt
                 }
             }
@@ -490,11 +492,11 @@ private struct PipsView: View {
     }
 }
 
-/// Random 3-axis rotation target for a single die. Each die rolls
-/// independently to a different rotation, so they don't spin in sync.
-/// X/Y rotation amounts are whole multiples of 360° so the die lands flat
-/// with its front face visible; the per-die variation comes from the spin
-/// count and direction.
+/// Small 3-axis wobble for a single die during the toss. Rotations are kept
+/// modest (≤±35°) to avoid `rotation3DEffect` perspective collapse — the
+/// "tumbling" feel comes from rapidly cycling the visible face value while
+/// the wobble plays. After settle, dice return to .zero so each face is
+/// shown squarely.
 private struct DieTumble: Equatable {
     var x: Double
     var y: Double
@@ -503,15 +505,10 @@ private struct DieTumble: Equatable {
     static let zero = DieTumble(x: 0, y: 0, z: 0)
 
     static func random() -> DieTumble {
-        let xTurns = Double(Int.random(in: 1...3)) * (Bool.random() ? 1 : -1)
-        let yTurns = Double(Int.random(in: 1...3)) * (Bool.random() ? 1 : -1)
-        // z lands on a 90° step — d6 face reads identically every quarter turn
-        // around z, so this just adds in-plane orientation variety per die.
-        let zSteps = Double(Int.random(in: -4...4))
-        return DieTumble(
-            x: xTurns * 360.0,
-            y: yTurns * 360.0,
-            z: zSteps * 90.0
+        DieTumble(
+            x: Double.random(in: 18...35) * (Bool.random() ? 1 : -1),
+            y: Double.random(in: 18...35) * (Bool.random() ? 1 : -1),
+            z: Double.random(in: -15...15)
         )
     }
 }
