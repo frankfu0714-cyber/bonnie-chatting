@@ -146,6 +146,40 @@
         }
       }
     },
+    "coin.face.mu" : {
+      "comment" : "Short name for the back/blank face of the coin shown in headers and the reveal pill. Western coin equivalent for EN.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tails"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "幕"
+          }
+        }
+      }
+    },
+    "coin.face.zi" : {
+      "comment" : "Short name for the inscribed/text face of the coin shown in headers and the reveal pill. Western coin equivalent for EN.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heads"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "字"
+          }
+        }
+      }
+    },
     "coin.question.label" : {
       "localizations" : {
         "en" : {
@@ -568,7 +602,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "聖筊"
+            "value" : "Affirmative"
           }
         },
         "zh-Hant" : {
@@ -632,7 +666,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "笑筊"
+            "value" : "Laughing"
           }
         },
         "zh-Hant" : {
@@ -696,7 +730,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "陰筊"
+            "value" : "Negative"
           }
         },
         "zh-Hant" : {

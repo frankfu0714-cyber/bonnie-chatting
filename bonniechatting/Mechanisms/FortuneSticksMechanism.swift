@@ -29,4 +29,13 @@ enum ChineseNumeral {
         }
         return "\(n)"
     }
+
+    /// Locale-aware numeral: Chinese form for zh locales, plain Arabic
+    /// digits otherwise. Use this anywhere the rendered numeral sits
+    /// alongside locale-specific prose (e.g., the fortune-stick reveal
+    /// text is "第 N 籤" in zh but "Stick No. N" in en — the middle
+    /// numeral must match the surrounding script).
+    static func localized(_ n: Int, locale: Locale) -> String {
+        locale.identifier.hasPrefix("zh") ? of(n) : String(n)
+    }
 }
