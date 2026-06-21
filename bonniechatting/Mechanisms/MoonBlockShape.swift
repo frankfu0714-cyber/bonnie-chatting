@@ -66,18 +66,36 @@ struct MoonBlockView: View {
                 .blur(radius: 7)
 
             ZStack {
-                // Body fill — flat cinnabar on the painted side, dome
-                // radial gradient on the curved side suggesting 3D form.
-                MoonBlockShape()
-                    .fill(bodyFill)
-
-                // Gloss highlight only on the curved face.
                 if face == .curved {
-                    highlight
-                }
+                    // Dark outer crescent — the base "shadowed" cinnabar
+                    // that surrounds the inner moon.
+                    MoonBlockShape()
+                        .fill(Theme.mbRedDeep)
 
-                // Carved centre dot — orientation cue for flat-face-up.
-                if face == .flat {
+                    // Bright inner crescent, scaled and blurred so it reads
+                    // as a smaller moon glowing inside the larger one.
+                    // Masked back to the outer crescent so the blur halo
+                    // doesn't spill past the silhouette.
+                    MoonBlockShape()
+                        .fill(Theme.mbRedLight)
+                        .scaleEffect(0.60)
+                        .blur(radius: 18)
+                        .mask(MoonBlockShape())
+
+                    // Narrow gloss highlight at the top middle of the dome.
+                    highlight
+                } else {
+                    // Flat face — uniform-ish vertical gradient + carved
+                    // centre dot. No inner-moon glow; the painted surface
+                    // wouldn't have this kind of dome shading.
+                    MoonBlockShape()
+                        .fill(
+                            LinearGradient(
+                                colors: [Theme.mbRed, Theme.mbRedDeep.opacity(0.95)],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
                     Circle()
                         .fill(Color.black.opacity(0.32))
                         .frame(width: 4.5, height: 4.5)
@@ -88,44 +106,6 @@ struct MoonBlockView: View {
         }
         .rotationEffect(rotation + tumble)
         .offset(translation)
-    }
-
-    /// Vivid cinnabar. The curved face uses a RadialGradient centred on
-    /// the visual middle of the crescent — the physical apex is highest
-    /// in the centre, so ALL edges (left/right tips AND top/bottom) curve
-    /// away from the viewer and read darker. The flat face stays
-    /// near-uniform.
-    private var bodyFill: AnyShapeStyle {
-        switch face {
-        case .flat:
-            return AnyShapeStyle(
-                LinearGradient(
-                    colors: [Theme.mbRed, Theme.mbRedDeep.opacity(0.95)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-            )
-        case .curved:
-            return AnyShapeStyle(
-                RadialGradient(
-                    gradient: Gradient(stops: [
-                        .init(color: Theme.mbRedLight,  location: 0.00),
-                        .init(color: Theme.mbRed,       location: 0.45),
-                        .init(color: Theme.mbRedDeep,   location: 0.85),
-                        .init(color: Theme.mbRedShadow, location: 1.00)
-                    ]),
-                    // Visual centre of the crescent sits slightly above the
-                    // rect midpoint because the inward arc on the bottom
-                    // pulls the silhouette upward.
-                    center: UnitPoint(x: 0.5, y: 0.40),
-                    startRadius: 2,
-                    // Tightened so the dark shadow tone reaches the upper
-                    // corners (where the dome arc meets the tips), not just
-                    // beyond them.
-                    endRadius: size.width * 0.40
-                )
-            )
-        }
     }
 
     /// Wider curved highlight (6pt) hugging the upper arc. AngularGradient
