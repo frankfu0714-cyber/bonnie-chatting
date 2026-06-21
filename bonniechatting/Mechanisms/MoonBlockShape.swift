@@ -46,10 +46,11 @@ struct MoonBlockView: View {
                 .fill(Theme.mbRed)
                 .frame(width: size.width, height: size.height)
 
-            // Thin curved highlight tracing the upper arc, inset from the
-            // outer edge. Positioned via GeometryReader so the inscribed
-            // circle's centre lines up with the block's semicircle centre.
-            highlight
+            // Gloss highlight only on the CURVED face — the flat painted
+            // face wouldn't catch light the same way the rounded back does.
+            if face == .curved {
+                highlight
+            }
 
             // Carved centre dot — orientation cue for flat-face-up.
             if face == .flat {
