@@ -90,10 +90,11 @@ struct MoonBlockView: View {
         .offset(translation)
     }
 
-    /// Vivid cinnabar. The curved face uses a horizontal gradient that
-    /// peaks at the middle and falls off at the tips — the crescent's
-    /// physical apex is in the middle, so the tips curve away from the
-    /// viewer and read darker. The flat face stays near-uniform.
+    /// Vivid cinnabar. The curved face uses a RadialGradient centred on
+    /// the visual middle of the crescent — the physical apex is highest
+    /// in the centre, so ALL edges (left/right tips AND top/bottom) curve
+    /// away from the viewer and read darker. The flat face stays
+    /// near-uniform.
     private var bodyFill: AnyShapeStyle {
         switch face {
         case .flat:
@@ -106,16 +107,18 @@ struct MoonBlockView: View {
             )
         case .curved:
             return AnyShapeStyle(
-                LinearGradient(
-                    stops: [
-                        .init(color: Theme.mbRedDeep,  location: 0.00),
-                        .init(color: Theme.mbRed,      location: 0.30),
-                        .init(color: Theme.mbRedLight, location: 0.50),
-                        .init(color: Theme.mbRed,      location: 0.70),
-                        .init(color: Theme.mbRedDeep,  location: 1.00)
-                    ],
-                    startPoint: .leading,
-                    endPoint: .trailing
+                RadialGradient(
+                    gradient: Gradient(colors: [
+                        Theme.mbRedLight,
+                        Theme.mbRed,
+                        Theme.mbRedDeep
+                    ]),
+                    // Visual centre of the crescent sits slightly above the
+                    // rect midpoint because the inward arc on the bottom
+                    // pulls the silhouette upward.
+                    center: UnitPoint(x: 0.5, y: 0.40),
+                    startRadius: 2,
+                    endRadius: size.width * 0.48
                 )
             )
         }
