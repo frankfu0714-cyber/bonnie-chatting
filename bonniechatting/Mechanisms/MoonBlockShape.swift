@@ -90,9 +90,10 @@ struct MoonBlockView: View {
         .offset(translation)
     }
 
-    /// Vivid cinnabar. For the curved face, a radial gradient suggests a
-    /// rounded dome lit from above. The flat face uses a near-uniform
-    /// cinnabar so it reads as a painted surface.
+    /// Vivid cinnabar. The curved face uses a horizontal gradient that
+    /// peaks at the middle and falls off at the tips — the crescent's
+    /// physical apex is in the middle, so the tips curve away from the
+    /// viewer and read darker. The flat face stays near-uniform.
     private var bodyFill: AnyShapeStyle {
         switch face {
         case .flat:
@@ -105,11 +106,16 @@ struct MoonBlockView: View {
             )
         case .curved:
             return AnyShapeStyle(
-                RadialGradient(
-                    gradient: Gradient(colors: [Theme.mbRedLight, Theme.mbRed, Theme.mbRedDeep]),
-                    center: UnitPoint(x: 0.5, y: 0.20),
-                    startRadius: 4,
-                    endRadius: size.width * 0.65
+                LinearGradient(
+                    stops: [
+                        .init(color: Theme.mbRedDeep,  location: 0.00),
+                        .init(color: Theme.mbRed,      location: 0.30),
+                        .init(color: Theme.mbRedLight, location: 0.50),
+                        .init(color: Theme.mbRed,      location: 0.70),
+                        .init(color: Theme.mbRedDeep,  location: 1.00)
+                    ],
+                    startPoint: .leading,
+                    endPoint: .trailing
                 )
             )
         }
