@@ -35,6 +35,8 @@ enum Theme {
     static let mbRed        = Color(red: 0.831, green: 0.231, blue: 0.169) // ~#D43A2C
     /// Shaded lower curve / outline accent.
     static let mbRedDeep    = Color(red: 0.604, green: 0.149, blue: 0.122) // ~#9A261F
+    /// Deepest shadow — used at the very edge of the curved-face radial.
+    static let mbRedShadow  = Color(red: 0.486, green: 0.129, blue: 0.133) // ~#7C2122
 
     // MARK: - Fonts
     /// Headline serif: tries `Songti TC` first (traditional look), falls back to system serif.
