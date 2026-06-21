@@ -16,11 +16,9 @@ struct DiceView: View {
     @State private var results: [Int] = []
     /// Per-die value shown — scrambles during tumble, locks at impact.
     @State private var displayValues: [Int] = []
-    /// Per-die 3-axis tumble rotations (random per die, animated independently).
-    @State private var tumble: [DieTumble] = []
     /// Per-die vertical offset for the drop + bounce.
     @State private var verticalOffset: [CGFloat] = []
-    /// Per-die post-settle wobble rotation in degrees (z-axis).
+    /// Per-die post-settle 2D rotation wobble in degrees.
     @State private var wobble: [Double] = []
     /// Per-die locked flag — once true, displayValues[i] is the final face.
     @State private var locked: [Bool] = []
@@ -154,7 +152,6 @@ struct DiceView: View {
                         ForEach(rows[rowIdx], id: \.self) { slot in
                             DieView(
                                 face: faceFor(slot),
-                                tumble: tumble.indices.contains(slot) ? tumble[slot] : .zero,
                                 verticalOffset: verticalOffset.indices.contains(slot) ? verticalOffset[slot] : 0,
                                 wobble: wobble.indices.contains(slot) ? wobble[slot] : 0
                             )
@@ -265,11 +262,10 @@ struct DiceView: View {
 
     private func ensureSlots() {
         let n = max(1, min(6, diceCount))
-        if displayValues.count != n { displayValues = Array(repeating: 1, count: n) }
-        if tumble.count != n        { tumble        = Array(repeating: .zero, count: n) }
+        if displayValues.count != n  { displayValues  = Array(repeating: 1, count: n) }
         if verticalOffset.count != n { verticalOffset = Array(repeating: 0, count: n) }
-        if wobble.count != n        { wobble        = Array(repeating: 0, count: n) }
-        if locked.count != n        { locked        = Array(repeating: true, count: n) }
+        if wobble.count != n         { wobble         = Array(repeating: 0, count: n) }
+        if locked.count != n         { locked         = Array(repeating: true, count: n) }
     }
 
     private func performRoll() {
@@ -288,44 +284,37 @@ struct DiceView: View {
         let myRoll = rollID
 
         // Reset visuals: dice lifted above the stage, ready to drop.
-        // Use no-animation to instantly position before the drop.
         var newOffsets = Array(repeating: CGFloat(0), count: n)
-        var newWobbles = Array(repeating: Double(0), count: n)
         var newLocked  = Array(repeating: false, count: n)
         for i in 0..<n {
             newOffsets[i] = -CGFloat.random(in: 110...150)
-            newWobbles[i] = 0
         }
         withTransaction(Transaction(animation: nil)) {
             verticalOffset = newOffsets
-            wobble = newWobbles
-            tumble = Array(repeating: .zero, count: n)
+            wobble = Array(repeating: 0, count: n)
             displayValues = (0..<n).map { _ in Int.random(in: 1...6) }
             locked = newLocked
         }
 
-        // Start scrambling the visible face on un-locked dice.
+        // Start scrambling the visible face on un-locked dice. The face
+        // flicker is what reads as "tumbling" — no 3D rotation involved,
+        // so the dice stay perfectly square the whole time.
         startScramble(myRoll: myRoll)
 
-        // Drive each die independently — stagger spawn, random per-die
-        // rotation, drop with bounce, then small settle wobble.
+        // Per-die stagger + drop + bounce + settle wobble. All motion is 2D
+        // (vertical offset + z-axis 2D rotation), no perspective effects.
         for i in 0..<n {
             let spawnDelay = Double(i) * 0.07 + Double.random(in: 0...0.04)
-            // Slight per-die speed variance for organic feel.
             let speed = Double.random(in: 0.88...1.18)
             let drop   = 0.32 * speed
             let bUp    = 0.10 * speed
             let bDown  = 0.13 * speed
-
-            // Independent 3-axis tumble target per die.
-            let dieTumble = DieTumble.random()
 
             // Phase 1: drop — easeIn for gravity-like acceleration.
             DispatchQueue.main.asyncAfter(deadline: .now() + spawnDelay) {
                 guard rollID == myRoll else { return }
                 withAnimation(.easeIn(duration: drop)) {
                     verticalOffset[i] = 0
-                    tumble[i] = dieTumble
                 }
             }
 
@@ -346,16 +335,14 @@ struct DiceView: View {
                 }
             }
 
-            // Phase 4: lock in the final face + return tumble to .zero so the
-            // die sits flat. A tiny z-axis wobble adds settle weight.
+            // Phase 4: lock in the final face + tiny 2D wobble for weight.
             let lockAt = spawnDelay + drop + bUp + bDown
             DispatchQueue.main.asyncAfter(deadline: .now() + lockAt) {
                 guard rollID == myRoll else { return }
                 displayValues[i] = target[i]
                 locked[i] = true
-                let wobbleAmt = Double.random(in: 2.5...4.0) * (Bool.random() ? 1 : -1)
+                let wobbleAmt = Double.random(in: 2.0...3.5) * (Bool.random() ? 1 : -1)
                 withAnimation(.spring(response: 0.32, dampingFraction: 0.55)) {
-                    tumble[i] = .zero
                     wobble[i] = wobbleAmt
                 }
             }
@@ -408,10 +395,12 @@ struct DiceView: View {
 
 // MARK: - Die rendering
 
-/// One die: rounded white square with 3D tumble + drop offset + settle wobble.
+/// One die: rounded white square with rapidly-cycling pips during the toss
+/// plus a 2D vertical drop and a tiny 2D settle wobble. NO `rotation3DEffect`
+/// — the cube stays a perfectly undistorted square the entire time. The
+/// "tumbling" feel comes from face flicker (see `startScramble`).
 private struct DieView: View {
     let face: Int
-    let tumble: DieTumble
     let verticalOffset: CGFloat
     let wobble: Double
 
@@ -438,9 +427,7 @@ private struct DieView: View {
         }
         .frame(width: dieSize, height: dieSize)
         .shadow(color: Theme.woodShadow.opacity(0.35), radius: 4, x: 1, y: 3)
-        .rotation3DEffect(.degrees(tumble.x), axis: (1, 0, 0))
-        .rotation3DEffect(.degrees(tumble.y), axis: (0, 1, 0))
-        .rotation3DEffect(.degrees(tumble.z + wobble), axis: (0, 0, 1))
+        .rotationEffect(.degrees(wobble))
         .offset(y: verticalOffset)
     }
 }
@@ -492,23 +479,3 @@ private struct PipsView: View {
     }
 }
 
-/// Small 3-axis wobble for a single die during the toss. Rotations are kept
-/// modest (≤±35°) to avoid `rotation3DEffect` perspective collapse — the
-/// "tumbling" feel comes from rapidly cycling the visible face value while
-/// the wobble plays. After settle, dice return to .zero so each face is
-/// shown squarely.
-private struct DieTumble: Equatable {
-    var x: Double
-    var y: Double
-    var z: Double
-
-    static let zero = DieTumble(x: 0, y: 0, z: 0)
-
-    static func random() -> DieTumble {
-        DieTumble(
-            x: Double.random(in: 18...35) * (Bool.random() ? 1 : -1),
-            y: Double.random(in: 18...35) * (Bool.random() ? 1 : -1),
-            z: Double.random(in: -15...15)
-        )
-    }
-}
