@@ -5,9 +5,10 @@ struct FortuneSticksView: View {
     // MARK: - Per-question state (persists)
 
     @AppStorage("sticks.question") private var question: String = ""
-    /// Newline-separated options. Default seeded on first appear.
+    /// Newline-separated user customisations. Empty = use locale-aware defaults.
     @AppStorage("sticks.options")  private var optionsRaw: String = ""
 
+    @Environment(\.locale) private var locale
     @FocusState private var questionFocused: Bool
     @State private var showingSettings = false
 
@@ -45,11 +46,6 @@ struct FortuneSticksView: View {
             .padding(.top, 8)
         }
         .scrollDismissesKeyboard(.immediately)
-        .onAppear {
-            if optionsRaw.isEmpty {
-                optionsRaw = NSLocalizedString("sticks.default.options", comment: "")
-            }
-        }
         .sheet(isPresented: $showingSettings) {
             FortuneStickSettingsSheet(optionsRaw: $optionsRaw)
                 .presentationDetents([.medium, .large])
@@ -58,8 +54,17 @@ struct FortuneSticksView: View {
 
     // MARK: - Computed
 
+    /// User customisations if present; otherwise the locale-aware defaults.
+    /// Computed live so toggling the in-app language picker updates the
+    /// displayed options without needing to re-seed `@AppStorage`.
+    private var effectiveOptionsRaw: String {
+        optionsRaw.isEmpty
+            ? String.appLocalized("sticks.default.options", locale: locale)
+            : optionsRaw
+    }
+
     private var options: [String] {
-        optionsRaw
+        effectiveOptionsRaw
             .split(whereSeparator: \.isNewline)
             .map { $0.trimmingCharacters(in: .whitespaces) }
             .filter { !$0.isEmpty }
@@ -187,9 +192,9 @@ struct FortuneSticksView: View {
     private func revealCard(index: Int) -> some View {
         let label = options.indices.contains(index) ? options[index] : "—"
         return VStack(spacing: 12) {
-            Text(verbatim: NSLocalizedString("sticks.reveal.prefix", comment: "")
+            Text(verbatim: String.appLocalized("sticks.reveal.prefix", locale: locale)
                  + ChineseNumeral.of(index + 1)
-                 + NSLocalizedString("sticks.reveal.suffix", comment: ""))
+                 + String.appLocalized("sticks.reveal.suffix", locale: locale))
                 .font(Theme.headlineSerif(20, weight: .semibold))
                 .foregroundStyle(Theme.cinnabar)
 
@@ -361,13 +366,17 @@ private struct StickShape: View {
 
 private struct FortuneStickSettingsSheet: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.locale) private var locale
     @Binding var optionsRaw: String
+    /// Local draft so we can pre-populate with locale defaults when the
+    /// user hasn't customised yet, without persisting that copy.
+    @State private var draft: String = ""
 
     var body: some View {
         NavigationStack {
             Form {
                 Section {
-                    TextEditor(text: $optionsRaw)
+                    TextEditor(text: $draft)
                         .font(Theme.body(16))
                         .frame(minHeight: 200)
                 } header: {
@@ -380,9 +389,22 @@ private struct FortuneStickSettingsSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("action.done") { dismiss() }
-                        .fontWeight(.semibold)
+                    Button("action.done") {
+                        let trimmed = draft.trimmingCharacters(in: .whitespacesAndNewlines)
+                        let localeDefault = String.appLocalized("sticks.default.options", locale: locale)
+                        // Empty draft OR draft identical to locale defaults
+                        // → store empty so future locale toggles still
+                        //   pick up the right language.
+                        optionsRaw = (trimmed.isEmpty || draft == localeDefault) ? "" : draft
+                        dismiss()
+                    }
+                    .fontWeight(.semibold)
                 }
+            }
+            .onAppear {
+                draft = optionsRaw.isEmpty
+                    ? String.appLocalized("sticks.default.options", locale: locale)
+                    : optionsRaw
             }
         }
     }

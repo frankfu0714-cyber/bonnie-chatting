@@ -9,6 +9,7 @@ struct CoinFlipView: View {
     @AppStorage("coin.labelZi")  private var labelZi: String = ""    // 字
     @AppStorage("coin.labelMu")  private var labelMu: String = ""    // 幕
 
+    @Environment(\.locale) private var locale
     @FocusState private var questionFocused: Bool
     @State private var showingSettings = false
 
@@ -50,10 +51,10 @@ struct CoinFlipView: View {
     // MARK: - Computed
 
     private var ziLabel: String {
-        labelZi.isEmpty ? NSLocalizedString("coin.default.zi", comment: "") : labelZi
+        labelZi.isEmpty ? String.appLocalized("coin.default.zi", locale: locale) : labelZi
     }
     private var muLabel: String {
-        labelMu.isEmpty ? NSLocalizedString("coin.default.mu", comment: "") : labelMu
+        labelMu.isEmpty ? String.appLocalized("coin.default.mu", locale: locale) : labelMu
     }
 
     // MARK: - Sub-views
