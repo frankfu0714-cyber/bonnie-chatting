@@ -108,17 +108,21 @@ struct MoonBlockView: View {
         case .curved:
             return AnyShapeStyle(
                 RadialGradient(
-                    gradient: Gradient(colors: [
-                        Theme.mbRedLight,
-                        Theme.mbRed,
-                        Theme.mbRedDeep
+                    gradient: Gradient(stops: [
+                        .init(color: Theme.mbRedLight,  location: 0.00),
+                        .init(color: Theme.mbRed,       location: 0.45),
+                        .init(color: Theme.mbRedDeep,   location: 0.85),
+                        .init(color: Theme.mbRedShadow, location: 1.00)
                     ]),
                     // Visual centre of the crescent sits slightly above the
                     // rect midpoint because the inward arc on the bottom
                     // pulls the silhouette upward.
                     center: UnitPoint(x: 0.5, y: 0.40),
                     startRadius: 2,
-                    endRadius: size.width * 0.48
+                    // Tightened so the dark shadow tone reaches the upper
+                    // corners (where the dome arc meets the tips), not just
+                    // beyond them.
+                    endRadius: size.width * 0.40
                 )
             )
         }
@@ -132,16 +136,18 @@ struct MoonBlockView: View {
             let inset: CGFloat = 9
             let ringD = max(2 * (r - inset), 0)
 
-            // ~80° wide arc centred on 12 o'clock.
-            // 10 o'clock ≈ t = 0.640, 12 o'clock = 0.750, 2 o'clock ≈ 0.860.
+            // Narrow ~36° arc centred on 12 o'clock — sits only over the
+            // top middle of the dome so it doesn't bleed onto the upper
+            // corners (which need to read dark, not lit).
+            // 11 o'clock ≈ t = 0.700, 12 o'clock = 0.750, 1 o'clock ≈ 0.800.
             Circle()
-                .trim(from: 0.640, to: 0.860)
+                .trim(from: 0.700, to: 0.800)
                 .stroke(
                     AngularGradient(
                         gradient: Gradient(stops: [
-                            .init(color: Color.white.opacity(0),    location: 0.640),
+                            .init(color: Color.white.opacity(0),    location: 0.700),
                             .init(color: Color.white.opacity(0.35), location: 0.750),
-                            .init(color: Color.white.opacity(0),    location: 0.860)
+                            .init(color: Color.white.opacity(0),    location: 0.800)
                         ]),
                         center: .center,
                         startAngle: .degrees(0),
