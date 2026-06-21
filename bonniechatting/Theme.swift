@@ -28,13 +28,13 @@ enum Theme {
     static let woodDark     = Color(red: 0.34, green: 0.19, blue: 0.10)
     static let woodShadow   = Color(red: 0.18, green: 0.10, blue: 0.05)
 
-    // MARK: - Moon block (筊杯) — flat-graphic cinnabar, NOT photorealistic wood.
-    /// Brighter accent (currently unused — kept for future use).
-    static let mbRedLight   = Color(red: 0.694, green: 0.184, blue: 0.176) // ~#B12F2D
-    /// Main cinnabar fill — deeper temple-red.
-    static let mbRed        = Color(red: 0.612, green: 0.157, blue: 0.149) // ~#9C2826
-    /// Darker accent (currently unused).
-    static let mbRedDeep    = Color(red: 0.475, green: 0.114, blue: 0.110) // ~#791D1C
+    // MARK: - Moon block (筊杯) — vivid temple cinnabar.
+    /// Bright dome top — used for the curved-face gradient highlight.
+    static let mbRedLight   = Color(red: 0.875, green: 0.290, blue: 0.220) // ~#DF4A38
+    /// Main cinnabar fill — vivid vermillion (matches temple poster reference).
+    static let mbRed        = Color(red: 0.831, green: 0.231, blue: 0.169) // ~#D43A2C
+    /// Shaded lower curve / outline accent.
+    static let mbRedDeep    = Color(red: 0.604, green: 0.149, blue: 0.122) // ~#9A261F
 
     // MARK: - Fonts
     /// Headline serif: tries `Songti TC` first (traditional look), falls back to system serif.

@@ -1,94 +1,144 @@
 import SwiftUI
 
-/// True half-moon silhouette: flat edge perfectly straight at the bottom,
-/// dome is a perfect semicircle. Built from two quarter-arc cubic Beziers
-/// with the standard k≈0.5523 circle approximation (max error <0.03%).
+/// Crescent silhouette — outer arc strongly convex, inner ("flat") edge
+/// concave with a pronounced inward bow. Matches the temple-poster reference:
+/// a banana/quarter-moon profile with pointed tips at the left and right.
 struct MoonBlockShape: Shape {
+    /// Bow depth of the inner edge as a fraction of `rect.height`.
+    /// 0 → straight flat edge (half-moon). 0.30 → pronounced crescent.
+    var flatArcDepth: CGFloat = 0.30
+
     func path(in rect: CGRect) -> Path {
         var p = Path()
         let r = min(rect.width / 2, rect.height)
         let cx = rect.midX
         let baseY = rect.maxY
-        let k: CGFloat = 0.5522847498
+        let k: CGFloat = 0.5522847498  // cubic Bezier circle approximation
 
+        // Start at the left tip.
         p.move(to: CGPoint(x: cx - r, y: baseY))
-        // Left-quarter arc: base → top
+
+        // Concave inner edge (the "flat" side) — arcs upward at centre.
+        let bow = rect.height * flatArcDepth
+        p.addQuadCurve(
+            to: CGPoint(x: cx + r, y: baseY),
+            control: CGPoint(x: cx, y: baseY - bow)
+        )
+
+        // Right-quarter outer arc: right tip → top.
         p.addCurve(
             to: CGPoint(x: cx, y: baseY - r),
-            control1: CGPoint(x: cx - r,     y: baseY - k * r),
-            control2: CGPoint(x: cx - k * r, y: baseY - r)
+            control1: CGPoint(x: cx + r,     y: baseY - k * r),
+            control2: CGPoint(x: cx + k * r, y: baseY - r)
         )
-        // Right-quarter arc: top → base
+
+        // Left-quarter outer arc: top → left tip.
         p.addCurve(
-            to: CGPoint(x: cx + r, y: baseY),
-            control1: CGPoint(x: cx + k * r, y: baseY - r),
-            control2: CGPoint(x: cx + r,     y: baseY - k * r)
+            to: CGPoint(x: cx - r, y: baseY),
+            control1: CGPoint(x: cx - k * r, y: baseY - r),
+            control2: CGPoint(x: cx - r,     y: baseY - k * r)
         )
+
         p.closeSubpath()
         return p
     }
 }
 
-/// A single moon block. Flat-graphic style: solid cinnabar fill, one thin
-/// curved highlight on the upper arc, optional carved centre dot on the
-/// flat-face side. No outline, no shadow, no perspective tilt.
+/// A single moon block. Vivid cinnabar fill with a soft 3D-leaning dome
+/// gradient on the curved-face side, plus a wider curved gloss highlight
+/// hugging the outer arc. Flat-face side stays flat (no highlight, no
+/// dome gradient) — just the carved orientation dot. Sits on a soft cast
+/// shadow at rest.
 struct MoonBlockView: View {
     let face: BlockFace
     var rotation: Angle = .zero
     var tumble: Angle = .zero
     var translation: CGSize = .zero
-    var size: CGSize = CGSize(width: 150, height: 75)
+    var size: CGSize = CGSize(width: 150, height: 78)
 
     var body: some View {
         ZStack {
-            // Solid cinnabar body — true semicircle.
-            MoonBlockShape()
-                .fill(Theme.mbRed)
-                .frame(width: size.width, height: size.height)
+            // Soft cast shadow on the parchment beneath the block.
+            Ellipse()
+                .fill(Color.black.opacity(0.20))
+                .frame(width: size.width * 0.92, height: 10)
+                .offset(y: size.height * 0.62)
+                .blur(radius: 7)
 
-            // Gloss highlight only on the CURVED face — the flat painted
-            // face wouldn't catch light the same way the rounded back does.
-            if face == .curved {
-                highlight
-            }
+            ZStack {
+                // Body fill — flat cinnabar on the painted side, dome
+                // radial gradient on the curved side suggesting 3D form.
+                MoonBlockShape()
+                    .fill(bodyFill)
 
-            // Carved centre dot — orientation cue for flat-face-up.
-            if face == .flat {
-                Circle()
-                    .fill(Color.black.opacity(0.30))
-                    .frame(width: 4, height: 4)
-                    .offset(y: -size.height * 0.05)
+                // Gloss highlight only on the curved face.
+                if face == .curved {
+                    highlight
+                }
+
+                // Carved centre dot — orientation cue for flat-face-up.
+                if face == .flat {
+                    Circle()
+                        .fill(Color.black.opacity(0.32))
+                        .frame(width: 4.5, height: 4.5)
+                        .offset(y: -size.height * 0.05)
+                }
             }
+            .frame(width: size.width, height: size.height)
         }
-        .frame(width: size.width, height: size.height)
         .rotationEffect(rotation + tumble)
         .offset(translation)
     }
 
+    /// Vivid cinnabar. For the curved face, a radial gradient suggests a
+    /// rounded dome lit from above. The flat face uses a near-uniform
+    /// cinnabar so it reads as a painted surface.
+    private var bodyFill: AnyShapeStyle {
+        switch face {
+        case .flat:
+            return AnyShapeStyle(
+                LinearGradient(
+                    colors: [Theme.mbRed, Theme.mbRedDeep.opacity(0.95)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
+        case .curved:
+            return AnyShapeStyle(
+                RadialGradient(
+                    gradient: Gradient(colors: [Theme.mbRedLight, Theme.mbRed, Theme.mbRedDeep]),
+                    center: UnitPoint(x: 0.5, y: 0.20),
+                    startRadius: 4,
+                    endRadius: size.width * 0.65
+                )
+            )
+        }
+    }
+
+    /// Wider curved highlight (6pt) hugging the upper arc. AngularGradient
+    /// fades at both ends so the highlight has soft edges, not hard endpoints.
     private var highlight: some View {
         GeometryReader { geo in
             let r = min(geo.size.width / 2, geo.size.height)
-            let inset: CGFloat = 7
+            let inset: CGFloat = 9
             let ringD = max(2 * (r - inset), 0)
 
-            // Top arc segment, ~70° wide centred on 12 o'clock — kept tight
-            // so it reads as a single highlight, not a wrap-around stroke.
-            // Circle's path: t=0 at 3 o'clock, increasing clockwise.
-            // 10:30 ≈ t = 0.660, 12:00 = 0.750, 1:30 ≈ 0.840.
+            // ~80° wide arc centred on 12 o'clock.
+            // 10 o'clock ≈ t = 0.640, 12 o'clock = 0.750, 2 o'clock ≈ 0.860.
             Circle()
-                .trim(from: 0.660, to: 0.840)
+                .trim(from: 0.640, to: 0.860)
                 .stroke(
                     AngularGradient(
                         gradient: Gradient(stops: [
-                            .init(color: Color.white.opacity(0),    location: 0.660),
-                            .init(color: Color.white.opacity(0.70), location: 0.750),
-                            .init(color: Color.white.opacity(0),    location: 0.840)
+                            .init(color: Color.white.opacity(0),    location: 0.640),
+                            .init(color: Color.white.opacity(0.35), location: 0.750),
+                            .init(color: Color.white.opacity(0),    location: 0.860)
                         ]),
                         center: .center,
                         startAngle: .degrees(0),
                         endAngle: .degrees(360)
                     ),
-                    style: StrokeStyle(lineWidth: 3, lineCap: .round)
+                    style: StrokeStyle(lineWidth: 6, lineCap: .round)
                 )
                 .frame(width: ringD, height: ringD)
                 .position(x: geo.size.width / 2, y: geo.size.height)
