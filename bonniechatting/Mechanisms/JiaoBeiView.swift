@@ -170,8 +170,8 @@ struct JiaoBeiView: View {
                     .frame(width: 75, height: 150)
             }
             Rectangle()
-                .fill(Theme.mbRedDeep.opacity(0.50))
-                .frame(width: 0.75, height: 144)
+                .fill(Color.black.opacity(0.25))
+                .frame(width: 1, height: 148)
         }
     }
 
