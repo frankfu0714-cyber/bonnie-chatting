@@ -193,7 +193,7 @@ struct FortuneSticksView: View {
         let label = options.indices.contains(index) ? options[index] : "—"
         return VStack(spacing: 12) {
             Text(verbatim: String.appLocalized("sticks.reveal.prefix", locale: locale)
-                 + ChineseNumeral.of(index + 1)
+                 + ChineseNumeral.localized(index + 1, locale: locale)
                  + String.appLocalized("sticks.reveal.suffix", locale: locale))
                 .font(Theme.headlineSerif(20, weight: .semibold))
                 .foregroundStyle(Theme.cinnabar)

@@ -96,10 +96,10 @@ struct CoinFlipView: View {
                         .font(Theme.body(14, weight: .semibold))
                         .foregroundStyle(Theme.ink)
                     HStack(spacing: 6) {
-                        Text("字").foregroundStyle(Theme.cinnabarDeep).font(Theme.headlineSerif(13, weight: .semibold))
+                        Text("coin.face.zi").foregroundStyle(Theme.cinnabarDeep).font(Theme.headlineSerif(13, weight: .semibold))
                         Text(verbatim: ziLabel).font(Theme.body(12)).foregroundStyle(Theme.inkSoft)
-                        Text("·").foregroundStyle(Theme.inkQuiet)
-                        Text("幕").foregroundStyle(Theme.cinnabarDeep).font(Theme.headlineSerif(13, weight: .semibold))
+                        Text(verbatim: "·").foregroundStyle(Theme.inkQuiet)
+                        Text("coin.face.mu").foregroundStyle(Theme.cinnabarDeep).font(Theme.headlineSerif(13, weight: .semibold))
                         Text(verbatim: muLabel).font(Theme.body(12)).foregroundStyle(Theme.inkSoft)
                     }
                     .lineLimit(1)
@@ -237,9 +237,9 @@ struct CoinFlipView: View {
 
     private var revealCard: some View {
         let landingLabel = (face == .zi) ? ziLabel : muLabel
-        let landingFace = (face == .zi) ? "字" : "幕"
+        let landingFaceKey: LocalizedStringKey = (face == .zi) ? "coin.face.zi" : "coin.face.mu"
         return VStack(spacing: 8) {
-            Text(verbatim: landingFace)
+            Text(landingFaceKey)
                 .font(Theme.headlineSerif(28, weight: .bold))
                 .foregroundStyle(Theme.cinnabarDeep)
                 .padding(.horizontal, 18)
@@ -360,7 +360,7 @@ private struct CoinSettingsSheet: View {
                     TextField("coin.default.zi", text: $labelZi)
                 } header: {
                     HStack(spacing: 6) {
-                        Text("字").font(Theme.headlineSerif(15, weight: .bold))
+                        Text("coin.face.zi").font(Theme.headlineSerif(15, weight: .bold))
                         Text("coin.settings.zi_header")
                     }
                 } footer: {
@@ -370,7 +370,7 @@ private struct CoinSettingsSheet: View {
                     TextField("coin.default.mu", text: $labelMu)
                 } header: {
                     HStack(spacing: 6) {
-                        Text("幕").font(Theme.headlineSerif(15, weight: .bold))
+                        Text("coin.face.mu").font(Theme.headlineSerif(15, weight: .bold))
                         Text("coin.settings.mu_header")
                     }
                 } footer: {
