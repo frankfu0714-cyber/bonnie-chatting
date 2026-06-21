@@ -67,39 +67,9 @@ struct MoonBlockView: View {
 
             ZStack {
                 if face == .curved {
-                    // Dark outer crescent — the base "shadowed" cinnabar
-                    // that surrounds the inner moon.
-                    MoonBlockShape()
-                        .fill(Theme.mbRedDeep)
-
-                    // Bright inner crescent, scaled and blurred so it reads
-                    // as a smaller moon glowing inside the larger one.
-                    // Masked back to the outer crescent so the blur halo
-                    // doesn't spill past the silhouette.
-                    MoonBlockShape()
-                        .fill(Theme.mbRedLight)
-                        .scaleEffect(0.60)
-                        .blur(radius: 18)
-                        .mask(MoonBlockShape())
-
-                    // Narrow gloss highlight at the top middle of the dome.
-                    highlight
+                    curvedFaceBody
                 } else {
-                    // Flat face — uniform-ish vertical gradient + carved
-                    // centre dot. No inner-moon glow; the painted surface
-                    // wouldn't have this kind of dome shading.
-                    MoonBlockShape()
-                        .fill(
-                            LinearGradient(
-                                colors: [Theme.mbRed, Theme.mbRedDeep.opacity(0.95)],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                        )
-                    Circle()
-                        .fill(Color.black.opacity(0.32))
-                        .frame(width: 4.5, height: 4.5)
-                        .offset(y: -size.height * 0.05)
+                    flatFaceBody
                 }
             }
             .frame(width: size.width, height: size.height)
@@ -108,35 +78,94 @@ struct MoonBlockView: View {
         .offset(translation)
     }
 
-    /// Wider curved highlight (6pt) hugging the upper arc. AngularGradient
-    /// fades at both ends so the highlight has soft edges, not hard endpoints.
-    private var highlight: some View {
+    // MARK: - Curved face (glossy, dimensional)
+
+    @ViewBuilder private var curvedFaceBody: some View {
+        // Dark outer crescent — base shadow tone surrounding the inner moon.
+        MoonBlockShape()
+            .fill(Theme.mbRedDeep)
+
+        // Bright inner crescent, scaled and blurred so it reads as a
+        // smaller moon glowing inside the larger one. Tighter blur (12pt)
+        // than before so the bright region stays distinct, and the vivid
+        // mbRedGlow pop colour makes it pop.
+        MoonBlockShape()
+            .fill(Theme.mbRedGlow)
+            .scaleEffect(0.60)
+            .blur(radius: 12)
+            .mask(MoonBlockShape())
+
+        // Bold gloss highlight at the top middle of the dome.
+        glossHighlight
+
+        // Tiny secondary specular catching off-axis light on the upper-right.
+        Circle()
+            .fill(Color.white.opacity(0.45))
+            .frame(width: 4, height: 4)
+            .blur(radius: 1)
+            .offset(x: size.width * 0.18, y: -size.height * 0.28)
+    }
+
+    /// Bold (~9pt) curved highlight hugging the upper arc.
+    private var glossHighlight: some View {
         GeometryReader { geo in
             let r = min(geo.size.width / 2, geo.size.height)
             let inset: CGFloat = 9
             let ringD = max(2 * (r - inset), 0)
 
-            // Narrow ~36° arc centred on 12 o'clock — sits only over the
-            // top middle of the dome so it doesn't bleed onto the upper
-            // corners (which need to read dark, not lit).
-            // 11 o'clock ≈ t = 0.700, 12 o'clock = 0.750, 1 o'clock ≈ 0.800.
             Circle()
                 .trim(from: 0.700, to: 0.800)
                 .stroke(
                     AngularGradient(
                         gradient: Gradient(stops: [
                             .init(color: Color.white.opacity(0),    location: 0.700),
-                            .init(color: Color.white.opacity(0.35), location: 0.750),
+                            .init(color: Color.white.opacity(0.55), location: 0.750),
                             .init(color: Color.white.opacity(0),    location: 0.800)
                         ]),
                         center: .center,
                         startAngle: .degrees(0),
                         endAngle: .degrees(360)
                     ),
-                    style: StrokeStyle(lineWidth: 6, lineCap: .round)
+                    style: StrokeStyle(lineWidth: 9, lineCap: .round)
                 )
                 .frame(width: ringD, height: ringD)
                 .position(x: geo.size.width / 2, y: geo.size.height)
         }
+    }
+
+    // MARK: - Flat face (matte, recessed, big carved dot)
+
+    @ViewBuilder private var flatFaceBody: some View {
+        // Solid matte cinnabar — deliberately less vivid than the curved
+        // face so the two states read clearly different.
+        MoonBlockShape()
+            .fill(Theme.mbRedMatte)
+
+        // Soft inset shadow around the perimeter — suggests the flat
+        // surface sits down inside the block rather than bulging up.
+        MoonBlockShape()
+            .stroke(Color.black.opacity(0.30), lineWidth: 3)
+            .blur(radius: 1.5)
+            .mask(MoonBlockShape())
+
+        // Carved centre pit — bigger and darker than before, with a top
+        // shadow rim + bottom highlight rim so it reads as recessed
+        // (light from above hits the far inside edge of the pit).
+        ZStack {
+            Circle()
+                .fill(Theme.mbDotDark)
+                .frame(width: 11, height: 11)
+            // Top of pit — overhead light blocked.
+            Circle()
+                .trim(from: 0.55, to: 0.95)
+                .stroke(Color.black.opacity(0.45), lineWidth: 1.2)
+                .frame(width: 10, height: 10)
+            // Bottom inside the pit — far surface catches light.
+            Circle()
+                .trim(from: 0.05, to: 0.45)
+                .stroke(Color.white.opacity(0.18), lineWidth: 1)
+                .frame(width: 10, height: 10)
+        }
+        .offset(y: -size.height * 0.05)
     }
 }
