@@ -34,8 +34,8 @@ struct JiaoBeiView: View {
     @State private var rightTumble: Angle = .zero
     @State private var leftOffset: CGSize = .zero
     @State private var rightOffset: CGSize = .zero
-    @State private var leftFace: BlockFace = .flat
-    @State private var rightFace: BlockFace = .flat
+    @State private var leftFace: BlockFace = .curved
+    @State private var rightFace: BlockFace = .curved
     @State private var revealVisible: Bool = false
 
     // MARK: - Body
@@ -142,58 +142,27 @@ struct JiaoBeiView: View {
                 )
                 .frame(height: 240)
 
-            if phase == .idle {
-                idleComposition
-            } else {
-                tossedComposition
+            // Blocks always render in the standard side-by-side layout —
+            // crescent-shaped blocks don't compose into a circle the way
+            // semicircles do, so the at-rest state is just two blocks sitting
+            // naturally on the parchment with a little separation.
+            HStack(spacing: 24) {
+                MoonBlockView(
+                    face: leftFace,
+                    rotation: leftRotation,
+                    tumble: leftTumble,
+                    translation: leftOffset
+                )
+                MoonBlockView(
+                    face: rightFace,
+                    rotation: rightRotation,
+                    tumble: rightTumble,
+                    translation: rightOffset
+                )
             }
         }
         .frame(height: 220)
         .padding(.vertical, 8)
-    }
-
-    /// Before any toss: the two blocks rest touching at their flat edges,
-    /// forming a complete circle with a thin dark hairline at the seam.
-    /// At rest the blocks naturally sit with their curved backs facing up,
-    /// so this composition uses `.curved` — gloss highlight on, no carved
-    /// dot. The tap-to-toss animation will split them apart.
-    private var idleComposition: some View {
-        ZStack {
-            HStack(spacing: 0) {
-                // Left block: rotated CCW so the flat edge faces the seam
-                // (right side of the left block); dome wraps around outside.
-                MoonBlockView(face: .curved)
-                    .rotationEffect(.degrees(-90))
-                    .frame(width: 75, height: 150)
-                // Right block: rotated CW so the flat edge faces the seam
-                // (left side of the right block); dome wraps around outside.
-                MoonBlockView(face: .curved)
-                    .rotationEffect(.degrees(90))
-                    .frame(width: 75, height: 150)
-            }
-            Rectangle()
-                .fill(Color.black.opacity(0.25))
-                .frame(width: 1, height: 148)
-        }
-    }
-
-    /// During and after the toss: independent blocks with their own
-    /// rotations and offsets driven by `performToss`.
-    private var tossedComposition: some View {
-        HStack(spacing: 24) {
-            MoonBlockView(
-                face: leftFace,
-                rotation: leftRotation,
-                tumble: leftTumble,
-                translation: leftOffset
-            )
-            MoonBlockView(
-                face: rightFace,
-                rotation: rightRotation,
-                tumble: rightTumble,
-                translation: rightOffset
-            )
-        }
     }
 
     private func revealCard(outcome: JiaoBeiOutcome) -> some View {
