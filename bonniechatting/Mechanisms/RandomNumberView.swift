@@ -9,6 +9,7 @@ struct RandomNumberView: View {
     @AppStorage("random.min")      private var minValue: Int = 1
     @AppStorage("random.max")      private var maxValue: Int = 100
 
+    @Environment(\.locale) private var locale
     @FocusState private var focusedField: Field?
     private enum Field: Hashable { case question, min, max }
 
@@ -180,7 +181,7 @@ struct RandomNumberView: View {
             Text(verbatim: String(final))
                 .font(Theme.headlineSerif(38, weight: .bold))
                 .foregroundStyle(Theme.cinnabarDeep)
-            Text(String(format: NSLocalizedString("random.range.subtitle", comment: ""),
+            Text(String(format: String.appLocalized("random.range.subtitle", locale: locale),
                         minValue, maxValue))
                 .font(Theme.body(13))
                 .foregroundStyle(Theme.inkSoft)

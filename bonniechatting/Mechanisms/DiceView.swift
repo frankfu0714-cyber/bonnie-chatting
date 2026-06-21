@@ -8,6 +8,7 @@ struct DiceView: View {
     @AppStorage("dice.question")  private var question: String = ""
     @AppStorage("dice.count")     private var diceCount: Int = 2
 
+    @Environment(\.locale) private var locale
     @FocusState private var questionFocused: Bool
 
     // MARK: - Roll state
@@ -210,7 +211,7 @@ struct DiceView: View {
             }
 
             if results.count > 1 {
-                Text(String(format: NSLocalizedString("dice.reveal.sum", comment: ""), results.reduce(0, +)))
+                Text(String(format: String.appLocalized("dice.reveal.sum", locale: locale), results.reduce(0, +)))
                     .font(Theme.headlineSerif(20, weight: .semibold))
                     .foregroundStyle(Theme.ink)
             }

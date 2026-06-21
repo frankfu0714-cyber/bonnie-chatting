@@ -8,6 +8,8 @@ struct FlowerPetalView: View {
     @AppStorage("petals.labelYes")   private var labelYes: String = ""
     @AppStorage("petals.labelNo")    private var labelNo: String = ""
 
+    @Environment(\.locale) private var locale
+
     /// Petal count is randomized per round (not persisted). Anything between
     /// 6 and 10 — combined with first-pluck-label randomization, this makes
     /// the final-petal answer genuinely unpredictable.
@@ -288,8 +290,8 @@ struct FlowerPetalView: View {
 
     // MARK: - Round logic
 
-    private var defaultYes: String { NSLocalizedString("petals.default.yes", comment: "") }
-    private var defaultNo:  String { NSLocalizedString("petals.default.no",  comment: "") }
+    private var defaultYes: String { String.appLocalized("petals.default.yes", locale: locale) }
+    private var defaultNo:  String { String.appLocalized("petals.default.no",  locale: locale) }
 
     private func labelOrDefault(_ s: String, default d: String) -> String {
         s.isEmpty ? d : s
