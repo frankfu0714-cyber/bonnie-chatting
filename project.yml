@@ -20,6 +20,9 @@ targets:
     deploymentTarget: "17.0"
     sources:
       - path: bonniechatting
+        excludes:
+          # Preserved-but-unshipped mechanics — see bonniechatting/Legacy/README.md.
+          - "Legacy/**"
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.frankfu.bonniechatting
