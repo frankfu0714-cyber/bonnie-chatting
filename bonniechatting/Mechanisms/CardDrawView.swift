@@ -1,12 +1,13 @@
 import SwiftUI
+import AudioToolbox
 
-struct FortuneSticksView: View {
+struct CardDrawView: View {
 
     // MARK: - Per-question state (persists)
 
-    @AppStorage("sticks.question") private var question: String = ""
+    @AppStorage("carddraw.question") private var question: String = ""
     /// Newline-separated options. Default seeded on first appear.
-    @AppStorage("sticks.options")  private var optionsRaw: String = ""
+    @AppStorage("carddraw.options")  private var optionsRaw: String = ""
 
     @FocusState private var questionFocused: Bool
     @State private var showingSettings = false
@@ -15,15 +16,15 @@ struct FortuneSticksView: View {
 
     private enum Phase: Equatable {
         case idle
-        case shaking
+        case drawing
         case settled(Int)   // winning option index (0-based)
     }
     @State private var phase: Phase = .idle
-    @State private var cylinderTilt: Angle = .zero
-    @State private var stickJitter: Double = 0
-    @State private var fallenIndex: Int? = nil
-    @State private var fallenOffset: CGSize = .zero
-    @State private var fallenRotation: Angle = .zero
+    @State private var drawnOffset: CGSize = .zero
+    @State private var drawnRotation: Angle = .zero
+    @State private var drawnFlip: Double = 0        // 0 = back, 180 = face
+    @State private var drawnIndex: Int? = nil
+    @State private var deckShuffleTick: Int = 0
     @State private var revealVisible: Bool = false
 
     // MARK: - Body
@@ -47,11 +48,11 @@ struct FortuneSticksView: View {
         .scrollDismissesKeyboard(.immediately)
         .onAppear {
             if optionsRaw.isEmpty {
-                optionsRaw = NSLocalizedString("sticks.default.options", comment: "")
+                optionsRaw = NSLocalizedString("carddraw.default.options", comment: "")
             }
         }
         .sheet(isPresented: $showingSettings) {
-            FortuneStickSettingsSheet(optionsRaw: $optionsRaw)
+            CardDrawSettingsSheet(optionsRaw: $optionsRaw)
                 .presentationDetents([.medium, .large])
         }
     }
@@ -71,12 +72,12 @@ struct FortuneSticksView: View {
 
     private var questionCard: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("sticks.question.label")
+            Text("carddraw.question.label")
                 .font(Theme.body(13, weight: .medium))
                 .foregroundStyle(Theme.inkSoft)
                 .textCase(.uppercase)
                 .tracking(0.8)
-            TextField("sticks.question.placeholder", text: $question, axis: .vertical)
+            TextField("carddraw.question.placeholder", text: $question, axis: .vertical)
                 .font(Theme.headlineSerif(19, weight: .regular))
                 .foregroundStyle(Theme.ink)
                 .lineLimit(1...3)
@@ -102,7 +103,7 @@ struct FortuneSticksView: View {
                 Image(systemName: "list.bullet")
                     .foregroundStyle(Theme.gold)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("sticks.settings.title")
+                    Text("carddraw.settings.title")
                         .font(Theme.body(14, weight: .semibold))
                         .foregroundStyle(Theme.ink)
                     Text(options.isEmpty ? "—" : options.joined(separator: " · "))
@@ -125,71 +126,58 @@ struct FortuneSticksView: View {
     }
 
     private var stage: some View {
-        // Reserve a strip of clear space at the top of the stage so the stick
-        // tips can never poke up into the settings/title card above.
         ZStack {
-            // Ground glow — sits lower in the stage so the cylinder reads as
-            // resting on a surface rather than floating.
             Circle()
                 .fill(
                     RadialGradient(
-                        colors: [Theme.gold.opacity(0.25), Theme.parchment.opacity(0)],
+                        colors: [Theme.gold.opacity(0.22), Theme.parchment.opacity(0)],
                         center: .center, startRadius: 30, endRadius: 200
                     )
                 )
-                .frame(width: 340, height: 320)
-                .offset(y: 70)
+                .frame(width: 340, height: 300)
+                .offset(y: 40)
 
-            // Sticks + cylinder anchored to the bottom of the stage. The
-            // bottom-aligned ZStack means the cylinder lifts off the bottom
-            // by a fixed amount; the sticks' tips end well below the stage's
-            // top edge.
-            ZStack(alignment: .bottom) {
-                ForEach(0..<n, id: \.self) { i in
-                    StickShape(numeral: ChineseNumeral.of(i + 1),
-                               isFallen: fallenIndex == i)
-                        .offset(x: stickColumnOffset(for: i),
-                                y: -135 + (fallenIndex == i ? 0 : sin(Double(i)) * 4))
-                        .rotationEffect(stickAngle(for: i))
+            // Deck stack — three background cards for depth.
+            ZStack {
+                ForEach(0..<3, id: \.self) { i in
+                    CardBack()
+                        .frame(width: 150, height: 210)
+                        .offset(x: CGFloat(i) * 3, y: CGFloat(-i) * 3)
+                        .rotationEffect(.degrees(Double(i) * -2))
+                        .opacity(1.0 - Double(i) * 0.06)
+                        .shadow(color: Theme.woodShadow.opacity(0.15), radius: 3, x: 0, y: 2)
                 }
-
-                CylinderBody()
-                    .frame(width: 130, height: 150)
             }
-            .rotationEffect(cylinderTilt, anchor: .bottom)
-            .frame(maxHeight: .infinity, alignment: .bottom)
-            .padding(.bottom, 10)
+            .id(deckShuffleTick)
 
-            // The fallen stick lies horizontally below the cylinder.
-            if let fi = fallenIndex {
-                StickShape(numeral: ChineseNumeral.of(fi + 1), isFallen: true)
-                    .rotationEffect(fallenRotation)
-                    .offset(fallenOffset)
-                    .transition(.opacity)
+            // The drawn card sits above the deck; front shows the picked option.
+            if let idx = drawnIndex {
+                CardFace(
+                    label: options.indices.contains(idx) ? options[idx] : "—",
+                    number: idx + 1
+                )
+                .frame(width: 150, height: 210)
+                .rotation3DEffect(
+                    .degrees(drawnFlip),
+                    axis: (x: 0, y: 1, z: 0),
+                    perspective: 0.6
+                )
+                .offset(drawnOffset)
+                .rotationEffect(drawnRotation)
+                .shadow(color: Theme.woodShadow.opacity(0.25), radius: 8, x: 0, y: 6)
+                // Hide the back side of the flip so we don't see mirrored text.
+                .opacity(drawnFlip.truncatingRemainder(dividingBy: 360) < 90
+                         || drawnFlip.truncatingRemainder(dividingBy: 360) > 270 ? 1 : 0)
             }
         }
-        .frame(height: 360)
+        .frame(height: 300)
         .padding(.top, 10)
-    }
-
-    private func stickColumnOffset(for i: Int) -> CGFloat {
-        // Spread sticks across a fan in the cylinder's neck.
-        let spread: CGFloat = 70
-        let step = n > 1 ? spread / CGFloat(n - 1) : 0
-        return -spread / 2 + step * CGFloat(i)
-    }
-
-    private func stickAngle(for i: Int) -> Angle {
-        let base = -10.0 + Double(i) * (20.0 / Double(max(1, n - 1)))
-        return .degrees(base + stickJitter * sin(Double(i) * 2.1))
     }
 
     private func revealCard(index: Int) -> some View {
         let label = options.indices.contains(index) ? options[index] : "—"
         return VStack(spacing: 12) {
-            Text(verbatim: NSLocalizedString("sticks.reveal.prefix", comment: "")
-                 + ChineseNumeral.of(index + 1)
-                 + NSLocalizedString("sticks.reveal.suffix", comment: ""))
+            Text("carddraw.reveal.prefix")
                 .font(Theme.headlineSerif(20, weight: .semibold))
                 .foregroundStyle(Theme.cinnabar)
 
@@ -213,12 +201,12 @@ struct FortuneSticksView: View {
     }
 
     private var actionButton: some View {
-        Button { performShake() } label: {
+        Button { performDraw() } label: {
             HStack(spacing: 10) {
-                Image(systemName: phase == .shaking ? "hourglass" : "hand.raised.fingers.spread")
-                Text(phase == .shaking
-                     ? "sticks.action.shaking"
-                     : (isSettled ? "sticks.action.again" : "sticks.action.shake"))
+                Image(systemName: phase == .drawing ? "hourglass" : "hand.tap")
+                Text(phase == .drawing
+                     ? "carddraw.action.drawing"
+                     : (isSettled ? "carddraw.action.again" : "carddraw.action.draw"))
                     .font(Theme.headlineSerif(20, weight: .semibold))
             }
             .foregroundStyle(Color.white)
@@ -237,8 +225,8 @@ struct FortuneSticksView: View {
             .shadow(color: Theme.cinnabarDeep.opacity(0.35), radius: 6, x: 0, y: 3)
         }
         .buttonStyle(.plain)
-        .disabled(phase == .shaking || options.isEmpty)
-        .opacity(phase == .shaking ? 0.7 : (options.isEmpty ? 0.5 : 1))
+        .disabled(phase == .drawing || options.isEmpty)
+        .opacity(phase == .drawing ? 0.7 : (options.isEmpty ? 0.5 : 1))
     }
 
     private var isSettled: Bool {
@@ -248,36 +236,35 @@ struct FortuneSticksView: View {
 
     // MARK: - Animation
 
-    private func performShake() {
+    private func performDraw() {
         guard !options.isEmpty else { return }
         questionFocused = false
         withAnimation(.easeIn(duration: 0.15)) { revealVisible = false }
-        fallenIndex = nil
-        phase = .shaking
+
+        // Reset the drawn card to face-down atop the deck.
+        drawnIndex = nil
+        drawnOffset = .zero
+        drawnRotation = .zero
+        drawnFlip = 0
+        deckShuffleTick &+= 1
+        phase = .drawing
 
         let winner = Int.random(in: 0..<n)
+        drawnIndex = winner
 
-        // Shake cylinder back-and-forth.
-        let shakeDuration = 0.55
-        withAnimation(.easeInOut(duration: shakeDuration / 6).repeatCount(6, autoreverses: true)) {
-            cylinderTilt = .degrees(14)
-            stickJitter = 6
+        // Slide up and to the right, then flip.
+        withAnimation(.easeOut(duration: 0.4)) {
+            drawnOffset = CGSize(width: 40, height: -60)
+            drawnRotation = .degrees(6)
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + shakeDuration) {
-            withAnimation(.easeOut(duration: 0.15)) {
-                cylinderTilt = .zero
-                stickJitter = 0
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+            AudioServicesPlaySystemSound(1104)
+            withAnimation(.easeInOut(duration: 0.55)) {
+                drawnFlip = 180
+                drawnOffset = CGSize(width: 0, height: -20)
+                drawnRotation = .zero
             }
-            // Drop the winner.
-            fallenIndex = winner
-            fallenOffset = CGSize(width: 0, height: -40)
-            fallenRotation = .degrees(Double.random(in: -10...10))
-            withAnimation(.spring(response: 0.6, dampingFraction: 0.6)) {
-                fallenOffset = CGSize(width: CGFloat.random(in: -20...20), height: 110)
-                fallenRotation = .degrees(Double.random(in: 70...100))
-            }
-
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.55) {
                 phase = .settled(winner)
                 withAnimation(.spring(response: 0.45, dampingFraction: 0.85)) {
@@ -288,78 +275,84 @@ struct FortuneSticksView: View {
     }
 }
 
-// MARK: - Cylinder
+// MARK: - Card visuals
 
-private struct CylinderBody: View {
+private struct CardBack: View {
     var body: some View {
-        ZStack {
-            // Side
-            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .fill(
-                    LinearGradient(
-                        colors: [Theme.woodMid, Theme.woodDark, Theme.woodMid],
-                        startPoint: .leading, endPoint: .trailing
-                    )
+        RoundedRectangle(cornerRadius: 12, style: .continuous)
+            .fill(
+                LinearGradient(
+                    colors: [Theme.card, Theme.parchmentDim],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
                 )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .stroke(Theme.gold.opacity(0.55), lineWidth: 1.2)
-                )
-                .overlay(
-                    // Decorative lacquer band
-                    Rectangle()
-                        .fill(Theme.cinnabarDeep.opacity(0.55))
-                        .frame(height: 14)
-                        .overlay(Rectangle().stroke(Theme.gold.opacity(0.7), lineWidth: 0.8))
-                )
-        }
-        .shadow(color: Theme.woodShadow.opacity(0.35), radius: 6, x: 0, y: 4)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .stroke(Theme.gold.opacity(0.6), lineWidth: 1.5)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .stroke(Theme.gold.opacity(0.35), lineWidth: 1)
+                    .padding(10)
+            )
+            .overlay(
+                Image(systemName: "diamond.fill")
+                    .font(.system(size: 22, weight: .regular))
+                    .foregroundStyle(Theme.cinnabar.opacity(0.55))
+            )
     }
 }
 
-// MARK: - One stick
-
-private struct StickShape: View {
-    let numeral: String
-    let isFallen: Bool
+private struct CardFace: View {
+    let label: String
+    let number: Int
 
     var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 3, style: .continuous)
-                .fill(
-                    LinearGradient(
-                        colors: [Color(red: 0.93, green: 0.83, blue: 0.55),
-                                 Color(red: 0.74, green: 0.58, blue: 0.32)],
-                        startPoint: .topLeading, endPoint: .bottomTrailing
-                    )
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 3, style: .continuous)
-                        .stroke(Theme.woodDark.opacity(0.5), lineWidth: 0.6)
-                )
-                .frame(width: 14, height: 98)
-                // Red dipped tip
-                .overlay(
-                    RoundedRectangle(cornerRadius: 2, style: .continuous)
-                        .fill(Theme.cinnabarDeep)
-                        .frame(width: 14, height: 22)
-                        .offset(y: -38),
-                    alignment: .center
-                )
-
-            // Brushed numeral near the top
-            Text(numeral)
-                .font(.system(size: 13, weight: .bold, design: .serif))
-                .foregroundStyle(Color.white)
-                .offset(y: -38)
-        }
-        .opacity(isFallen ? 1 : 0.96)
+        RoundedRectangle(cornerRadius: 12, style: .continuous)
+            .fill(Theme.card)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .stroke(Theme.gold, lineWidth: 1.5)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .stroke(Theme.gold.opacity(0.4), lineWidth: 1)
+                    .padding(10)
+            )
+            .overlay(
+                VStack {
+                    HStack {
+                        Text("\(number)")
+                            .font(Theme.headlineSerif(16, weight: .semibold))
+                            .foregroundStyle(Theme.cinnabarDeep)
+                        Spacer()
+                    }
+                    Spacer()
+                    Text(label)
+                        .font(Theme.headlineSerif(22, weight: .bold))
+                        .foregroundStyle(Theme.ink)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(4)
+                        .minimumScaleFactor(0.6)
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        Text("\(number)")
+                            .font(Theme.headlineSerif(16, weight: .semibold))
+                            .foregroundStyle(Theme.cinnabarDeep)
+                            .rotationEffect(.degrees(180))
+                    }
+                }
+                .padding(16)
+            )
+            .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
     }
 }
 
 // MARK: - Settings sheet
 
-private struct FortuneStickSettingsSheet: View {
+private struct CardDrawSettingsSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Binding var optionsRaw: String
 
@@ -371,12 +364,12 @@ private struct FortuneStickSettingsSheet: View {
                         .font(Theme.body(16))
                         .frame(minHeight: 200)
                 } header: {
-                    Text("sticks.settings.list_header")
+                    Text("carddraw.settings.list_header")
                 } footer: {
-                    Text("sticks.settings.list_footer")
+                    Text("carddraw.settings.list_footer")
                 }
             }
-            .navigationTitle("sticks.settings.title")
+            .navigationTitle("carddraw.settings.title")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
