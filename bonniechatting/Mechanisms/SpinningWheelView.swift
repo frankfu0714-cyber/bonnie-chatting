@@ -5,8 +5,10 @@ struct SpinningWheelView: View {
     // MARK: - Per-question state
 
     @AppStorage("wheel.question") private var question: String = ""
+    /// Newline-separated user customisations. Empty = use locale-aware defaults.
     @AppStorage("wheel.options")  private var optionsRaw: String = ""
 
+    @Environment(\.locale) private var locale
     @FocusState private var questionFocused: Bool
     @State private var showingSettings = false
 
@@ -36,19 +38,21 @@ struct SpinningWheelView: View {
             .padding(.top, 8)
         }
         .scrollDismissesKeyboard(.immediately)
-        .onAppear {
-            if optionsRaw.isEmpty {
-                optionsRaw = NSLocalizedString("wheel.default.options", comment: "")
-            }
-        }
         .sheet(isPresented: $showingSettings) {
             WheelSettingsSheet(optionsRaw: $optionsRaw)
                 .presentationDetents([.medium, .large])
         }
     }
 
+    /// User customisations if present; otherwise the locale-aware defaults.
+    private var effectiveOptionsRaw: String {
+        optionsRaw.isEmpty
+            ? String.appLocalized("wheel.default.options", locale: locale)
+            : optionsRaw
+    }
+
     private var options: [String] {
-        optionsRaw
+        effectiveOptionsRaw
             .split(whereSeparator: \.isNewline)
             .map { $0.trimmingCharacters(in: .whitespaces) }
             .filter { !$0.isEmpty }
@@ -336,13 +340,15 @@ private struct PointerShape: Shape {
 
 private struct WheelSettingsSheet: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.locale) private var locale
     @Binding var optionsRaw: String
+    @State private var draft: String = ""
 
     var body: some View {
         NavigationStack {
             Form {
                 Section {
-                    TextEditor(text: $optionsRaw)
+                    TextEditor(text: $draft)
                         .font(Theme.body(16))
                         .frame(minHeight: 200)
                 } header: {
@@ -355,9 +361,19 @@ private struct WheelSettingsSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("action.done") { dismiss() }
-                        .fontWeight(.semibold)
+                    Button("action.done") {
+                        let trimmed = draft.trimmingCharacters(in: .whitespacesAndNewlines)
+                        let localeDefault = String.appLocalized("wheel.default.options", locale: locale)
+                        optionsRaw = (trimmed.isEmpty || draft == localeDefault) ? "" : draft
+                        dismiss()
+                    }
+                    .fontWeight(.semibold)
                 }
+            }
+            .onAppear {
+                draft = optionsRaw.isEmpty
+                    ? String.appLocalized("wheel.default.options", locale: locale)
+                    : optionsRaw
             }
         }
     }

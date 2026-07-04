@@ -2,10 +2,6 @@
   "sourceLanguage": "zh-Hant",
   "strings": {
     "": {},
-    "–": {},
-    "·": {},
-    "／": {},
-    "→": {},
     "action.cancel": {
       "extractionState": "stale",
       "localizations": {
@@ -52,6 +48,166 @@
           "stringUnit": {
             "state": "translated",
             "value": "幫你決定！"
+          }
+        }
+      }
+    },
+    "carddraw.action.again": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Draw Again"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "再抽一張"
+          }
+        }
+      }
+    },
+    "carddraw.action.draw": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Draw a Card"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "抽一張"
+          }
+        }
+      }
+    },
+    "carddraw.action.drawing": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drawing…"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "抽卡中…"
+          }
+        }
+      }
+    },
+    "carddraw.default.options": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pizza\nRamen\nSushi\nSalad\nBeef Noodles\nDumplings"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "披薩\n拉麵\n壽司\n沙拉\n牛肉麵\n水餃"
+          }
+        }
+      }
+    },
+    "carddraw.question.label": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your Question"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的問題"
+          }
+        }
+      }
+    },
+    "carddraw.question.placeholder": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What would you like to ask? (optional)"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "想問什麼?(可不填)"
+          }
+        }
+      }
+    },
+    "carddraw.reveal.prefix": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The card you drew"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "抽到的卡片"
+          }
+        }
+      }
+    },
+    "carddraw.settings.list_footer": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "One option per line. Each card maps to one entry in the list."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "每行一個選項,每張卡片會對應到清單裡的一項。"
+          }
+        }
+      }
+    },
+    "carddraw.settings.list_header": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Possible Answers"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "可能的答案"
+          }
+        }
+      }
+    },
+    "carddraw.settings.title": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Card Options"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "卡片選項"
           }
         }
       }
@@ -132,6 +288,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "是"
+          }
+        }
+      }
+    },
+    "coin.face.mu": {
+      "comment": "Short name for the back/blank face of the coin shown in headers and the reveal pill. Western coin equivalent for EN.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tails"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "幕"
+          }
+        }
+      }
+    },
+    "coin.face.zi": {
+      "comment": "Short name for the inscribed/text face of the coin shown in headers and the reveal pill. Western coin equivalent for EN.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heads"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "字"
           }
         }
       }
@@ -423,8 +613,7 @@
             "value": "擲筊"
           }
         }
-      },
-      "extractionState": "stale"
+      }
     },
     "jiaobei.action.toss_again": {
       "localizations": {
@@ -440,8 +629,7 @@
             "value": "再擲一次"
           }
         }
-      },
-      "extractionState": "stale"
+      }
     },
     "jiaobei.action.tossing": {
       "localizations": {
@@ -457,8 +645,7 @@
             "value": "擲筊中…"
           }
         }
-      },
-      "extractionState": "stale"
+      }
     },
     "jiaobei.labels.custom_set": {
       "localizations": {
@@ -474,8 +661,7 @@
             "value": "已自訂說法 — 點此修改"
           }
         }
-      },
-      "extractionState": "stale"
+      }
     },
     "jiaobei.labels.reset": {
       "localizations": {
@@ -491,8 +677,7 @@
             "value": "恢復預設"
           }
         }
-      },
-      "extractionState": "stale"
+      }
     },
     "jiaobei.labels.title": {
       "localizations": {
@@ -508,8 +693,7 @@
             "value": "答案說法"
           }
         }
-      },
-      "extractionState": "stale"
+      }
     },
     "jiaobei.labels.using_defaults": {
       "localizations": {
@@ -525,8 +709,7 @@
             "value": "使用預設說法 — 點此自訂"
           }
         }
-      },
-      "extractionState": "stale"
+      }
     },
     "jiaobei.outcome.sheng.default_label": {
       "localizations": {
@@ -542,8 +725,7 @@
             "value": "好,去做"
           }
         }
-      },
-      "extractionState": "stale"
+      }
     },
     "jiaobei.outcome.sheng.desc": {
       "localizations": {
@@ -559,15 +741,14 @@
             "value": "一平一凸 — 神明同意,可以放心去做。"
           }
         }
-      },
-      "extractionState": "stale"
+      }
     },
     "jiaobei.outcome.sheng.name": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "聖筊"
+            "value": "Affirmative"
           }
         },
         "zh-Hant": {
@@ -576,8 +757,7 @@
             "value": "聖筊"
           }
         }
-      },
-      "extractionState": "stale"
+      }
     },
     "jiaobei.outcome.sheng.title": {
       "localizations": {
@@ -593,8 +773,7 @@
             "value": "神明應允"
           }
         }
-      },
-      "extractionState": "stale"
+      }
     },
     "jiaobei.outcome.xiao.default_label": {
       "localizations": {
@@ -610,8 +789,7 @@
             "value": "神明在笑,再問一次"
           }
         }
-      },
-      "extractionState": "stale"
+      }
     },
     "jiaobei.outcome.xiao.desc": {
       "localizations": {
@@ -627,15 +805,14 @@
             "value": "兩面皆平 — 問題不清或答案明顯,換個問法再問一次。"
           }
         }
-      },
-      "extractionState": "stale"
+      }
     },
     "jiaobei.outcome.xiao.name": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "笑筊"
+            "value": "Laughing"
           }
         },
         "zh-Hant": {
@@ -644,8 +821,7 @@
             "value": "笑筊"
           }
         }
-      },
-      "extractionState": "stale"
+      }
     },
     "jiaobei.outcome.xiao.title": {
       "localizations": {
@@ -661,8 +837,7 @@
             "value": "神明在笑"
           }
         }
-      },
-      "extractionState": "stale"
+      }
     },
     "jiaobei.outcome.yin.default_label": {
       "localizations": {
@@ -678,8 +853,7 @@
             "value": "不行,再等等"
           }
         }
-      },
-      "extractionState": "stale"
+      }
     },
     "jiaobei.outcome.yin.desc": {
       "localizations": {
@@ -695,15 +869,14 @@
             "value": "兩面皆凸 — 神明不允,先緩一緩,或另尋他法。"
           }
         }
-      },
-      "extractionState": "stale"
+      }
     },
     "jiaobei.outcome.yin.name": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "陰筊"
+            "value": "Negative"
           }
         },
         "zh-Hant": {
@@ -712,8 +885,7 @@
             "value": "陰筊"
           }
         }
-      },
-      "extractionState": "stale"
+      }
     },
     "jiaobei.outcome.yin.title": {
       "localizations": {
@@ -729,8 +901,7 @@
             "value": "神明否決"
           }
         }
-      },
-      "extractionState": "stale"
+      }
     },
     "jiaobei.question.label": {
       "localizations": {
@@ -746,8 +917,7 @@
             "value": "你的問題"
           }
         }
-      },
-      "extractionState": "stale"
+      }
     },
     "jiaobei.question.placeholder": {
       "localizations": {
@@ -763,8 +933,343 @@
             "value": "想問什麼?(可不填)"
           }
         }
-      },
-      "extractionState": "stale"
+      }
+    },
+    "magic8ball.action.again": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shake Again"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "再搖一次"
+          }
+        }
+      }
+    },
+    "magic8ball.action.shake": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shake"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "搖一搖"
+          }
+        }
+      }
+    },
+    "magic8ball.action.shaking": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shaking…"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "搖動中…"
+          }
+        }
+      }
+    },
+    "magic8ball.labels.custom_set": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Custom labels set — tap to edit"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已自訂說法 — 點此修改"
+          }
+        }
+      }
+    },
+    "magic8ball.labels.reset": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reset to defaults"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "恢復預設"
+          }
+        }
+      }
+    },
+    "magic8ball.labels.title": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Outcome Labels"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "答案說法"
+          }
+        }
+      }
+    },
+    "magic8ball.labels.using_defaults": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Using default meanings — tap to customize"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用預設說法 — 點此自訂"
+          }
+        }
+      }
+    },
+    "magic8ball.outcome.maybe.default_label": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unclear — ask again"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不確定,再問一次"
+          }
+        }
+      }
+    },
+    "magic8ball.outcome.maybe.desc": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signs are unclear. Rephrase and ask again."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "答案不明,再問一次或換個問法試試。"
+          }
+        }
+      }
+    },
+    "magic8ball.outcome.maybe.title": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maybe"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "再想想"
+          }
+        }
+      }
+    },
+    "magic8ball.outcome.no.default_label": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No — hold off"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不行,再等等"
+          }
+        }
+      }
+    },
+    "magic8ball.outcome.no.desc": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hold off — the timing isn't right."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "先緩一緩,現在不是時候。"
+          }
+        }
+      }
+    },
+    "magic8ball.outcome.no.title": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "否定"
+          }
+        }
+      }
+    },
+    "magic8ball.outcome.yes.default_label": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yes — go ahead"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "好,去做"
+          }
+        }
+      }
+    },
+    "magic8ball.outcome.yes.desc": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Go ahead — the answer points your way."
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "去做吧,結果會如你所願。"
+          }
+        }
+      }
+    },
+    "magic8ball.outcome.yes.title": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yes"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "肯定"
+          }
+        }
+      }
+    },
+    "magic8ball.question.label": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your Question"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的問題"
+          }
+        }
+      }
+    },
+    "magic8ball.question.placeholder": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What would you like to ask? (optional)"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "想問什麼?(可不填)"
+          }
+        }
+      }
+    },
+    "magic8ball.window.idle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ask a question"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "問個問題"
+          }
+        }
+      }
+    },
+    "magic8ball.window.shaking": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "…"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "…"
+          }
+        }
+      }
+    },
+    "mechanism.carddraw.name": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Card Draw"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "抽卡片"
+          }
+        }
+      }
     },
     "mechanism.coin.name": {
       "localizations": {
@@ -812,8 +1317,23 @@
             "value": "筊杯"
           }
         }
-      },
-      "extractionState": "stale"
+      }
+    },
+    "mechanism.magic8ball.name": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Magic 8-Ball"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "神奇八球"
+          }
+        }
+      }
     },
     "mechanism.petals.name": {
       "localizations": {
@@ -861,8 +1381,7 @@
             "value": "求籤"
           }
         }
-      },
-      "extractionState": "stale"
+      }
     },
     "mechanism.tissues.name": {
       "localizations": {
@@ -1410,8 +1929,7 @@
             "value": "再搖一次"
           }
         }
-      },
-      "extractionState": "stale"
+      }
     },
     "sticks.action.shake": {
       "localizations": {
@@ -1427,8 +1945,7 @@
             "value": "搖籤"
           }
         }
-      },
-      "extractionState": "stale"
+      }
     },
     "sticks.action.shaking": {
       "localizations": {
@@ -1444,8 +1961,7 @@
             "value": "搖籤中…"
           }
         }
-      },
-      "extractionState": "stale"
+      }
     },
     "sticks.default.options": {
       "localizations": {
@@ -1461,8 +1977,7 @@
             "value": "披薩\n拉麵\n壽司\n沙拉"
           }
         }
-      },
-      "extractionState": "stale"
+      }
     },
     "sticks.question.label": {
       "localizations": {
@@ -1478,8 +1993,7 @@
             "value": "你的問題"
           }
         }
-      },
-      "extractionState": "stale"
+      }
     },
     "sticks.question.placeholder": {
       "localizations": {
@@ -1495,8 +2009,7 @@
             "value": "想問什麼?(可不填)"
           }
         }
-      },
-      "extractionState": "stale"
+      }
     },
     "sticks.reveal.prefix": {
       "localizations": {
@@ -1512,8 +2025,7 @@
             "value": "第"
           }
         }
-      },
-      "extractionState": "stale"
+      }
     },
     "sticks.reveal.suffix": {
       "localizations": {
@@ -1529,8 +2041,7 @@
             "value": "籤"
           }
         }
-      },
-      "extractionState": "stale"
+      }
     },
     "sticks.settings.list_footer": {
       "localizations": {
@@ -1546,8 +2057,7 @@
             "value": "每行一個選項。抽出的籤號會對應到清單上的順序。"
           }
         }
-      },
-      "extractionState": "stale"
+      }
     },
     "sticks.settings.list_header": {
       "localizations": {
@@ -1563,8 +2073,7 @@
             "value": "可能的答案"
           }
         }
-      },
-      "extractionState": "stale"
+      }
     },
     "sticks.settings.title": {
       "localizations": {
@@ -1580,8 +2089,7 @@
             "value": "籤詩選項"
           }
         }
-      },
-      "extractionState": "stale"
+      }
     },
     "tissues.action.again": {
       "localizations": {
@@ -1679,22 +2187,6 @@
         }
       }
     },
-    "tissues.round_intro": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "About 10-15 sheets in this pack"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "本包約 10-15 張"
-          }
-        }
-      }
-    },
     "tissues.question.label": {
       "localizations": {
         "en": {
@@ -1739,6 +2231,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "最後一張"
+          }
+        }
+      }
+    },
+    "tissues.round_intro": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "About 10-15 sheets in this pack"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "本包約 10-15 張"
           }
         }
       }
@@ -1935,520 +2443,12 @@
         }
       }
     },
+    "·": {},
+    "–": {},
+    "→": {},
     "字": {},
     "幕": {},
-    "mechanism.magic8ball.name": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Magic 8-Ball"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "神奇八球"
-          }
-        }
-      }
-    },
-    "magic8ball.question.label": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Your Question"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "你的問題"
-          }
-        }
-      }
-    },
-    "magic8ball.question.placeholder": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "What would you like to ask? (optional)"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "想問什麼?(可不填)"
-          }
-        }
-      }
-    },
-    "magic8ball.labels.title": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Outcome Labels"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "答案說法"
-          }
-        }
-      }
-    },
-    "magic8ball.labels.custom_set": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Custom labels set — tap to edit"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "已自訂說法 — 點此修改"
-          }
-        }
-      }
-    },
-    "magic8ball.labels.using_defaults": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Using default meanings — tap to customize"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "使用預設說法 — 點此自訂"
-          }
-        }
-      }
-    },
-    "magic8ball.labels.reset": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reset to defaults"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "恢復預設"
-          }
-        }
-      }
-    },
-    "magic8ball.outcome.yes.title": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Yes"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "肯定"
-          }
-        }
-      }
-    },
-    "magic8ball.outcome.yes.desc": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Go ahead — the answer points your way."
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "去做吧,結果會如你所願。"
-          }
-        }
-      }
-    },
-    "magic8ball.outcome.yes.default_label": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Yes — go ahead"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "好,去做"
-          }
-        }
-      }
-    },
-    "magic8ball.outcome.maybe.title": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Maybe"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "再想想"
-          }
-        }
-      }
-    },
-    "magic8ball.outcome.maybe.desc": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Signs are unclear. Rephrase and ask again."
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "答案不明,再問一次或換個問法試試。"
-          }
-        }
-      }
-    },
-    "magic8ball.outcome.maybe.default_label": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unclear — ask again"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "不確定,再問一次"
-          }
-        }
-      }
-    },
-    "magic8ball.outcome.no.title": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "否定"
-          }
-        }
-      }
-    },
-    "magic8ball.outcome.no.desc": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hold off — the timing isn't right."
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "先緩一緩,現在不是時候。"
-          }
-        }
-      }
-    },
-    "magic8ball.outcome.no.default_label": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No — hold off"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "不行,再等等"
-          }
-        }
-      }
-    },
-    "magic8ball.window.idle": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ask a question"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "問個問題"
-          }
-        }
-      }
-    },
-    "magic8ball.window.shaking": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "…"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "…"
-          }
-        }
-      }
-    },
-    "magic8ball.action.shake": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Shake"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "搖一搖"
-          }
-        }
-      }
-    },
-    "magic8ball.action.shaking": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Shaking…"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "搖動中…"
-          }
-        }
-      }
-    },
-    "magic8ball.action.again": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Shake Again"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "再搖一次"
-          }
-        }
-      }
-    },
-    "mechanism.carddraw.name": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Card Draw"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "抽卡片"
-          }
-        }
-      }
-    },
-    "carddraw.question.label": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Your Question"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "你的問題"
-          }
-        }
-      }
-    },
-    "carddraw.question.placeholder": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "What would you like to ask? (optional)"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "想問什麼?(可不填)"
-          }
-        }
-      }
-    },
-    "carddraw.default.options": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pizza\nRamen\nSushi\nSalad\nBeef Noodles\nDumplings"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "披薩\n拉麵\n壽司\n沙拉\n牛肉麵\n水餃"
-          }
-        }
-      }
-    },
-    "carddraw.settings.title": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Card Options"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "卡片選項"
-          }
-        }
-      }
-    },
-    "carddraw.settings.list_header": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Possible Answers"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "可能的答案"
-          }
-        }
-      }
-    },
-    "carddraw.settings.list_footer": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "One option per line. Each card maps to one entry in the list."
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "每行一個選項,每張卡片會對應到清單裡的一項。"
-          }
-        }
-      }
-    },
-    "carddraw.reveal.prefix": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The card you drew"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "抽到的卡片"
-          }
-        }
-      }
-    },
-    "carddraw.action.draw": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Draw a Card"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "抽一張"
-          }
-        }
-      }
-    },
-    "carddraw.action.drawing": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Drawing…"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "抽卡中…"
-          }
-        }
-      }
-    },
-    "carddraw.action.again": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Draw Again"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "再抽一張"
-          }
-        }
-      }
-    }
+    "／": {}
   },
   "version": "1.0"
 }

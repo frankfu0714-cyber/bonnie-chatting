@@ -10,6 +10,7 @@ struct TissueView: View {
     @AppStorage("tissues.labelYes") private var labelYes: String = ""
     @AppStorage("tissues.labelNo")  private var labelNo: String = ""
 
+    @Environment(\.locale) private var locale
     @FocusState private var questionFocused: Bool
     @State private var showingSettings = false
 
@@ -359,8 +360,8 @@ struct TissueView: View {
 
     // MARK: - Round logic
 
-    private var defaultYes: String { NSLocalizedString("tissues.default.yes", comment: "") }
-    private var defaultNo:  String { NSLocalizedString("tissues.default.no",  comment: "") }
+    private var defaultYes: String { String.appLocalized("tissues.default.yes", locale: locale) }
+    private var defaultNo:  String { String.appLocalized("tissues.default.no",  locale: locale) }
 
     private func labelOrDefault(_ s: String, default d: String) -> String {
         s.isEmpty ? d : s
