@@ -1,21 +1,21 @@
 import SwiftUI
 
 struct ContentView: View {
-    @AppStorage("selectedMechanismID") private var selectedMechanismID: String = JiaoBeiMechanism().id
+    @AppStorage("selectedMechanismID") private var selectedMechanismID: String = MagicEightBallMechanism().id
     @State private var showingSettings = false
 
-    private let mechanisms: [any DivinationMechanism] = [
-        JiaoBeiMechanism(),
+    private let mechanisms: [any DecisionMechanism] = [
+        MagicEightBallMechanism(),
         FlowerPetalMechanism(),
         TissueMechanism(),
-        FortuneSticksMechanism(),
+        CardDrawMechanism(),
         SpinningWheelMechanism(),
         CoinFlipMechanism(),
         RandomNumberMechanism(),
         DiceMechanism()
     ]
 
-    private var selected: any DivinationMechanism {
+    private var selected: any DecisionMechanism {
         mechanisms.first(where: { $0.id == selectedMechanismID }) ?? mechanisms[0]
     }
 
@@ -63,7 +63,7 @@ struct ContentView: View {
 }
 
 private struct MechanismChipBar: View {
-    let mechanisms: [any DivinationMechanism]
+    let mechanisms: [any DecisionMechanism]
     @Binding var selectedID: String
 
     var body: some View {
@@ -91,7 +91,7 @@ private struct MechanismChipBar: View {
     }
 
     @ViewBuilder
-    private func chip(for m: any DivinationMechanism) -> some View {
+    private func chip(for m: any DecisionMechanism) -> some View {
         let isSelected = m.id == selectedID
         HStack(spacing: 6) {
             Image(systemName: m.iconName)

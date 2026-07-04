@@ -4,7 +4,7 @@ import SwiftUI
 /// as the flower-petal mechanism but with a tactile "tug" instead of a delicate
 /// pluck. Tissue count per round is randomized (10...20) so parity counting
 /// can't be used to pre-compute the final answer.
-struct TissueMechanism: DivinationMechanism {
+struct TissueMechanism: DecisionMechanism {
     let id = "tissues"
     var displayName: LocalizedStringKey { "mechanism.tissues.name" }
     let iconName = "square.stack.3d.up"

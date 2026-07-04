@@ -4,7 +4,7 @@ import SwiftUI
 /// 字 (text-side, traditionally bearing the era inscription) and
 /// 幕 (back, traditionally blank). Common shorthand in folk divination
 /// for yes / no.
-struct CoinFlipMechanism: DivinationMechanism {
+struct CoinFlipMechanism: DecisionMechanism {
     let id = "coin"
     var displayName: LocalizedStringKey { "mechanism.coin.name" }
     let iconName = "centsign.circle.fill"
