@@ -28,7 +28,7 @@ enum Theme {
     static let woodDark     = Color(red: 0.34, green: 0.19, blue: 0.10)
     static let woodShadow   = Color(red: 0.18, green: 0.10, blue: 0.05)
 
-    // MARK: - Moon block (筊杯) — vivid temple cinnabar.
+    // MARK: - Moon block / two-piece toss — vivid cinnabar.
     /// Vivid pop colour for the inner-moon glow on the curved face.
     static let mbRedGlow    = Color(red: 0.949, green: 0.353, blue: 0.271) // ~#F25A45
     /// Bright dome top — used for the curved-face gradient highlight.

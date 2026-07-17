@@ -1,22 +1,25 @@
 import SwiftUI
 
-/// 求籤 — bamboo fortune sticks in a cylinder. The user provides a list of
-/// possible answers; shaking the cylinder makes one stick fall out, mapping
-/// (by Chinese-numeral position) to the chosen answer.
-struct FortuneSticksMechanism: DivinationMechanism {
-    let id = "sticks"
-    var displayName: LocalizedStringKey { "mechanism.sticks.name" }
+/// Stick Pick — a cylinder of numbered wooden sticks. The user provides a
+/// list of possible answers; shaking the cylinder makes one stick fall out,
+/// and the stick's position in the list maps to the picked answer. Pure
+/// random picker — the mechanism assigns no meaning of its own.
+struct StickPickMechanism: DecisionMechanism {
+    let id = "stickpick"
+    var displayName: LocalizedStringKey { "mechanism.stickpick.name" }
     let iconName = "list.number"
 
     func view() -> AnyView {
-        AnyView(FortuneSticksView())
+        AnyView(StickPickView())
     }
 }
 
-enum ChineseNumeral {
+enum StickNumeral {
     static let digits = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九"]
 
     /// Convert 1...99 to its traditional Chinese numeral; falls back to base-10.
+    /// Used as decorative typography on each stick's tip — the sticks are
+    /// numbered from one to N so the falling stick can be identified visually.
     static func of(_ n: Int) -> String {
         guard n > 0 else { return digits[0] }
         if n < 10 { return digits[n] }
@@ -30,11 +33,8 @@ enum ChineseNumeral {
         return "\(n)"
     }
 
-    /// Locale-aware numeral: Chinese form for zh locales, plain Arabic
-    /// digits otherwise. Use this anywhere the rendered numeral sits
-    /// alongside locale-specific prose (e.g., the fortune-stick reveal
-    /// text is "第 N 籤" in zh but "Stick No. N" in en — the middle
-    /// numeral must match the surrounding script).
+    /// Locale-aware numeral for the reveal label: Chinese for zh locales,
+    /// Arabic digits otherwise.
     static func localized(_ n: Int, locale: Locale) -> String {
         locale.identifier.hasPrefix("zh") ? of(n) : String(n)
     }

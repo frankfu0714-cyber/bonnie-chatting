@@ -599,342 +599,6 @@
         }
       }
     },
-    "jiaobei.action.toss": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Toss"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "擲筊"
-          }
-        }
-      }
-    },
-    "jiaobei.action.toss_again": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Toss Again"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "再擲一次"
-          }
-        }
-      }
-    },
-    "jiaobei.action.tossing": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tossing…"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "擲筊中…"
-          }
-        }
-      }
-    },
-    "jiaobei.labels.custom_set": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Custom labels set — tap to edit"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "已自訂說法 — 點此修改"
-          }
-        }
-      }
-    },
-    "jiaobei.labels.reset": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reset to defaults"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "恢復預設"
-          }
-        }
-      }
-    },
-    "jiaobei.labels.title": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Outcome Labels"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "答案說法"
-          }
-        }
-      }
-    },
-    "jiaobei.labels.using_defaults": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Using default meanings — tap to customize"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "使用預設說法 — 點此自訂"
-          }
-        }
-      }
-    },
-    "jiaobei.outcome.sheng.default_label": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Yes — go ahead"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "好,去做"
-          }
-        }
-      }
-    },
-    "jiaobei.outcome.sheng.desc": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "One flat side and one curved side land up. The deity is in agreement — the answer is yes."
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "一平一凸 — 神明同意,可以放心去做。"
-          }
-        }
-      }
-    },
-    "jiaobei.outcome.sheng.name": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Affirmative"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "聖筊"
-          }
-        }
-      }
-    },
-    "jiaobei.outcome.sheng.title": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sacred Yes"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "神明應允"
-          }
-        }
-      }
-    },
-    "jiaobei.outcome.xiao.default_label": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The deity is laughing — try asking differently"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "神明在笑,再問一次"
-          }
-        }
-      }
-    },
-    "jiaobei.outcome.xiao.desc": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Both flat sides land up. Your question may be unclear, already answered, or not the right one. Rephrase and ask again."
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "兩面皆平 — 問題不清或答案明顯,換個問法再問一次。"
-          }
-        }
-      }
-    },
-    "jiaobei.outcome.xiao.name": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Laughing"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "笑筊"
-          }
-        }
-      }
-    },
-    "jiaobei.outcome.xiao.title": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Laughing Blocks"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "神明在笑"
-          }
-        }
-      }
-    },
-    "jiaobei.outcome.yin.default_label": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No — hold off"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "不行,再等等"
-          }
-        }
-      }
-    },
-    "jiaobei.outcome.yin.desc": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Both curved sides land up. The deity does not agree — wait, reconsider, or choose another path."
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "兩面皆凸 — 神明不允,先緩一緩,或另尋他法。"
-          }
-        }
-      }
-    },
-    "jiaobei.outcome.yin.name": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Negative"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "陰筊"
-          }
-        }
-      }
-    },
-    "jiaobei.outcome.yin.title": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sacred No"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "神明否決"
-          }
-        }
-      }
-    },
-    "jiaobei.question.label": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Your Question"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "你的問題"
-          }
-        }
-      }
-    },
-    "jiaobei.question.placeholder": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "What would you like to ask? (optional)"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "想問什麼?(可不填)"
-          }
-        }
-      }
-    },
     "magic8ball.action.again": {
       "localizations": {
         "en": {
@@ -1303,22 +967,6 @@
         }
       }
     },
-    "mechanism.jiaobei.name": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Moon Blocks"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "筊杯"
-          }
-        }
-      }
-    },
     "mechanism.magic8ball.name": {
       "localizations": {
         "en": {
@@ -1367,18 +1015,18 @@
         }
       }
     },
-    "mechanism.sticks.name": {
+    "mechanism.stickpick.name": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Fortune Sticks"
+            "value": "Stick Pick"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "求籤"
+            "value": "抽木條"
           }
         }
       }
@@ -1395,6 +1043,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "抽面紙"
+          }
+        }
+      }
+    },
+    "mechanism.twopiece.name": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Two-Piece Toss"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "翻塊"
           }
         }
       }
@@ -1915,7 +1579,7 @@
         }
       }
     },
-    "sticks.action.again": {
+    "stickpick.action.again": {
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1931,7 +1595,7 @@
         }
       }
     },
-    "sticks.action.shake": {
+    "stickpick.action.shake": {
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1942,12 +1606,12 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "搖籤"
+            "value": "搖動"
           }
         }
       }
     },
-    "sticks.action.shaking": {
+    "stickpick.action.shaking": {
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1958,12 +1622,12 @@
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "搖籤中…"
+            "value": "搖動中…"
           }
         }
       }
     },
-    "sticks.default.options": {
+    "stickpick.default.options": {
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1979,7 +1643,7 @@
         }
       }
     },
-    "sticks.question.label": {
+    "stickpick.question.label": {
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1995,7 +1659,7 @@
         }
       }
     },
-    "sticks.question.placeholder": {
+    "stickpick.question.placeholder": {
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2011,55 +1675,39 @@
         }
       }
     },
-    "sticks.reveal.prefix": {
+    "stickpick.reveal.prefix": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Stick No. "
+            "value": "Picked"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "第"
+            "value": "抽到"
           }
         }
       }
     },
-    "sticks.reveal.suffix": {
+    "stickpick.settings.list_footer": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": ""
+            "value": "One option per line. The drawn stick maps to its position in this list."
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "籤"
+            "value": "每行一個選項,抽出的木條會對應到清單上的順序。"
           }
         }
       }
     },
-    "sticks.settings.list_footer": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "One option per line. The drawn stick's number will map to its position in this list."
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "每行一個選項。抽出的籤號會對應到清單上的順序。"
-          }
-        }
-      }
-    },
-    "sticks.settings.list_header": {
+    "stickpick.settings.list_header": {
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2075,18 +1723,18 @@
         }
       }
     },
-    "sticks.settings.title": {
+    "stickpick.settings.title": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Fortune Stick Options"
+            "value": "Stick Options"
           }
         },
         "zh-Hant": {
           "stringUnit": {
             "state": "translated",
-            "value": "籤詩選項"
+            "value": "木條選項"
           }
         }
       }
@@ -2279,6 +1927,246 @@
           "stringUnit": {
             "state": "translated",
             "value": "面紙設定"
+          }
+        }
+      }
+    },
+    "twopiece.action.toss": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toss"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "翻塊"
+          }
+        }
+      }
+    },
+    "twopiece.action.toss_again": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toss Again"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "再翻一次"
+          }
+        }
+      }
+    },
+    "twopiece.action.tossing": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tossing…"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "翻塊中…"
+          }
+        }
+      }
+    },
+    "twopiece.labels.custom_set": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Custom labels set — tap to edit"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已自訂答案 — 點此修改"
+          }
+        }
+      }
+    },
+    "twopiece.labels.reset": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reset to defaults"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "恢復預設"
+          }
+        }
+      }
+    },
+    "twopiece.labels.title": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Outcome Labels"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "答案設定"
+          }
+        }
+      }
+    },
+    "twopiece.labels.using_defaults": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Using default labels — tap to customize"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用預設答案 — 點此自訂"
+          }
+        }
+      }
+    },
+    "twopiece.outcome.both_curved.default_label": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "不要"
+          }
+        }
+      }
+    },
+    "twopiece.outcome.both_curved.name": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Both curved"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "兩面皆凸"
+          }
+        }
+      }
+    },
+    "twopiece.outcome.both_flat.default_label": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maybe"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "再想想"
+          }
+        }
+      }
+    },
+    "twopiece.outcome.both_flat.name": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Both flat"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "兩面皆平"
+          }
+        }
+      }
+    },
+    "twopiece.outcome.mixed.default_label": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yes"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "好"
+          }
+        }
+      }
+    },
+    "twopiece.outcome.mixed.name": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "One flat, one curved"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一平一凸"
+          }
+        }
+      }
+    },
+    "twopiece.question.label": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your Question"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你的問題"
+          }
+        }
+      }
+    },
+    "twopiece.question.placeholder": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What would you like to ask? (optional)"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "想問什麼?(可不填)"
           }
         }
       }

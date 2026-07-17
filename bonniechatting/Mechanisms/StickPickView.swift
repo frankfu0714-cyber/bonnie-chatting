@@ -1,12 +1,12 @@
 import SwiftUI
 
-struct FortuneSticksView: View {
+struct StickPickView: View {
 
     // MARK: - Per-question state (persists)
 
-    @AppStorage("sticks.question") private var question: String = ""
+    @AppStorage("stickpick.question") private var question: String = ""
     /// Newline-separated user customisations. Empty = use locale-aware defaults.
-    @AppStorage("sticks.options")  private var optionsRaw: String = ""
+    @AppStorage("stickpick.options")  private var optionsRaw: String = ""
 
     @Environment(\.locale) private var locale
     @FocusState private var questionFocused: Bool
@@ -47,7 +47,7 @@ struct FortuneSticksView: View {
         }
         .scrollDismissesKeyboard(.immediately)
         .sheet(isPresented: $showingSettings) {
-            FortuneStickSettingsSheet(optionsRaw: $optionsRaw)
+            StickPickSettingsSheet(optionsRaw: $optionsRaw)
                 .presentationDetents([.medium, .large])
         }
     }
@@ -59,7 +59,7 @@ struct FortuneSticksView: View {
     /// displayed options without needing to re-seed `@AppStorage`.
     private var effectiveOptionsRaw: String {
         optionsRaw.isEmpty
-            ? String.appLocalized("sticks.default.options", locale: locale)
+            ? String.appLocalized("stickpick.default.options", locale: locale)
             : optionsRaw
     }
 
@@ -76,12 +76,12 @@ struct FortuneSticksView: View {
 
     private var questionCard: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("sticks.question.label")
+            Text("stickpick.question.label")
                 .font(Theme.body(13, weight: .medium))
                 .foregroundStyle(Theme.inkSoft)
                 .textCase(.uppercase)
                 .tracking(0.8)
-            TextField("sticks.question.placeholder", text: $question, axis: .vertical)
+            TextField("stickpick.question.placeholder", text: $question, axis: .vertical)
                 .font(Theme.headlineSerif(19, weight: .regular))
                 .foregroundStyle(Theme.ink)
                 .lineLimit(1...3)
@@ -107,7 +107,7 @@ struct FortuneSticksView: View {
                 Image(systemName: "list.bullet")
                     .foregroundStyle(Theme.gold)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("sticks.settings.title")
+                    Text("stickpick.settings.title")
                         .font(Theme.body(14, weight: .semibold))
                         .foregroundStyle(Theme.ink)
                     Text(options.isEmpty ? "—" : options.joined(separator: " · "))
@@ -130,11 +130,7 @@ struct FortuneSticksView: View {
     }
 
     private var stage: some View {
-        // Reserve a strip of clear space at the top of the stage so the stick
-        // tips can never poke up into the settings/title card above.
         ZStack {
-            // Ground glow — sits lower in the stage so the cylinder reads as
-            // resting on a surface rather than floating.
             Circle()
                 .fill(
                     RadialGradient(
@@ -145,13 +141,9 @@ struct FortuneSticksView: View {
                 .frame(width: 340, height: 320)
                 .offset(y: 70)
 
-            // Sticks + cylinder anchored to the bottom of the stage. The
-            // bottom-aligned ZStack means the cylinder lifts off the bottom
-            // by a fixed amount; the sticks' tips end well below the stage's
-            // top edge.
             ZStack(alignment: .bottom) {
                 ForEach(0..<n, id: \.self) { i in
-                    StickShape(numeral: ChineseNumeral.of(i + 1),
+                    StickShape(numeral: StickNumeral.of(i + 1),
                                isFallen: fallenIndex == i)
                         .offset(x: stickColumnOffset(for: i),
                                 y: -135 + (fallenIndex == i ? 0 : sin(Double(i)) * 4))
@@ -165,9 +157,8 @@ struct FortuneSticksView: View {
             .frame(maxHeight: .infinity, alignment: .bottom)
             .padding(.bottom, 10)
 
-            // The fallen stick lies horizontally below the cylinder.
             if let fi = fallenIndex {
-                StickShape(numeral: ChineseNumeral.of(fi + 1), isFallen: true)
+                StickShape(numeral: StickNumeral.of(fi + 1), isFallen: true)
                     .rotationEffect(fallenRotation)
                     .offset(fallenOffset)
                     .transition(.opacity)
@@ -178,7 +169,6 @@ struct FortuneSticksView: View {
     }
 
     private func stickColumnOffset(for i: Int) -> CGFloat {
-        // Spread sticks across a fan in the cylinder's neck.
         let spread: CGFloat = 70
         let step = n > 1 ? spread / CGFloat(n - 1) : 0
         return -spread / 2 + step * CGFloat(i)
@@ -191,12 +181,16 @@ struct FortuneSticksView: View {
 
     private func revealCard(index: Int) -> some View {
         let label = options.indices.contains(index) ? options[index] : "—"
+        let numberText = "#" + StickNumeral.localized(index + 1, locale: locale)
         return VStack(spacing: 12) {
-            Text(verbatim: String.appLocalized("sticks.reveal.prefix", locale: locale)
-                 + ChineseNumeral.localized(index + 1, locale: locale)
-                 + String.appLocalized("sticks.reveal.suffix", locale: locale))
-                .font(Theme.headlineSerif(20, weight: .semibold))
-                .foregroundStyle(Theme.cinnabar)
+            HStack(spacing: 8) {
+                Text("stickpick.reveal.prefix")
+                    .font(Theme.headlineSerif(20, weight: .semibold))
+                    .foregroundStyle(Theme.cinnabar)
+                Text(verbatim: numberText)
+                    .font(Theme.headlineSerif(20, weight: .semibold))
+                    .foregroundStyle(Theme.cinnabar)
+            }
 
             Text(label)
                 .font(Theme.headlineSerif(28, weight: .bold))
@@ -222,8 +216,8 @@ struct FortuneSticksView: View {
             HStack(spacing: 10) {
                 Image(systemName: phase == .shaking ? "hourglass" : "hand.raised.fingers.spread")
                 Text(phase == .shaking
-                     ? "sticks.action.shaking"
-                     : (isSettled ? "sticks.action.again" : "sticks.action.shake"))
+                     ? "stickpick.action.shaking"
+                     : (isSettled ? "stickpick.action.again" : "stickpick.action.shake"))
                     .font(Theme.headlineSerif(20, weight: .semibold))
             }
             .foregroundStyle(Color.white)
@@ -262,7 +256,6 @@ struct FortuneSticksView: View {
 
         let winner = Int.random(in: 0..<n)
 
-        // Shake cylinder back-and-forth.
         let shakeDuration = 0.55
         withAnimation(.easeInOut(duration: shakeDuration / 6).repeatCount(6, autoreverses: true)) {
             cylinderTilt = .degrees(14)
@@ -274,7 +267,6 @@ struct FortuneSticksView: View {
                 cylinderTilt = .zero
                 stickJitter = 0
             }
-            // Drop the winner.
             fallenIndex = winner
             fallenOffset = CGSize(width: 0, height: -40)
             fallenRotation = .degrees(Double.random(in: -10...10))
@@ -298,7 +290,6 @@ struct FortuneSticksView: View {
 private struct CylinderBody: View {
     var body: some View {
         ZStack {
-            // Side
             RoundedRectangle(cornerRadius: 10, style: .continuous)
                 .fill(
                     LinearGradient(
@@ -311,7 +302,6 @@ private struct CylinderBody: View {
                         .stroke(Theme.gold.opacity(0.55), lineWidth: 1.2)
                 )
                 .overlay(
-                    // Decorative lacquer band
                     Rectangle()
                         .fill(Theme.cinnabarDeep.opacity(0.55))
                         .frame(height: 14)
@@ -343,7 +333,6 @@ private struct StickShape: View {
                         .stroke(Theme.woodDark.opacity(0.5), lineWidth: 0.6)
                 )
                 .frame(width: 14, height: 98)
-                // Red dipped tip
                 .overlay(
                     RoundedRectangle(cornerRadius: 2, style: .continuous)
                         .fill(Theme.cinnabarDeep)
@@ -352,7 +341,6 @@ private struct StickShape: View {
                     alignment: .center
                 )
 
-            // Brushed numeral near the top
             Text(numeral)
                 .font(.system(size: 13, weight: .bold, design: .serif))
                 .foregroundStyle(Color.white)
@@ -364,12 +352,10 @@ private struct StickShape: View {
 
 // MARK: - Settings sheet
 
-private struct FortuneStickSettingsSheet: View {
+private struct StickPickSettingsSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.locale) private var locale
     @Binding var optionsRaw: String
-    /// Local draft so we can pre-populate with locale defaults when the
-    /// user hasn't customised yet, without persisting that copy.
     @State private var draft: String = ""
 
     var body: some View {
@@ -380,21 +366,18 @@ private struct FortuneStickSettingsSheet: View {
                         .font(Theme.body(16))
                         .frame(minHeight: 200)
                 } header: {
-                    Text("sticks.settings.list_header")
+                    Text("stickpick.settings.list_header")
                 } footer: {
-                    Text("sticks.settings.list_footer")
+                    Text("stickpick.settings.list_footer")
                 }
             }
-            .navigationTitle("sticks.settings.title")
+            .navigationTitle("stickpick.settings.title")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("action.done") {
                         let trimmed = draft.trimmingCharacters(in: .whitespacesAndNewlines)
-                        let localeDefault = String.appLocalized("sticks.default.options", locale: locale)
-                        // Empty draft OR draft identical to locale defaults
-                        // → store empty so future locale toggles still
-                        //   pick up the right language.
+                        let localeDefault = String.appLocalized("stickpick.default.options", locale: locale)
                         optionsRaw = (trimmed.isEmpty || draft == localeDefault) ? "" : draft
                         dismiss()
                     }
@@ -403,7 +386,7 @@ private struct FortuneStickSettingsSheet: View {
             }
             .onAppear {
                 draft = optionsRaw.isEmpty
-                    ? String.appLocalized("sticks.default.options", locale: locale)
+                    ? String.appLocalized("stickpick.default.options", locale: locale)
                     : optionsRaw
             }
         }
