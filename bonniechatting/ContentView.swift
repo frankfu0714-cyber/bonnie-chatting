@@ -12,7 +12,9 @@ struct ContentView: View {
         SpinningWheelMechanism(),
         CoinFlipMechanism(),
         RandomNumberMechanism(),
-        DiceMechanism()
+        DiceMechanism(),
+        TwoPieceTossMechanism(),
+        StickPickMechanism()
     ]
 
     private var selected: any DecisionMechanism {

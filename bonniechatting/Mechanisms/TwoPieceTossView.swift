@@ -1,33 +1,34 @@
 import SwiftUI
 import AudioToolbox
 
-/// The full 筊杯 experience: question entry → optional outcome labels → toss → reveal.
-struct JiaoBeiView: View {
+/// Two-piece toss — question entry, three user-editable outcome labels
+/// (defaults: Yes / Maybe / No), a physical toss animation, and a reveal
+/// showing the user's chosen label. Pure random picker — the mechanism
+/// assigns no meaning of its own.
+struct TwoPieceTossView: View {
 
     // MARK: - Question
 
-    @State private var question: String = ""
+    @AppStorage("twopiece.question") private var question: String = ""
     @FocusState private var questionFocused: Bool
 
-    // MARK: - User-customized outcome labels (persist between sessions)
+    // MARK: - User-customizable outcome labels
 
-    @AppStorage("jiaobei.label.sheng") private var labelSheng: String = ""
-    @AppStorage("jiaobei.label.xiao")  private var labelXiao:  String = ""
-    @AppStorage("jiaobei.label.yin")   private var labelYin:   String = ""
+    @AppStorage("twopiece.label.mixed")       private var labelMixed:       String = ""
+    @AppStorage("twopiece.label.both_flat")   private var labelBothFlat:    String = ""
+    @AppStorage("twopiece.label.both_curved") private var labelBothCurved:  String = ""
 
     @State private var showingLabelEditor = false
 
     // MARK: - Toss state
 
-    /// Toss phase drives the animation + reveal.
     private enum Phase: Equatable {
         case idle
         case tossing
-        case settled(JiaoBeiOutcome, BlockFace, BlockFace)
+        case settled(TossOutcome, BlockFace, BlockFace)
     }
     @State private var phase: Phase = .idle
 
-    /// Per-block visual state. Re-driven on each toss.
     @State private var leftRotation: Angle = .degrees(-12)
     @State private var rightRotation: Angle = .degrees(14)
     @State private var leftTumble: Angle = .zero
@@ -60,9 +61,9 @@ struct JiaoBeiView: View {
         .parchmentBackground()
         .sheet(isPresented: $showingLabelEditor) {
             OutcomeLabelEditor(
-                labelSheng: $labelSheng,
-                labelXiao: $labelXiao,
-                labelYin: $labelYin
+                labelMixed: $labelMixed,
+                labelBothFlat: $labelBothFlat,
+                labelBothCurved: $labelBothCurved
             )
             .presentationDetents([.medium, .large])
         }
@@ -72,13 +73,13 @@ struct JiaoBeiView: View {
 
     private var questionCard: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("jiaobei.question.label")
+            Text("twopiece.question.label")
                 .font(Theme.body(13, weight: .medium))
                 .foregroundStyle(Theme.inkSoft)
                 .textCase(.uppercase)
                 .tracking(0.8)
 
-            TextField("jiaobei.question.placeholder", text: $question, axis: .vertical)
+            TextField("twopiece.question.placeholder", text: $question, axis: .vertical)
                 .font(Theme.headlineSerif(19, weight: .regular))
                 .foregroundStyle(Theme.ink)
                 .lineLimit(1...3)
@@ -107,10 +108,10 @@ struct JiaoBeiView: View {
                 Image(systemName: "tag")
                     .foregroundStyle(Theme.gold)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("jiaobei.labels.title")
+                    Text("twopiece.labels.title")
                         .font(Theme.body(14, weight: .semibold))
                         .foregroundStyle(Theme.ink)
-                    Text(hasCustomLabels ? "jiaobei.labels.custom_set" : "jiaobei.labels.using_defaults")
+                    Text(hasCustomLabels ? "twopiece.labels.custom_set" : "twopiece.labels.using_defaults")
                         .font(Theme.body(12))
                         .foregroundStyle(Theme.inkQuiet)
                 }
@@ -130,7 +131,6 @@ struct JiaoBeiView: View {
 
     private var stage: some View {
         ZStack {
-            // The "ground": a soft golden disc the blocks sit on.
             Circle()
                 .fill(
                     RadialGradient(
@@ -142,10 +142,6 @@ struct JiaoBeiView: View {
                 )
                 .frame(height: 240)
 
-            // Blocks always render in the standard side-by-side layout —
-            // crescent-shaped blocks don't compose into a circle the way
-            // semicircles do, so the at-rest state is just two blocks sitting
-            // naturally on the parchment with a little separation.
             HStack(spacing: 24) {
                 MoonBlockView(
                     face: leftFace,
@@ -165,32 +161,25 @@ struct JiaoBeiView: View {
         .padding(.vertical, 8)
     }
 
-    private func revealCard(outcome: JiaoBeiOutcome) -> some View {
+    private func revealCard(outcome: TossOutcome) -> some View {
         VStack(spacing: 14) {
-            // Chinese name pill
             Text(outcome.nameKey)
-                .font(Theme.headlineSerif(28, weight: .bold))
+                .font(Theme.body(13, weight: .semibold))
                 .foregroundStyle(Theme.cinnabarDeep)
-                .padding(.horizontal, 22)
-                .padding(.vertical, 6)
+                .textCase(.uppercase)
+                .tracking(0.8)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 4)
                 .background(
                     Capsule()
-                        .fill(Theme.gold.opacity(0.25))
+                        .fill(Theme.gold.opacity(0.22))
                         .overlay(Capsule().stroke(Theme.gold, lineWidth: 1))
                 )
 
-            // User-facing answer (custom if set, otherwise the default)
             Text(userLabel(for: outcome))
-                .font(Theme.headlineSerif(22, weight: .semibold))
+                .font(Theme.headlineSerif(26, weight: .bold))
                 .foregroundStyle(Theme.ink)
                 .multilineTextAlignment(.center)
-
-            // Traditional meaning
-            Text(outcome.descriptionKey)
-                .font(Theme.body(14))
-                .foregroundStyle(Theme.inkSoft)
-                .multilineTextAlignment(.center)
-                .padding(.top, 2)
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 18)
@@ -211,8 +200,8 @@ struct JiaoBeiView: View {
             performToss()
         } label: {
             HStack(spacing: 10) {
-                Image(systemName: phase == .tossing ? "hourglass" : "sparkles")
-                Text(phase == .tossing ? "jiaobei.action.tossing" : (isSettled ? "jiaobei.action.toss_again" : "jiaobei.action.toss"))
+                Image(systemName: phase == .tossing ? "hourglass" : "arrow.triangle.2.circlepath")
+                Text(phase == .tossing ? "twopiece.action.tossing" : (isSettled ? "twopiece.action.toss_again" : "twopiece.action.toss"))
                     .font(Theme.headlineSerif(20, weight: .semibold))
             }
             .foregroundStyle(Color.white)
@@ -246,15 +235,15 @@ struct JiaoBeiView: View {
     }
 
     private var hasCustomLabels: Bool {
-        !labelSheng.isEmpty || !labelXiao.isEmpty || !labelYin.isEmpty
+        !labelMixed.isEmpty || !labelBothFlat.isEmpty || !labelBothCurved.isEmpty
     }
 
-    private func userLabel(for outcome: JiaoBeiOutcome) -> LocalizedStringKey {
+    private func userLabel(for outcome: TossOutcome) -> LocalizedStringKey {
         let custom: String
         switch outcome {
-        case .sheng: custom = labelSheng
-        case .xiao:  custom = labelXiao
-        case .yin:   custom = labelYin
+        case .mixed:       custom = labelMixed
+        case .bothFlat:    custom = labelBothFlat
+        case .bothCurved:  custom = labelBothCurved
         }
         if custom.isEmpty {
             return outcome.defaultUserLabelKey
@@ -267,25 +256,21 @@ struct JiaoBeiView: View {
     private func performToss() {
         questionFocused = false
 
-        // Randomize the outcome.
         let faces: [BlockFace] = [.flat, .curved]
         let newLeft  = faces.randomElement()!
         let newRight = faces.randomElement()!
-        let outcome = JiaoBeiOutcome.from(newLeft, newRight)
+        let outcome = TossOutcome.from(newLeft, newRight)
 
-        // Hide the previous reveal first.
         withAnimation(.easeIn(duration: 0.15)) {
             revealVisible = false
         }
         phase = .tossing
 
-        // Reset to a small "pickup" pose, then fling.
         leftOffset  = CGSize(width: -10, height: -20)
         rightOffset = CGSize(width:  10, height: -20)
         leftTumble  = .zero
         rightTumble = .zero
 
-        // Phase 1: high arc — blocks travel up and tumble fast.
         withAnimation(.easeOut(duration: 0.55)) {
             leftOffset  = CGSize(width: -60, height: -110)
             rightOffset = CGSize(width:  60, height: -110)
@@ -293,9 +278,7 @@ struct JiaoBeiView: View {
             rightTumble = .degrees(Double.random(in: 540...900) * (Bool.random() ? 1 : -1))
         }
 
-        // Phase 2: fall and settle.
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.55) {
-            // Lock in the final faces just before they land.
             leftFace  = newLeft
             rightFace = newRight
 
@@ -308,8 +291,6 @@ struct JiaoBeiView: View {
                 rightTumble = .zero
             }
 
-            // Wooden "clack" — a built-in sound that is close enough to a knock.
-            // 1104 = "Tock" on iOS. Soft, satisfying.
             AudioServicesPlaySystemSound(1104)
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
@@ -326,46 +307,40 @@ struct JiaoBeiView: View {
 
 private struct OutcomeLabelEditor: View {
     @Environment(\.dismiss) private var dismiss
-    @Binding var labelSheng: String
-    @Binding var labelXiao: String
-    @Binding var labelYin: String
+    @Binding var labelMixed: String
+    @Binding var labelBothFlat: String
+    @Binding var labelBothCurved: String
 
     var body: some View {
         NavigationStack {
             Form {
                 Section {
-                    labelField(title: "jiaobei.outcome.sheng.name",
-                               placeholderKey: "jiaobei.outcome.sheng.default_label",
-                               text: $labelSheng)
-                } footer: {
-                    Text("jiaobei.outcome.sheng.desc")
+                    labelField(title: "twopiece.outcome.mixed.name",
+                               placeholderKey: "twopiece.outcome.mixed.default_label",
+                               text: $labelMixed)
                 }
                 Section {
-                    labelField(title: "jiaobei.outcome.xiao.name",
-                               placeholderKey: "jiaobei.outcome.xiao.default_label",
-                               text: $labelXiao)
-                } footer: {
-                    Text("jiaobei.outcome.xiao.desc")
+                    labelField(title: "twopiece.outcome.both_flat.name",
+                               placeholderKey: "twopiece.outcome.both_flat.default_label",
+                               text: $labelBothFlat)
                 }
                 Section {
-                    labelField(title: "jiaobei.outcome.yin.name",
-                               placeholderKey: "jiaobei.outcome.yin.default_label",
-                               text: $labelYin)
-                } footer: {
-                    Text("jiaobei.outcome.yin.desc")
+                    labelField(title: "twopiece.outcome.both_curved.name",
+                               placeholderKey: "twopiece.outcome.both_curved.default_label",
+                               text: $labelBothCurved)
                 }
 
                 Section {
                     Button(role: .destructive) {
-                        labelSheng = ""
-                        labelXiao = ""
-                        labelYin = ""
+                        labelMixed = ""
+                        labelBothFlat = ""
+                        labelBothCurved = ""
                     } label: {
-                        Text("jiaobei.labels.reset")
+                        Text("twopiece.labels.reset")
                     }
                 }
             }
-            .navigationTitle("jiaobei.labels.title")
+            .navigationTitle("twopiece.labels.title")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
